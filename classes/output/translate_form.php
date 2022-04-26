@@ -50,7 +50,11 @@ class translate_form extends moodleform {
         // Start moodle form.
         $mform = $this->_form;
         $mform->disable_form_change_checker();
-        \MoodleQuickForm::registerElementType('cteditor', "$CFG->libdir/form/editor.php", '\local_coursetranslator\editor\MoodleQuickForm_cteditor');
+        \MoodleQuickForm::registerElementType(
+            'cteditor',
+            "$CFG->libdir/form/editor.php",
+            '\local_coursetranslator\editor\MoodleQuickForm_cteditor'
+        );
 
         // Open Form.
         $mform->addElement('html', '<div class="container-fluid local-coursetranslator__form">');

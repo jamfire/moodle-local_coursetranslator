@@ -13,6 +13,8 @@ GNU General Public License for more details.
 
 You should have received a copy of the GNU General Public License
 along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
+}}{{!
+  @template local_coursetranslator/translate_page
 }}
 <div class="container-fluid">
   <div class="row">
@@ -22,6 +24,7 @@ along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
           >{{#str}}t_select_target_language,local_coursetranslator{{/str}}</label
         >
         <select
+          id="select-target-language"
           name="select-target-language"
           class="local-coursetranslator__localeswitcher form-control"
         >
@@ -62,6 +65,7 @@ along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
           aria-label="{{#str}}t_selectall,local_coursetranslator{{/str}}"
           title="{{#str}}t_selectall,local_coursetranslator{{/str}}"
           name="select-all"
+          id="select-all"
           disabled
         />
         <label class="form-check-label text-white" for="select-all">

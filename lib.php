@@ -15,8 +15,17 @@
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
 /**
- * Add Translate Link to Edit Settings
+ * Course Translator extended libs
  *
+ * @package      local_coursetranslator
+ * @copyright    2022 Kaleb Heitzman <kaleb@jamfire.io>
+ * @license      http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
+ */
+
+/**
+ * Add Translate Course to course settings menu.
+ *
+ * @package      local_coursetranslator
  * @param object $navigation
  * @param object $course
  * @return void

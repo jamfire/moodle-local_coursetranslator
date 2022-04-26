@@ -175,7 +175,7 @@ class course_data {
      * @param integer $id
      * @param string $text
      * @param integer $format
-     * @param string $field
+     * @param string $table
      * @param string $field
      * @return \stdClass
      */

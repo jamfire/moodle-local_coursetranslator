@@ -16,6 +16,15 @@
 
 namespace local_coursetranslator\data;
 
+/**
+ * Course Data Processor
+ *
+ * Processess course data for moodleform. This class is logic heavy.
+ *
+ * @package    local_coursetranslator
+ * @copyright  2022 Kaleb Heitzman <kaleb@jamfire.io>
+ * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
+ */
 class course_data {
 
     /**

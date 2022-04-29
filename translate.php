@@ -54,6 +54,8 @@ $jsconfig->courseid = $courseid;
 $jsconfig->deeplurl = boolval(get_config('local_coursetranslator', 'deeplpro'))
     ? 'https://api.deepl.com/v2/translate?'
     : 'https://api-free.deepl.com/v2/translate?';
+$jsconfig->multiplemlang = get_string('t_multiplemlang', 'local_coursetranslator');
+$jsconfig->autosavedmsg = get_string('t_autosaved', 'local_coursetranslator');
 
 $mlangfilter = new \filter_multilang2($context, array());
 

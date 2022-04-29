@@ -120,13 +120,13 @@ class course_data {
                 }
 
                 // Standard intro.
-                if (isset($record->intro) && !empty($record->intro)) {
+                if (isset($record->intro) && !empty($record->intro) && trim(strip_tags($record->intro)) !== "") {
                     $data = $this->build_data($record->id, $record->intro, $record->introformat, $activity->modname, 'intro');
                     array_push($activitydata, $data);
                 }
 
                 // Standard content.
-                if (isset($record->content) && !empty($record->content)) {
+                if (isset($record->content) && !empty($record->content) && trim(strip_tags($record->content)) === "") {
                     $data = $this->build_data($record->id, $record->content, $record->contentformat, $activity->modname, 'content');
                     array_push($activitydata, $data);
                 }

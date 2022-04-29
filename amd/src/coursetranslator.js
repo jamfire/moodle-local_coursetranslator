@@ -21,19 +21,12 @@
 
 // import libs
 import ajax from "core/ajax";
-import * as str from "core/str";
 
 /**
  * Translation Editor UI
  * @param {Object} config JS Config
  */
 export const init = (config) => {
-
-  // Autosave Translation String
-  let autosavedMsg = "";
-  str.get_string("t_autosaved", "local_coursetranslator").done((string) => {
-    autosavedMsg = string;
-  });
 
   /**
    * Convert a template string into HTML DOM nodes
@@ -71,7 +64,7 @@ export const init = (config) => {
   /**
    * {mlang} searchex regex
    */
-  const searchex = /{\s*mlang\s+((?:[a-z0-9_-]+)(?:\s*,\s*[a-z0-9_-]+\s*)*)\s*}(.*?){\s*mlang\s*}/gim;
+  const searchex = /{\s*mlang\s+((?:[a-z0-9_-]+)(?:\s*,\s*[a-z0-9_-]+\s*)*)\s*}(.*?){\s*mlang\s*}/gisd;
 
   /**
    * Search for mlang tags
@@ -94,7 +87,6 @@ export const init = (config) => {
     const replacecallback = (lang, match) => {
       let blocklang = match.split(searchex)[1];
       let blocktext = match.split(searchex)[2];
-      window.console.log(blocklang, blocktext);
       if (blocklang === lang) {
         return blocktext;
       }
@@ -292,7 +284,7 @@ export const init = (config) => {
         '<div class="local-coursetranslator__success-message" data-key="' +
         key +
         '">' +
-        autosavedMsg +
+        config.autosavedmsg +
         "</div>";
       editor.after(...stringToHTML(indicator));
 
@@ -407,10 +399,31 @@ export const init = (config) => {
       let key = textarea.getAttribute('data-key');
       let text = textarea.innerHTML;
       let editor = document.querySelector('[data-key="' + key + '"] [contenteditable="true"]');
+
+      let lang = "{mlang " + config.lang + "}(.*?){mlang}";
+      let langex = new RegExp(lang, "gisd");
+      let matches = text.match(langex);
+
       // Parse the text for mlang
       let parsedtext = mlangparser(text);
-      // Updated contenteditables with parsedtext
-      editor.innerHTML = parsedtext;
+
+      if (matches && matches.length === 1) {
+
+        // Updated contenteditables with parsedtext
+        editor.innerHTML = parsedtext;
+      } else if (matches && matches.length > 1) {
+        document.querySelector('input[type="checkbox"][data-key="' + key + '"]').remove();
+        editor.closest('.form-group').remove();
+        document.querySelector('.local-coursetranslator__textarea[data-key="' + key + '"]').remove();
+        let p = document.createElement('p');
+        p.innerHTML = '<em><small>' + config.multiplemlang + '</small></em>';
+        this.document.querySelector('.local-coursetranslator__editor[data-key="' + key + '"]').append(p);
+      } else {
+        editor.innerHTML = parsedtext;
+      }
+
+      this.window.console.log(config);
+
     });
   });
 

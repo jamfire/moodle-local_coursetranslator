@@ -132,16 +132,18 @@ class translate_form extends moodleform {
             $mform->addElement('cteditor', $key, $key);
             $mform->setType($key, PARAM_RAW);
         }
-        // Textarea for processing.
-        $mform->addElement(
-            'html',
-            '<div data-key="' . $key . '" class="local-coursetranslator__textarea d-none">' . trim($item->text) . '</div>'
-        );
 
         $mform->addElement('html', '</div>');
+
+        $mform->addElement('html', '<div class="d-none col-2 px-0"></div>');
+        $mform->addElement(
+            'html',
+            '<div data-key="' . $key . '" class="d-none col-10 px-0 py-5 local-coursetranslator__textarea">' . trim($item->text) . '</div>'
+        );
 
         // Close translation item.
         $mform->addElement('html', '</div>');
+
     }
 
     /**

@@ -260,6 +260,7 @@ export const init = (config) => {
   const saveTranslation = (key, editor, text) => {
     let element = editor.closest(".local-coursetranslator__editor");
     let id = element.getAttribute("data-id");
+    let tid = element.getAttribute("data-tid");
     let table = element.getAttribute("data-table");
     let field = element.getAttribute("data-field");
 
@@ -272,6 +273,7 @@ export const init = (config) => {
     let data = {};
     data.courseid = config.courseid;
     data.id = parseInt(id);
+    data.tid = tid;
     data.table = table;
     data.field = field;
     data.text = updatedtext;
@@ -287,6 +289,10 @@ export const init = (config) => {
         config.autosavedmsg +
         "</div>";
       editor.after(...stringToHTML(indicator));
+
+      let status = document.querySelector('[data-status-key="' + key + '"');
+      status.classList.replace('badge-danger', 'badge-success');
+      status.innerHTML = config.uptodate;
 
       // Remove success message after a few seconds
       setTimeout(() => {

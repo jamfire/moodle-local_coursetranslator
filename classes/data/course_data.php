@@ -213,20 +213,21 @@ class course_data {
             $params['s_lastmodified'] = $time;
             $params['t_lastmodified'] = $time;
             $id = $DB->insert_record($this->dbtable, $params);
-            $record = $DB->get_record($this->dbtable, array('id' => $id), 's_lastmodified,t_lastmodified');
+            $record = $DB->get_record($this->dbtable, array('id' => $id), 'id,s_lastmodified,t_lastmodified');
         } else {
-            $record = $DB->get_record($this->dbtable, $params, 's_lastmodified,t_lastmodified');
+            $record = $DB->get_record($this->dbtable, $params, 'id,s_lastmodified,t_lastmodified');
         }
 
         // Build item.
         $item = new \stdClass();
         $item->id = $id;
+        $item->tid = $record->id;
         $item->text = $text;
         $item->format = intval($format);
         $item->table = $table;
         $item->field = $field;
         $item->link = $this->link_builder($id, $table, $cmid);
-        $item->tneeded = $record->s_lastmodified >= $record->t_modified;
+        $item->tneeded = $record->s_lastmodified >= $record->t_lastmodified;
 
         return $item;
     }

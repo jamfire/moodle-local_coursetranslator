@@ -15,6 +15,41 @@ You should have received a copy of the GNU General Public License
 along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 }}{{!
   @template local_coursetranslator/translate_page
+
+  Provides translation form header and controls
+
+  Classes required for JS:
+  * local-coursetranslator__localeswitcher
+  * local-coursetranslator__select-all
+  * local-coursetranslator__autotranslate-btn
+
+  Data attributes required for JS:
+  * none
+
+  Context variables required for this template:
+  * lang
+  * langs
+  * wordcount
+  * charcount
+  * charcountspaces
+
+  Example context (json):
+  {
+    lang: 'en',
+    langs: [
+      {
+        code: 'other',
+        lang: 'Other (other)'
+      },
+      {
+        code: 'en',
+        lang: 'English (en)'
+      }
+    ],
+    wordcount: 4,
+    charcount: 20,
+    charcountspaces: 25
+  }
 }}
 <div class="container-fluid">
   <div class="row">

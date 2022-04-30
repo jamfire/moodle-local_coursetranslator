@@ -7,6 +7,9 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [0.9.1] -2022-04-26
 
+### Added
+- Detect split {mlang} tags and notify editor to use standard moodle form instead.
+
 ### Fixed
 - Code prechecks
 

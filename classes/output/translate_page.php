@@ -36,8 +36,9 @@ class translate_page implements renderable, templatable {
     /**
      * Constructor
      *
-     * @param object $multilinguals Multilingual items
      * @param object $course Moodle course record
+     * @param array  $coursedata Custom processed course record
+     * @param object $mlangfilter Multilang2 Filter for filtering output
      */
     public function __construct($course, $coursedata, $mlangfilter) {
         $this->course = $course;

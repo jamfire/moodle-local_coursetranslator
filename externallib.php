@@ -57,9 +57,9 @@ class local_coursetranslator_external extends external_api {
     /**
      * Update Translation
      *
-     * Add translation to the database
+     * Dynamically update table and column name for item submitted
      *
-     * @param object $translation
+     * @param object $data
      * @return array
      */
     public static function update_translation($data) {
@@ -75,7 +75,7 @@ class local_coursetranslator_external extends external_api {
 
             purge_all_caches();
 
-            // Check for null values and throw errors @todo.
+            // Check for null values and throw errors.
 
             // Security checks.
             $context = context_course::instance($data['courseid']);

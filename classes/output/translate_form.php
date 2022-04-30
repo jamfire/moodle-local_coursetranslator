@@ -50,7 +50,11 @@ class translate_form extends moodleform {
         // Start moodle form.
         $mform = $this->_form;
         $mform->disable_form_change_checker();
-        \MoodleQuickForm::registerElementType('cteditor', "$CFG->libdir/form/editor.php", '\local_coursetranslator\editor\MoodleQuickForm_cteditor');
+        \MoodleQuickForm::registerElementType(
+            'cteditor',
+            "$CFG->libdir/form/editor.php",
+            '\local_coursetranslator\editor\MoodleQuickForm_cteditor'
+        );
 
         // Open Form.
         $mform->addElement('html', '<div class="container-fluid local-coursetranslator__form">');
@@ -91,11 +95,17 @@ class translate_form extends moodleform {
             data-key="' . $key . '"
             disabled
         />');
-        $mform->addElement('html',
-            '<label class="form-check-label">'
-            . $item->field . '[' . $item->id . ']' . '<br /><small>'
-            . $item->table . '</small></label>'
-        );
+        $label = '<label class="form-check-lable">';
+        if ($item->link) {
+            $label .= '<a href="' . $item->link . '">';
+        }
+        $label .= $item->field . '[' . $item->id . ']';
+        if ($item->link) {
+            $label .= '</a>';
+        }
+        $label .= '<br /><small>' . $item->table . '</small>';
+        $label .= '</label>';
+        $mform->addElement('html', $label);
         $mform->addElement('html', '</div>');
         $mform->addElement('html', '</div>');
 
@@ -128,16 +138,18 @@ class translate_form extends moodleform {
             $mform->addElement('cteditor', $key, $key);
             $mform->setType($key, PARAM_RAW);
         }
-        // Textarea for processing.
-        $mform->addElement(
-            'html',
-            '<div data-key="' . $key . '" class="local-coursetranslator__textarea d-none">' . trim($item->text) . '</div>'
-        );
 
         $mform->addElement('html', '</div>');
+
+        $mform->addElement('html', '<div class="d-none col-2 px-0"></div>');
+        $mform->addElement(
+            'html',
+            '<div data-key="' . $key . '" class="d-none col-10 px-0 py-5 local-coursetranslator__textarea">' . trim($item->text) . '</div>'
+        );
 
         // Close translation item.
         $mform->addElement('html', '</div>');
+
     }
 
     /**

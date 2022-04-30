@@ -26,13 +26,22 @@ namespace local_coursetranslator\editor;
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 class MoodleQuickForm_cteditor extends \MoodleQuickForm_editor {
-    // phpcs:ignore
-    public function __construct($elementName=null, $elementLabel=null, $attributes=null, $options=null) {
+
+    /**
+     * Course Translation Editor Setup
+     *
+     * Intercept options in order to disable autosave, specify toolbar, etc.
+     *
+     * @param string $elementName
+     * @param string $elementLabel
+     * @param array $attributes
+     * @param object $options
+     */
+    public function __construct($elementName=null, $elementLabel=null, $attributes=null, $options=null) { // phpcs:ignore
         // Set custom options.
         $this->_options['subdirs'] = true;
         $this->_options['maxbytes'] = 10240;
         $this->_options['maxfiles'] = EDITOR_UNLIMITED_FILES;
-        // $this->_options['context'] = null;
         $this->_options['noclean'] = true;
         $this->_options['trusttext'] = true;
         $this->_options['enable_filemanagement'] = true;

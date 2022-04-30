@@ -115,19 +115,23 @@ class course_data {
 
                 // Standard name.
                 if (isset($record->name) && !empty($record->name)) {
-                    $data = $this->build_data($record->id, $record->name, 0, $activity->modname, 'name');
+                    $data = $this->build_data($record->id, $record->name, 0, $activity->modname, 'name', $activity->id);
                     array_push($activitydata, $data);
                 }
 
                 // Standard intro.
-                if (isset($record->intro) && !empty($record->intro)) {
-                    $data = $this->build_data($record->id, $record->intro, $record->introformat, $activity->modname, 'intro');
+                if (isset($record->intro) && !empty($record->intro) && trim(strip_tags($record->intro)) !== "") {
+                    $data = $this->build_data(
+                        $record->id, $record->intro, $record->introformat, $activity->modname, 'intro', $activity->id
+                    );
                     array_push($activitydata, $data);
                 }
 
                 // Standard content.
-                if (isset($record->content) && !empty($record->content)) {
-                    $data = $this->build_data($record->id, $record->content, $record->contentformat, $activity->modname, 'content');
+                if (isset($record->content) && !empty($record->content) && trim(strip_tags($record->content)) === "") {
+                    $data = $this->build_data(
+                        $record->id, $record->content, $record->contentformat, $activity->modname, 'content', $activity->id
+                    );
                     array_push($activitydata, $data);
                 }
 
@@ -137,7 +141,8 @@ class course_data {
                         $record->page_after_submit,
                         $record->page_after_submitformat,
                         $activity->modname,
-                        'page_after_submit'
+                        'page_after_submit',
+                        $activity->id
                     );
                     array_push($activitydata, $data);
                 }
@@ -148,7 +153,8 @@ class course_data {
                         $record->instructauthors,
                         $record->instructauthorsformat,
                         $activity->modname,
-                        'instructauthors'
+                        'instructauthors',
+                        $activity->id
                     );
                     array_push($activitydata, $data);
                 }
@@ -159,7 +165,8 @@ class course_data {
                         $record->instructreviewers,
                         $record->instructreviewersformat,
                         $activity->modname,
-                        'instructreviewers'
+                        'instructreviewers',
+                        $activity->id
                     );
                     array_push($activitydata, $data);
                 }
@@ -175,18 +182,46 @@ class course_data {
      * @param integer $id
      * @param string $text
      * @param integer $format
+     * @param string $table
      * @param string $field
-     * @param string $field
+     * @param integer $cmid
      * @return \stdClass
      */
-    private function build_data($id, $text, $format, $table, $field) {
+    private function build_data($id, $text, $format, $table, $field, $cmid = null) {
         $item = new \stdClass();
         $item->id = $id;
         $item->text = $text;
         $item->format = intval($format);
         $item->table = $table;
         $item->field = $field;
+        $item->link = $this->link_builder($id, $table, $cmid);
         return $item;
     }
 
+    /**
+     * Link Builder
+     *
+     * @param integer $id
+     * @param string $table
+     * @param integer $cmid
+     * @return string
+     */
+    private function link_builder($id, $table, $cmid = 0) {
+
+        $link = null;
+        switch ($table) {
+            case 'course':
+                $link = "/course/edit.php?id=${id}";
+                break;
+            case 'course_sections':
+                $link = "/course/editsection.php?id=${id}";
+            default:
+                if ($cmid !== 0) {
+                    $link = "/course/modedit.php?update=${cmid}";
+                }
+                break;
+        }
+
+        return $link;
+    }
 }

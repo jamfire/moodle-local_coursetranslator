@@ -95,11 +95,17 @@ class translate_form extends moodleform {
             data-key="' . $key . '"
             disabled
         />');
-        $mform->addElement('html',
-            '<label class="form-check-label">'
-            . $item->field . '[' . $item->id . ']' . '<br /><small>'
-            . $item->table . '</small></label>'
-        );
+        $label = '<label class="form-check-lable">';
+        if ($item->link) {
+            $label .= '<a href="' . $item->link . '">';
+        }
+        $label .= $item->field . '[' . $item->id . ']';
+        if ($item->link) {
+            $label .= '</a>';
+        }
+        $label .= '<br /><small>' . $item->table . '</small>';
+        $label .= '</label>';
+        $mform->addElement('html', $label);
         $mform->addElement('html', '</div>');
         $mform->addElement('html', '</div>');
 

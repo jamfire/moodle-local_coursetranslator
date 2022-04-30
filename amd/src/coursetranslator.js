@@ -413,7 +413,7 @@ export const init = (config) => {
         editor.innerHTML = parsedtext;
       } else if (matches && matches.length > 1) {
         document.querySelector('input[type="checkbox"][data-key="' + key + '"]').remove();
-        editor.closest('.form-group').remove();
+        document.querySelector('.local-coursetranslator__editor[data-key="' + key + '"] > *').remove();
         document.querySelector('.local-coursetranslator__textarea[data-key="' + key + '"]').remove();
         let p = document.createElement('p');
         p.innerHTML = '<em><small>' + config.multiplemlang + '</small></em>';
@@ -421,8 +421,6 @@ export const init = (config) => {
       } else {
         editor.innerHTML = parsedtext;
       }
-
-      this.window.console.log(config);
 
     });
   });

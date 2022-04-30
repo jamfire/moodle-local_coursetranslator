@@ -32,7 +32,7 @@ This plugin has been tested on Moodle 3.11 and Moodle 4.0.
 
 ## How does this plugin differe from Content Translation Manager and Content Translation Filter?
 
-This plugin does not create any new tables in your database and it does not translate every string on your site. It is only meant for translating courses and it uses Moodle's built in multilingual features along with ```{mlang}``` to translate your content. When you backup and restore courses, your translations will migrate with your content.
+This plugin does not translate every string on your site. It is only meant for translating courses and it uses Moodle's built in multilingual features along with ```{mlang}``` to translate your content. When you backup and restore courses, your translations will migrate with your content. Updating your source content will provide a "Update Needed" status message on the course translation page.
 
 ## Submit an issue
 

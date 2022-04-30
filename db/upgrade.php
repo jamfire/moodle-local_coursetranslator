@@ -44,6 +44,8 @@ function xmldb_local_coursetranslator_upgrade($oldversion) {
         $table->add_field('id', XMLDB_TYPE_INTEGER, '10', null, XMLDB_NOTNULL, XMLDB_SEQUENCE, null);
         $table->add_field('t_id', XMLDB_TYPE_INTEGER, '10', null, XMLDB_NOTNULL, null, null);
         $table->add_field('t_lang', XMLDB_TYPE_CHAR, '2', null, XMLDB_NOTNULL, null, null);
+        $table->add_field('t_lang', XMLDB_TYPE_CHAR, '55', null, XMLDB_NOTNULL, null, null);
+        $table->add_field('t_lang', XMLDB_TYPE_CHAR, '55', null, XMLDB_NOTNULL, null, null);
         $table->add_field('s_lastmodified', XMLDB_TYPE_INTEGER, '11', null, XMLDB_NOTNULL, null, null);
         $table->add_field('t_lastmodified', XMLDB_TYPE_INTEGER, '11', null, XMLDB_NOTNULL, null, null);
 

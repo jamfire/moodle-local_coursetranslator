@@ -10,6 +10,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ### Added
 - Status and status visibility controls
 - local_coursetranslator db table for managing status of updates
+- Detect when content contains multiple mlang tags of the same language
 
 ### Changed
 - Documentation to mustache template

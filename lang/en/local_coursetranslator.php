@@ -54,6 +54,6 @@ $string['t_autosaved'] = 'Autosaved';
 $string['t_selectall'] = 'Select All';
 $string['t_status'] = 'Status';
 $string['t_other'] = 'Other (other)';
-$string['t_multiplemlang'] = 'Multiple mlang tags of the same language detected for this field. Please <a href="{$a}" title="Edit">edit translation</a> using standard Moodle editor or simplify to a single mlang tag per language.';
+$string['t_multiplemlang'] = 'This field is using advanced {mlang} usage. Please <a href="{$a}" title="Edit">edit translation</a> using standard Moodle editor or simplify to a single mlang tag per language.';
 $string['t_needsupdate'] = 'Update Needed';
 $string['t_uptodate'] = 'Updated';

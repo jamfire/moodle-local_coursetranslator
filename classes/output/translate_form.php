@@ -83,8 +83,14 @@ class translate_form extends moodleform {
         // Build a key for js interaction.
         $key = "$item->table[$item->id][$item->field]";
 
+        // Data status.
+        $status = $item->tneeded ? 'needsupdate' : 'updated';
+
         // Open translation item.
-        $mform->addElement('html', '<div class="row align-items-start border-bottom py-3" data-row-id="' . $key . '">');
+        $mform->addElement(
+            'html',
+            '<div class="row align-items-start border-bottom py-3" data-row-id="' . $key . '" data-status="' . $status . '">'
+        );
 
         // First column.
         $mform->addElement('html', '<div class="col-2">');
@@ -95,7 +101,7 @@ class translate_form extends moodleform {
             data-key="' . $key . '"
             disabled
         />');
-        $label = '<label class="form-check-lable">';
+        $label = '<label class="form-check-label">';
         if ($item->tneeded) {
             $label .= ' <span class="badge badge-pill badge-danger rounded py-2" data-status-key="' . $key . '">'
                     . get_string('t_needsupdate', 'local_coursetranslator')

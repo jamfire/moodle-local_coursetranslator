@@ -119,6 +119,44 @@ export const init = (config) => {
   });
 
   /**
+   * Show Updated Checkbox
+   */
+  let showUpdatedCheckbox = document.querySelector(
+    ".local-coursetranslator__show-updated"
+  );
+  showUpdatedCheckbox.addEventListener('change', e => {
+    let items = document.querySelectorAll('[data-status="updated"]');
+    if (e.target.checked) {
+      items.forEach(item => {
+        item.classList.remove('d-none');
+      });
+    } else {
+      items.forEach(item => {
+        item.classList.add('d-none');
+      });
+    }
+  });
+
+  /**
+   * Show Update Needed Checkbox
+   */
+  let showUpdateNeededCheckbox = document.querySelector(
+    ".local-coursetranslator__show-needsupdate"
+  );
+  showUpdateNeededCheckbox.addEventListener('change', e => {
+    let items = document.querySelectorAll('[data-status="needsupdate"]');
+    if (e.target.checked) {
+      items.forEach(item => {
+        item.classList.remove('d-none');
+      });
+    } else {
+      items.forEach(item => {
+        item.classList.add('d-none');
+      });
+    }
+  });
+
+  /**
    * Select All Checkbox
    */
   const selectAll = document.querySelector(

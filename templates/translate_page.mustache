@@ -21,6 +21,8 @@ along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
   Classes required for JS:
   * local-coursetranslator__localeswitcher
   * local-coursetranslator__select-all
+  * local-coursetranslator__show-updated
+  * local-coursetranslator__show-needsupdate
   * local-coursetranslator__autotranslate-btn
 
   Data attributes required for JS:
@@ -52,9 +54,9 @@ along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
   }
 }}
 <div class="container-fluid">
-  <div class="row">
+  <div class="row align-items-end py-3">
     <form class="col-2 pl-0 pr-5">
-      <div class="form-group">
+      <div class="form-group my-0">
         <label for="select-target-language"
           >{{#str}}t_select_target_language,local_coursetranslator{{/str}}</label
         >
@@ -69,14 +71,24 @@ along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
         </select>
       </div>
     </form>
-    <div class="col-6 px-0">
-      <p>
+    <form class="col-5 px-0">
+      <div class="form-check form-check-inline">
+        <input type="checkbox" id="show-updated" checked="checked" class="local-coursetranslator__show-updated" />
+        <label for="show-updated" class="mb-0 pl-1">{{#str}}t_uptodate,local_coursetranslator{{/str}}</label>
+      </div>
+      <div class="form-check form-check-inline">
+        <input type="checkbox" id="show-needsupdate" checked="checked" class="local-coursetranslator__show-needsupdate" />
+        <label for="show-needsupdate" class="mb-0 pl-1">{{#str}}t_needsupdate,local_coursetranslator{{/str}}</label>
+      </div>
+    </form>
+    <div class="col-3 px-0">
+      <p class="my-0">
         {{#str}}t_word_count,local_coursetranslator, {{ wordcount }}{{/str}}<br />
         {{#str}}t_char_count,local_coursetranslator, {{ charcount }}{{/str}}<br />
         {{#str}}t_char_count_spaces,local_coursetranslator, {{ charcountspaces }}{{/str}}
       </p>
     </div>
-    <div class="col-4 px-0 mb-3">
+    <div class="col-2 px-0">
       <div class="text-right">
         <button
           type="button"

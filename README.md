@@ -26,7 +26,7 @@ To change the language you want to translate in, choose a language from the **Se
 
 To automatically translate a field, check the row's checkbox and then click autotranslate. You can also use the select all checkbox next to status in the translation table header. This will generate a translation from the DeepL API and then automatically save it to your course. If you need to see all of the content and ```{mlang}``` tags for the activty you are editing, you will need to go back to your course and edit the activity from there. The Course Translator filters out all unneeded content to give translators and easy and quick way to translate Moodle courses on the fly.
 
-__At this time, Course Translator does not have the ability to translate advanced usage of mlang in content. For example, this includes the use of multiple mlang tags spread throughout content that utilize the same language.__
+_At this time, Course Translator does not have the ability to translate advanced usage of mlang in content. For example, this includes the use of multiple mlang tags spread throughout content that utilize the same language._
 
 <img src="https://ik.imagekit.io/1zvlk0e7l/moodle/course-translator-v0.9.2_prvB1rCSS.png?ik-sdk-version=javascript-1.4.3&updatedAt=1651374909723" alt="Course Translator Page">
 

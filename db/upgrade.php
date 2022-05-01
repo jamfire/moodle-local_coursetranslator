@@ -35,7 +35,7 @@ function xmldb_local_coursetranslator_upgrade($oldversion) {
     global $DB;
     $dbman = $DB->get_manager();
 
-    if ($oldversion < 2022043015) {
+    if ($oldversion < 2022050100) {
 
         // Define table local_coursetranslator to be created.
         $table = new xmldb_table('local_coursetranslator');
@@ -44,8 +44,8 @@ function xmldb_local_coursetranslator_upgrade($oldversion) {
         $table->add_field('id', XMLDB_TYPE_INTEGER, '10', null, XMLDB_NOTNULL, XMLDB_SEQUENCE, null);
         $table->add_field('t_id', XMLDB_TYPE_INTEGER, '10', null, XMLDB_NOTNULL, null, null);
         $table->add_field('t_lang', XMLDB_TYPE_CHAR, '2', null, XMLDB_NOTNULL, null, null);
-        $table->add_field('t_lang', XMLDB_TYPE_CHAR, '55', null, XMLDB_NOTNULL, null, null);
-        $table->add_field('t_lang', XMLDB_TYPE_CHAR, '55', null, XMLDB_NOTNULL, null, null);
+        $table->add_field('t_table', XMLDB_TYPE_CHAR, '55', null, XMLDB_NOTNULL, null, null);
+        $table->add_field('t_field', XMLDB_TYPE_CHAR, '55', null, XMLDB_NOTNULL, null, null);
         $table->add_field('s_lastmodified', XMLDB_TYPE_INTEGER, '11', null, XMLDB_NOTNULL, null, null);
         $table->add_field('t_lastmodified', XMLDB_TYPE_INTEGER, '11', null, XMLDB_NOTNULL, null, null);
 
@@ -62,7 +62,7 @@ function xmldb_local_coursetranslator_upgrade($oldversion) {
         }
 
         // Coursetranslator savepoint reached.
-        upgrade_plugin_savepoint(true, 2022043015, 'local', 'coursetranslator');
+        upgrade_plugin_savepoint(true, 2022050100, 'local', 'coursetranslator');
     }
 
     return true;

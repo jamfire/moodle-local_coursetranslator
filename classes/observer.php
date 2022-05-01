@@ -17,14 +17,19 @@
 /**
  * Course Translator Observers
  *
- * Watch for course, course section, and mod updates
- *
  * @package    local_coursetranslator
  * @copyright  2022 Kaleb Heitzman <kaleb@jamfire.io>
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  * @see        https://docs.moodle.org/dev/Events_API
  */
 
+/**
+ * Course Translator Observers
+ *
+ * Watch for course, course section, and mod updates
+ *
+ * @package    local_coursetranslator
+ */
 class local_coursetranslator_observer {
 
     /**

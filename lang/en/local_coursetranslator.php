@@ -47,7 +47,6 @@ $string['t_word_count'] = 'Word Count: {$a}';
 $string['t_char_count'] = 'Character Count: {$a}';
 $string['t_char_count_spaces'] = 'Character Count with Spaces: {$a}';
 $string['t_autotranslate'] = 'Autotranslate';
-$string['t_status'] = 'Status';
 $string['t_source_text'] = 'Source Text';
 $string['t_translation'] = 'Translation: {$a}';
 $string['t_autosaved'] = 'Autosaved';

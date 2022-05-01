@@ -1,6 +1,6 @@
 # Course Translator for Moodle
 
-![Moodle CI](https://github.com/jamfire/moodle-local_coursetranslator/actions/workflows/moodle-ci.yml/badge.svg) ![Dependency Review](https://github.com/jamfire/moodle-local_coursetranslator/actions/workflows/dependency-review.yml/badge.svg)
+![Moodle CI](https://github.com/jamfire/moodle-local_coursetranslator/actions/workflows/moodle-ci.yml/badge.svg) ![Dependency Review](https://github.com/jamfire/moodle-local_coursetranslator/actions/workflows/dependency-review.yml/badge.svg) ![SonarCloud](https://github.com/jamfire/moodle-local_coursetranslator/actions/workflows/sonarcloud.yml/badge.svg)
 
 Course Translator is a local moodle plugin that provides a content translation page for courses and automatic machine translation using the DeepL Pro Translation api. Currently it can translate content two levels deep and is developed for those who want to translate a course all on one page without having to navigate to each module and update translations. [Multi-Language Content (v2)](https://moodle.org/plugins/filter_multilang2) is a dependency of this plugin and will not work without it.
 

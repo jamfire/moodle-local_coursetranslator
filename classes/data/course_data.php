@@ -31,12 +31,21 @@ class course_data {
      * Class Construct
      *
      * @param \stdClass $course
+     * @param string $lang
      */
-    public function __construct(\stdClass $course) {
+    public function __construct(\stdClass $course, string $lang) {
+        // Set db table.
+        $this->dbtable = 'local_coursetranslator';
+
+        // Set course.
         $this->course = $course;
 
+        // Set modinfo.
         $modinfo = get_fast_modinfo($course);
         $this->modinfo = $modinfo;
+
+        // Set language.
+        $this->lang = $lang === 'other' ? '00' : $lang;
     }
 
     /**
@@ -188,13 +197,38 @@ class course_data {
      * @return \stdClass
      */
     private function build_data($id, $text, $format, $table, $field, $cmid = null) {
+        global $DB;
+
+        // Build db params.
+        $params = array(
+            't_id' => $id,
+            't_lang' => $this->lang,
+            't_table' => $table,
+            't_field' => $field
+        );
+
+        // Insert tracking record if it does not exist.
+        if (!$DB->record_exists($this->dbtable, $params)) {
+            $time = time();
+            $params['s_lastmodified'] = $time;
+            $params['t_lastmodified'] = $time;
+            $id = $DB->insert_record($this->dbtable, $params);
+            $record = $DB->get_record($this->dbtable, array('id' => $id), 'id,s_lastmodified,t_lastmodified');
+        } else {
+            $record = $DB->get_record($this->dbtable, $params, 'id,s_lastmodified,t_lastmodified');
+        }
+
+        // Build item.
         $item = new \stdClass();
         $item->id = $id;
+        $item->tid = $record->id;
         $item->text = $text;
         $item->format = intval($format);
         $item->table = $table;
         $item->field = $field;
         $item->link = $this->link_builder($id, $table, $cmid);
+        $item->tneeded = $record->s_lastmodified >= $record->t_lastmodified;
+
         return $item;
     }
 

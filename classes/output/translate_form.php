@@ -83,8 +83,14 @@ class translate_form extends moodleform {
         // Build a key for js interaction.
         $key = "$item->table[$item->id][$item->field]";
 
+        // Data status.
+        $status = $item->tneeded ? 'needsupdate' : 'updated';
+
         // Open translation item.
-        $mform->addElement('html', '<div class="row align-items-start border-bottom py-3">');
+        $mform->addElement(
+            'html',
+            '<div class="row align-items-start border-bottom py-3" data-row-id="' . $key . '" data-status="' . $status . '">'
+        );
 
         // First column.
         $mform->addElement('html', '<div class="col-2">');
@@ -95,15 +101,16 @@ class translate_form extends moodleform {
             data-key="' . $key . '"
             disabled
         />');
-        $label = '<label class="form-check-lable">';
-        if ($item->link) {
-            $label .= '<a href="' . $item->link . '">';
+        $label = '<label class="form-check-label">';
+        if ($item->tneeded) {
+            $label .= ' <span class="badge badge-pill badge-danger rounded py-2" data-status-key="' . $key . '">'
+                    . get_string('t_needsupdate', 'local_coursetranslator')
+                    . '</span>';
+        } else {
+            $label .= ' <span class="badge badge-pill badge-success rounded py-2" data-status-key="' . $key . '">'
+                    . get_string('t_uptodate', 'local_coursetranslator')
+                    . '</span>';
         }
-        $label .= $item->field . '[' . $item->id . ']';
-        if ($item->link) {
-            $label .= '</a>';
-        }
-        $label .= '<br /><small>' . $item->table . '</small>';
         $label .= '</label>';
         $mform->addElement('html', $label);
         $mform->addElement('html', '</div>');
@@ -124,6 +131,7 @@ class translate_form extends moodleform {
             data-table="' . $item->table . '"
             data-id="' . $item->id . '"
             data-field="' . $item->field . '"
+            data-tid="' . $item->tid . '"
         >');
         // Plain text input.
         if ($item->format === 0) {
@@ -144,7 +152,9 @@ class translate_form extends moodleform {
         $mform->addElement('html', '<div class="d-none col-2 px-0"></div>');
         $mform->addElement(
             'html',
-            '<div data-key="' . $key . '" class="d-none col-10 px-0 py-5 local-coursetranslator__textarea">' . trim($item->text) . '</div>'
+            '<div data-key="' . $key
+            . '" class="d-none col-10 px-0 py-5 local-coursetranslator__textarea">'
+            . trim($item->text) . '</div>'
         );
 
         // Close translation item.

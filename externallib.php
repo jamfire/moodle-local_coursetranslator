@@ -44,6 +44,7 @@ class local_coursetranslator_external extends external_api {
                         array(
                             'courseid'  => new external_value(PARAM_INT, 'course id'),
                             'id'        => new external_value(PARAM_INT, 'id of table record'),
+                            'tid'       => new external_value(PARAM_INT, 'tid of local_coursetranslator record'),
                             'table'     => new external_value(PARAM_RAW, 'table to update text'),
                             'field'     => new external_value(PARAM_RAW, 'table field to update'),
                             'text'      => new external_value(PARAM_RAW, 'text to be upserted'),
@@ -87,9 +88,15 @@ class local_coursetranslator_external extends external_api {
             $dataobject['id'] = $data['id'];
             $dataobject[$data['field']] = $data['text'];
             $record->id = $DB->update_record($data['table'], (object) $dataobject);
+
+            // Update t_lastmodified.
+            $timemodified = time();
+            $DB->update_record('local_coursetranslator', array('id' => $data['tid'], 't_lastmodified' => $timemodified));
+
             $response[] = array(
                 'id' => $record->id,
-                'dataobject' => serialize($dataobject)
+                'dataobject' => serialize($dataobject),
+                't_lastmodified' => $timemodified,
             );
         }
 
@@ -110,8 +117,9 @@ class local_coursetranslator_external extends external_api {
         return new external_multiple_structure(
             new external_single_structure(
                 array(
-                    'id'            => new external_value(PARAM_INT, 'id of table record'),
-                    'dataobject'    => new external_value(PARAM_RAW, 'serialized dataobject'),
+                    'id'             => new external_value(PARAM_INT, 'id of table record'),
+                    'dataobject'     => new external_value(PARAM_RAW, 'serialized dataobject'),
+                    't_lastmodified' => new external_value(PARAM_INT, 'translation last modified time')
                 )
             )
         );

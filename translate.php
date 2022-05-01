@@ -56,6 +56,8 @@ $jsconfig->deeplurl = boolval(get_config('local_coursetranslator', 'deeplpro'))
     : 'https://api-free.deepl.com/v2/translate?';
 $jsconfig->multiplemlang = get_string('t_multiplemlang', 'local_coursetranslator');
 $jsconfig->autosavedmsg = get_string('t_autosaved', 'local_coursetranslator');
+$jsconfig->needsupdate = get_string('t_needsupdate', 'local_coursetranslator');
+$jsconfig->uptodate = get_string('t_uptodate', 'local_coursetranslator');
 
 $mlangfilter = new \filter_multilang2($context, array());
 
@@ -79,7 +81,7 @@ echo $output->header();
 echo $output->heading($mlangfilter->filter($course->fullname));
 
 // Output translation grid.
-$coursedata = new \local_coursetranslator\data\course_data($course);
+$coursedata = new \local_coursetranslator\data\course_data($course, $lang);
 $renderable = new \local_coursetranslator\output\translate_page($course, $coursedata->getdata(), $mlangfilter);
 echo $output->render($renderable, $course);
 

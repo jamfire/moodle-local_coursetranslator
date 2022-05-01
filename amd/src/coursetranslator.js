@@ -119,6 +119,44 @@ export const init = (config) => {
   });
 
   /**
+   * Show Updated Checkbox
+   */
+  let showUpdatedCheckbox = document.querySelector(
+    ".local-coursetranslator__show-updated"
+  );
+  showUpdatedCheckbox.addEventListener('change', e => {
+    let items = document.querySelectorAll('[data-status="updated"]');
+    if (e.target.checked) {
+      items.forEach(item => {
+        item.classList.remove('d-none');
+      });
+    } else {
+      items.forEach(item => {
+        item.classList.add('d-none');
+      });
+    }
+  });
+
+  /**
+   * Show Update Needed Checkbox
+   */
+  let showUpdateNeededCheckbox = document.querySelector(
+    ".local-coursetranslator__show-needsupdate"
+  );
+  showUpdateNeededCheckbox.addEventListener('change', e => {
+    let items = document.querySelectorAll('[data-status="needsupdate"]');
+    if (e.target.checked) {
+      items.forEach(item => {
+        item.classList.remove('d-none');
+      });
+    } else {
+      items.forEach(item => {
+        item.classList.add('d-none');
+      });
+    }
+  });
+
+  /**
    * Select All Checkbox
    */
   const selectAll = document.querySelector(
@@ -260,6 +298,7 @@ export const init = (config) => {
   const saveTranslation = (key, editor, text) => {
     let element = editor.closest(".local-coursetranslator__editor");
     let id = element.getAttribute("data-id");
+    let tid = element.getAttribute("data-tid");
     let table = element.getAttribute("data-table");
     let field = element.getAttribute("data-field");
 
@@ -272,6 +311,7 @@ export const init = (config) => {
     let data = {};
     data.courseid = config.courseid;
     data.id = parseInt(id);
+    data.tid = tid;
     data.table = table;
     data.field = field;
     data.text = updatedtext;
@@ -287,6 +327,10 @@ export const init = (config) => {
         config.autosavedmsg +
         "</div>";
       editor.after(...stringToHTML(indicator));
+
+      let status = document.querySelector('[data-status-key="' + key + '"');
+      status.classList.replace('badge-danger', 'badge-success');
+      status.innerHTML = config.uptodate;
 
       // Remove success message after a few seconds
       setTimeout(() => {

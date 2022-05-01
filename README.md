@@ -20,11 +20,15 @@ To begin translating content, visit a course, open the course settings action me
 
 <img src="https://ik.imagekit.io/1zvlk0e7l/moodle/action-menu_zsYkTOVeN.png?ik-sdk-version=javascript-1.4.3&updatedAt=1650925893813" alt="Course Settings Action Menu" />
 
-You will be sent to the translation page for the course and the course language will automatically be set to **other**. This will automatically insert ```{mlang other}Your Content{mlang}``` tags when first translating your content. To change the language you want to translate in, choose a language from the **Select {mlang} language** dropdown. Note: Changing the site wide language will not change the course language you are translating in. You need to use the locale switcher just above the translation table. Translations are automatically saved when you click outside of the form input or tab to the next field. The translation page uses a custom implementation of the Atto editor so any changes you make for your toolbar, etc in Site Administration will not apply.
+You will be sent to the translation page for the course and the course language will automatically be set to **other**. This will automatically insert ```{mlang other}Your Content{mlang}``` tags when first translating your content. Please checkout the <a href="https://moodle.org/plugins/filter_multilang2">mlang docs</a> to understand more.
 
-To automatically translate a field, check the checkbox and then click autotranslate. This will generate a translation from the DeepL API and then automatically save it to your course. If you need to see all of the content and ```{mlang}``` tags for the activty you are editing, you will need to go back to your course and edit the activity from there. The Course Translator filters out all unneeded content to give translators and easy and quick way to translate Moodle courses on the fly.
+To change the language you want to translate in, choose a language from the **Select {mlang} language** dropdown. Note: Changing the site wide language will not change the course language you are translating in. You need to use the locale switcher just above the translation table. You can verify the language you are translating to by looking at the head of the translation column. Translations are automatically saved when you click outside of the form input or tab to the next field. The translation page uses a custom implementation of the Atto editor so any changes you make for your toolbar, etc in Site Administration will not apply.
 
-<img src="https://ik.imagekit.io/1zvlk0e7l/moodle/course-translator_JBBrSg_Ng.png?ik-sdk-version=javascript-1.4.3&updatedAt=1650926556695" alt="Course Translator Page">
+To automatically translate a field, check the row's checkbox and then click autotranslate. You can also use the select all checkbox next to status in the translation table header. This will generate a translation from the DeepL API and then automatically save it to your course. If you need to see all of the content and ```{mlang}``` tags for the activty you are editing, you will need to go back to your course and edit the activity from there. The Course Translator filters out all unneeded content to give translators and easy and quick way to translate Moodle courses on the fly.
+
+_At this time, Course Translator does not have the ability to translate advanced usage of mlang in content. For example, this includes the use of multiple mlang tags spread throughout content that utilize the same language._
+
+<img src="https://ik.imagekit.io/1zvlk0e7l/moodle/course-translator-v0.9.2_prvB1rCSS.png?ik-sdk-version=javascript-1.4.3&updatedAt=1651374909723" alt="Course Translator Page">
 
 ## Compatability
 
@@ -32,7 +36,7 @@ This plugin has been tested on Moodle 3.11 and Moodle 4.0.
 
 ## How does this plugin differe from Content Translation Manager and Content Translation Filter?
 
-This plugin does not create any new tables in your database and it does not translate every string on your site. It is only meant for translating courses and it uses Moodle's built in multilingual features along with ```{mlang}``` to translate your content. When you backup and restore courses, your translations will migrate with your content.
+This plugin does not translate every string on your site. It is only meant for translating courses and it uses Moodle's built in multilingual features along with ```{mlang}``` to translate your content. When you backup and restore courses, your translations will migrate with your content. Updating your source content will provide a "Update Needed" status message on the course translation page.
 
 ## Submit an issue
 

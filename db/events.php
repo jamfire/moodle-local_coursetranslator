@@ -15,22 +15,34 @@
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
 /**
- * Local Course Translator
+ * Course Translator Observers
+ *
+ * Watch for course, course section, and mod updates
  *
  * @package    local_coursetranslator
  * @copyright  2022 Kaleb Heitzman <kaleb@jamfire.io>
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
- * @see        https://docs.moodle.org/dev/version.php
+ * @see        https://docs.moodle.org/dev/Events_API
  */
 
 defined('MOODLE_INTERNAL') || die();
 
-$plugin->component    = 'local_coursetranslator';  // Full name of the plugin (used for diagnostics).
-$plugin->version      = 2022050100;                // The current plugin version (Date: YYYYMMDDXX).
-$plugin->requires     = 2020061500;                // Requires Moodle 3.9 LTS.
-$plugin->supported    = [311, 400];                // Supported Moodle Versions.
-$plugin->maturity     = MATURITY_ALPHA;            // Maturity level.
-$plugin->release      = 'v0.9.2';                  // Semantic Versioning for CHANGES.md.
-$plugin->dependencies = array(                     // Dependencies.
-    'filter_multilang2' => 2020101300
+// Event observer for local_coursetranslator.
+$observers = array(
+
+    array(
+        'eventname' => '\core\event\course_updated',
+        'callback'  => 'local_coursetranslator_observer::course_updated'
+    ),
+
+    array(
+        'eventname' => '\core\event\course_section_updated',
+        'callback'  => 'local_coursetranslator_observer::course_section_updated'
+    ),
+
+    array(
+        'eventname' => '\core\event\course_module_updated',
+        'callback'  => 'local_coursetranslator_observer::course_module_updated'
+    ),
+
 );

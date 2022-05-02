@@ -10,6 +10,9 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ### Added
 - Edit Links per field
 
+### Fixed
+- Edit links that were broken in amd module
+
 ## [0.9.3] - 2022-05-02
 
 ### Added

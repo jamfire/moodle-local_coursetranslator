@@ -152,11 +152,11 @@ class translate_form extends moodleform {
 
         $mform->addElement('html', '</div>');
 
-        $mform->addElement('html', '<div class="d-none col-2 px-0"></div>');
+        $mform->addElement('html', '<div class="col-2 px-0"></div>');
         $mform->addElement(
             'html',
             '<div data-key="' . $key
-            . '" class="d-none col-10 px-0 py-5 local-coursetranslator__textarea">'
+            . '" class="col-10 px-0 py-5 local-coursetranslator__textarea">'
             . trim($item->text) . '</div>'
         );
 

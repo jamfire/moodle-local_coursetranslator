@@ -29,6 +29,63 @@ require_once("$CFG->libdir/externallib.php");
  */
 class local_coursetranslator_external extends external_api {
 
+    public static function get_field_parameters() {
+        return new external_function_parameters(
+            array(
+                'data' => new external_multiple_structure(
+                    new external_single_structure(
+                        array(
+                            'courseid'  => new external_value(PARAM_INT, 'course id'),
+                            'id'        => new external_value(PARAM_INT, 'id of table record'),
+                            'table'     => new external_value(PARAM_RAW, 'table to update text'),
+                            'field'     => new external_value(PARAM_RAW, 'table field to update'),
+                        )
+                    )
+                )
+            )
+        );
+    }
+
+    public static function get_field($data) {
+        global $CFG, $DB;
+
+        $params = self::validate_parameters(self::get_field_parameters(), array('data' => $data));
+        $transaction = $DB->start_delegated_transaction();
+        $response = array();
+
+        foreach ($params['data'] as $data) {
+            // Check for null values and throw errors.
+
+            // Security checks.
+            $context = context_course::instance($data['courseid']);
+            self::validate_context($context);
+            require_capability('local/coursetranslator:edittranslations', $context);
+
+            // Get the original record.
+            $record = (array) $DB->get_record($data['table'], array('id' => $data['id']));
+            $text = $record[$data['field']];
+
+            $response[] = array(
+                'text' => $text,
+            );
+        }
+
+        // Commit the transaction.
+        $transaction->allow_commit();
+
+        return $response;
+    }
+
+    public static function get_field_returns() {
+        return new external_multiple_structure(
+            new external_single_structure(
+                array(
+                    'text' => new external_value(PARAM_RAW, 'updated text of field')
+                )
+            )
+        );
+    }
+
     /**
      * Update Translation Parameters
      *
@@ -48,7 +105,6 @@ class local_coursetranslator_external extends external_api {
                             'table'     => new external_value(PARAM_RAW, 'table to update text'),
                             'field'     => new external_value(PARAM_RAW, 'table field to update'),
                             'text'      => new external_value(PARAM_RAW, 'text to be upserted'),
-                            'lang'      => new external_value(PARAM_RAW, 'language of text'),
                         )
                     )
                 )
@@ -84,33 +140,19 @@ class local_coursetranslator_external extends external_api {
             self::validate_context($context);
             require_capability('local/coursetranslator:edittranslations', $context);
 
-            // Get the original record.
-            $orecord = (array) $DB->get_record($data['table'], array('id' => $data['id']));
-            $otext = $orecord[$data['field']];
-
-            // Set the new text.
-            $ntext = $otext . '{mlang ' . $data['lang'] . '}' . $data['text'] . '{/mlang}';
-
             // Update the record.
             $dataobject = array();
             $dataobject['id'] = $data['id'];
-            $dataobject[$data['field']] = $ntext;
-            $record = $DB->update_record($data['table'], (object) $dataobject);
+            $dataobject[$data['field']] = $data['text'];
+            $DB->update_record($data['table'], (object) $dataobject);
 
             // Update t_lastmodified.
             $timemodified = time();
             $DB->update_record('local_coursetranslator', array('id' => $data['tid'], 't_lastmodified' => $timemodified));
 
-            // Get new record.
-            $nrecord = $DB->get_record($data['table'], array('id' => $data['id']));
-
             $response[] = array(
-                'id' => $record->id,
-                'dataobject' => serialize($dataobject),
-                'orecord' => serialize($orecord),
-                'nrecord' => serialize($nrecord),
                 't_lastmodified' => $timemodified,
-                'text' => $ntext,
+                'text' => $data['text']
             );
         }
 
@@ -131,12 +173,8 @@ class local_coursetranslator_external extends external_api {
         return new external_multiple_structure(
             new external_single_structure(
                 array(
-                    'id'             => new external_value(PARAM_INT, 'id of table record'),
-                    'dataobject'     => new external_value(PARAM_RAW, 'serialized dataobject'),
                     't_lastmodified' => new external_value(PARAM_INT, 'translation last modified time'),
-                    'orecord'        => new external_value(PARAM_RAW, 'original record'),
-                    'nrecord'        => new external_value(PARAM_RAW, 'new record'),
-                    'text'           => new external_value(PARAM_RAW, 'updated text of field')
+                    'text'           => new external_value(PARAM_RAW, 'text of field')
                 )
             )
         );

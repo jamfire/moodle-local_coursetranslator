@@ -101,7 +101,10 @@ class translate_form extends moodleform {
             data-key="' . $key . '"
             disabled
         />');
-        $label = '<label class="form-check-label">';
+        $label = '<a href="' . $item->link . '" target="_blank" title="' . get_string('t_edit', 'local_coursetranslator') . '">';
+        $label .= '<i class="fa fa-pencil-square-o mr-3" aria-hidden="true"></i>';
+        $label .= '</a>';
+        $label .= '<label class="form-check-label">';
         if ($item->tneeded) {
             $label .= ' <span class="badge badge-pill badge-danger rounded py-2" data-status-key="' . $key . '">'
                     . get_string('t_needsupdate', 'local_coursetranslator')

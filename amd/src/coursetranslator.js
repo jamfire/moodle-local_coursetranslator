@@ -304,8 +304,8 @@ export const init = (config) => {
 
     // Updated hidden textarea with updatedtext
     let textarea = document.querySelector('.local-coursetranslator__textarea[data-key="' + key + '"]');
-    let updatedtext = getupdatedtext(textarea, text);
-    textarea.innerHTML = updatedtext;
+    // let updatedtext = getupdatedtext(textarea, text);
+    // textarea.innerHTML = updatedtext;
 
     // Build the data object
     let data = {};
@@ -314,7 +314,8 @@ export const init = (config) => {
     data.tid = tid;
     data.table = table;
     data.field = field;
-    data.text = updatedtext;
+    data.text = text;
+    data.lang = config.lang;
 
     // Success Message
     const successMessage = () => {
@@ -358,6 +359,7 @@ export const init = (config) => {
           window.console.log("ws: ", key, data);
           if (data.length > 0) {
             successMessage();
+            textarea.innerHTML = data.text;
             if (config.currentlang === config.lang) {
               document.querySelector('[data-sourcetext-key="' + key + '"]').innerHTML = text;
             }
@@ -379,31 +381,31 @@ export const init = (config) => {
    * @param {string} text Text to update
    * @returns {string}
    */
-  const getupdatedtext = (textarea, text) => {
-    let lang = config.lang;
+  // const getupdatedtext = (textarea, text) => {
+  //   let lang = config.lang;
 
-    // Search for {mlang} not found.
-    let textareatext = textarea.innerHTML;
-    if (textareatext.indexOf('{mlang') === -1) {
-      if (lang === 'other') {
-        return '{mlang other}' + text + '{mlang}';
-      } else {
-        return '{mlang other}' + textareatext + '{mlang}{mlang ' + lang + '}' + text + '{mlang}';
-      }
-    }
+  //   // Search for {mlang} not found.
+  //   let textareatext = textarea.innerHTML;
+  //   if (textareatext.indexOf('{mlang') === -1) {
+  //     if (lang === 'other') {
+  //       return '{mlang other}' + text + '{mlang}';
+  //     } else {
+  //       return '{mlang other}' + textareatext + '{mlang}{mlang ' + lang + '}' + text + '{mlang}';
+  //     }
+  //   }
 
-    // Use regex to replace the string
-    let pattern = `{*mlang +(${lang})}(.*?){*mlang*}`;
-    let replacex = new RegExp(pattern, 'gim');
-    let matches = textareatext.match(replacex);
+  //   // Use regex to replace the string
+  //   let pattern = `{*mlang +(${lang})}(.*?){*mlang*}`;
+  //   let replacex = new RegExp(pattern, 'gim');
+  //   let matches = textareatext.match(replacex);
 
-    // Return the updated string
-    if (!matches) {
-      return textareatext + '{mlang ' + lang + '}' + text + '{mlang}';
-    } else {
-      return textareatext.replace(replacex, '{mlang ' + lang + '}' + text + '{mlang}');
-    }
-  };
+  //   // Return the updated string
+  //   if (!matches) {
+  //     return textareatext + '{mlang ' + lang + '}' + text + '{mlang}';
+  //   } else {
+  //     return textareatext.replace(replacex, '{mlang ' + lang + '}' + text + '{mlang}');
+  //   }
+  // };
 
   /**
    * Get the Translation using Moodle Web Service
@@ -444,8 +446,8 @@ export const init = (config) => {
       let text = textarea.innerHTML;
       let editor = document.querySelector('[data-key="' + key + '"] [contenteditable="true"]');
 
-      let lang = "{mlang " + config.lang + "}(.*?){mlang}";
-      let langex = new RegExp(lang, "gisd");
+      let langpattern = "{mlang " + config.lang + "}(.*?){mlang}";
+      let langex = new RegExp(langpattern, "gisd");
       let matches = text.match(langex);
 
       // Parse the text for mlang

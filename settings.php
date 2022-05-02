@@ -25,7 +25,6 @@
 
 defined('MOODLE_INTERNAL') || die();
 
-
 if ($hassiteconfig) {
 
     // Create new settings page.

@@ -58,6 +58,7 @@ $jsconfig->multiplemlang = get_string('t_multiplemlang', 'local_coursetranslator
 $jsconfig->autosavedmsg = get_string('t_autosaved', 'local_coursetranslator');
 $jsconfig->needsupdate = get_string('t_needsupdate', 'local_coursetranslator');
 $jsconfig->uptodate = get_string('t_uptodate', 'local_coursetranslator');
+$jsconfig->debug = $CFG->debug;
 
 $mlangfilter = new \filter_multilang2($context, array());
 

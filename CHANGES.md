@@ -8,13 +8,16 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ## [0.9.4] - 2022-05-3
 
 ### Added
-- Edit Links per field
+- Edit links per field
+- View source button on translate page to inspect mlang tags in content
 
 ### Fixed
 - Edit links that were broken in amd module
+- Allow users to edit content in different languages at same time
 
 ### Changed
 - Using SonarCloud automatic analysis instead of github action
+- Fields now automatically populate mlang other text for other locales if they exist
 
 ## [0.9.3] - 2022-05-02
 

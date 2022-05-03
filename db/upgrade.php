@@ -65,5 +65,11 @@ function xmldb_local_coursetranslator_upgrade($oldversion) {
         upgrade_plugin_savepoint(true, 2022050100, 'local', 'coursetranslator');
     }
 
+    if ($oldversion < 2022050300) {
+
+        // Coursetranslator savepoint reached.
+        upgrade_plugin_savepoint(true, 2022050300, 'local', 'coursetranslator');
+    }
+
     return true;
 }

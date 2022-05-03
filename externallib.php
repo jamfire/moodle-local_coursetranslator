@@ -30,9 +30,88 @@ require_once("$CFG->libdir/externallib.php");
 class local_coursetranslator_external extends external_api {
 
     /**
+     * Get field parameters
+     *
+     * Adds validation parameters for getting db fields
+     *
+     * @return external_function_parameters
+     */
+    public static function get_field_parameters() {
+        return new external_function_parameters(
+            array(
+                'data' => new external_multiple_structure(
+                    new external_single_structure(
+                        array(
+                            'courseid'  => new external_value(PARAM_INT, 'course id'),
+                            'id'        => new external_value(PARAM_INT, 'id of table record'),
+                            'table'     => new external_value(PARAM_RAW, 'table to update text'),
+                            'field'     => new external_value(PARAM_RAW, 'table field to update'),
+                        )
+                    )
+                )
+            )
+        );
+    }
+
+    /**
+     * Get DB Field
+     *
+     * Dynamically get db field to allow simultaenous editing
+     *
+     * @param object $data
+     * @return array
+     */
+    public static function get_field($data) {
+        global $CFG, $DB;
+
+        $params = self::validate_parameters(self::get_field_parameters(), array('data' => $data));
+        $transaction = $DB->start_delegated_transaction();
+        $response = array();
+
+        foreach ($params['data'] as $data) {
+            // Check for null values and throw errors.
+
+            // Security checks.
+            $context = context_course::instance($data['courseid']);
+            self::validate_context($context);
+            require_capability('local/coursetranslator:edittranslations', $context);
+
+            // Get the original record.
+            $record = (array) $DB->get_record($data['table'], array('id' => $data['id']));
+            $text = $record[$data['field']];
+
+            $response[] = array(
+                'text' => $text,
+            );
+        }
+
+        // Commit the transaction.
+        $transaction->allow_commit();
+
+        return $response;
+    }
+
+    /**
+     * Return Field
+     *
+     * Returns field data to the user from web service.
+     *
+     * @return external_multiple_structure
+     */
+    public static function get_field_returns() {
+        return new external_multiple_structure(
+            new external_single_structure(
+                array(
+                    'text' => new external_value(PARAM_RAW, 'updated text of field')
+                )
+            )
+        );
+    }
+
+    /**
      * Update Translation Parameters
      *
-     * Adds validaiton parameters for translations
+     * Adds validation parameters for translations
      *
      * @return external_function_parameters
      */
@@ -87,16 +166,15 @@ class local_coursetranslator_external extends external_api {
             $dataobject = array();
             $dataobject['id'] = $data['id'];
             $dataobject[$data['field']] = $data['text'];
-            $record->id = $DB->update_record($data['table'], (object) $dataobject);
+            $DB->update_record($data['table'], (object) $dataobject);
 
             // Update t_lastmodified.
             $timemodified = time();
             $DB->update_record('local_coursetranslator', array('id' => $data['tid'], 't_lastmodified' => $timemodified));
 
             $response[] = array(
-                'id' => $record->id,
-                'dataobject' => serialize($dataobject),
                 't_lastmodified' => $timemodified,
+                'text' => $data['text']
             );
         }
 
@@ -117,9 +195,8 @@ class local_coursetranslator_external extends external_api {
         return new external_multiple_structure(
             new external_single_structure(
                 array(
-                    'id'             => new external_value(PARAM_INT, 'id of table record'),
-                    'dataobject'     => new external_value(PARAM_RAW, 'serialized dataobject'),
-                    't_lastmodified' => new external_value(PARAM_INT, 'translation last modified time')
+                    't_lastmodified' => new external_value(PARAM_INT, 'translation last modified time'),
+                    'text'           => new external_value(PARAM_RAW, 'text of field')
                 )
             )
         );

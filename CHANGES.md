@@ -9,6 +9,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Added
 - Edit Links per field
+- View source button on translate page to inspect mlang tags in content
 
 ### Fixed
 - Edit links that were broken in amd module

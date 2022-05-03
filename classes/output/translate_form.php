@@ -82,6 +82,7 @@ class translate_form extends moodleform {
 
         // Build a key for js interaction.
         $key = "$item->table[$item->id][$item->field]";
+        $keyid = "{$item->table}-{$item->id}-{$item->field}";
 
         // Data status.
         $status = $item->tneeded ? 'needsupdate' : 'updated';
@@ -101,20 +102,23 @@ class translate_form extends moodleform {
             data-key="' . $key . '"
             disabled
         />');
-        $label = '<a href="' . $item->link . '" target="_blank" title="' . get_string('t_edit', 'local_coursetranslator') . '">';
-        $label .= '<i class="fa fa-pencil-square-o mr-3" aria-hidden="true"></i>';
-        $label .= '</a>';
-        $label .= '<label class="form-check-label">';
+        $label = '<label class="form-check-label">';
         if ($item->tneeded) {
-            $label .= ' <span class="badge badge-pill badge-danger rounded py-2" data-status-key="' . $key . '">'
+            $label .= ' <span class="badge badge-pill badge-danger rounded py-1" data-status-key="' . $key . '">'
                     . get_string('t_needsupdate', 'local_coursetranslator')
                     . '</span>';
         } else {
-            $label .= ' <span class="badge badge-pill badge-success rounded py-2" data-status-key="' . $key . '">'
+            $label .= ' <span class="badge badge-pill badge-success rounded py-1" data-status-key="' . $key . '">'
                     . get_string('t_uptodate', 'local_coursetranslator')
                     . '</span>';
         }
         $label .= '</label>';
+        $label .= '<a href="' . $item->link . '" target="_blank" title="' . get_string('t_edit', 'local_coursetranslator') . '">';
+        $label .= '<i class="fa fa-pencil-square-o mr-1" aria-hidden="true"></i>';
+        $label .= '</a>';
+        $label .= '<a data-toggle="collapse" title="' . get_string('t_viewsource', 'local_coursetranslator') . '" href="#'
+            . $keyid . '" role="button" aria-expanded="false" aria-controls="'
+            . $keyid . '"><i class="fa fa-code" aria-hidden="true"></i></a>';
         $mform->addElement('html', $label);
         $mform->addElement('html', '</div>');
         $mform->addElement('html', '</div>');
@@ -125,6 +129,17 @@ class translate_form extends moodleform {
             data-key="' . $key . '"
         >');
         $mform->addElement('html', '<div data-sourcetext-key="' . $key . '">' . $mlangfilter->filter($item->text) . '</div>');
+        $mform->addElement('html', '<div>');
+
+        $mform->addElement('html', '<div class="collapse" id="' . $keyid . '">');
+        $mform->addElement(
+            'html',
+            '<div data-key="' . $key
+            . '" class="mt-3 card card-body local-coursetranslator__textarea">'
+            . trim($item->text) . '</div>'
+        );
+        $mform->addElement('html', '</div>');
+        $mform->addElement('html', '</div>');
         $mform->addElement('html', '</div>');
 
         // Translation Input.
@@ -151,14 +166,6 @@ class translate_form extends moodleform {
         }
 
         $mform->addElement('html', '</div>');
-
-        $mform->addElement('html', '<div class="col-2 px-0"></div>');
-        $mform->addElement(
-            'html',
-            '<div data-key="' . $key
-            . '" class="col-10 px-0 py-5 local-coursetranslator__textarea">'
-            . trim($item->text) . '</div>'
-        );
 
         // Close translation item.
         $mform->addElement('html', '</div>');

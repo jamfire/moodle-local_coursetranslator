@@ -57,3 +57,4 @@ $string['t_multiplemlang'] = 'This field is using advanced {mlang} usage. Please
 $string['t_needsupdate'] = 'Update Needed';
 $string['t_uptodate'] = 'Updated';
 $string['t_edit'] = 'Edit';
+$string['t_viewsource'] = 'View Source';

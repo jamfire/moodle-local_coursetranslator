@@ -102,7 +102,7 @@ export const init = (config) => {
       let mlangpattern = "{mlang other}(.*?){mlang}";
       let mlangex = new RegExp(mlangpattern, "dgis");
       let matches = text.match(mlangex);
-      if (matches[0].split(searchex)[2]) {
+      if (matches && matches[0].split(searchex)[2]) {
         return matches[0].split(searchex)[2];
       }
     }
@@ -546,7 +546,7 @@ export const init = (config) => {
           .remove();
         let p = document.createElement("p");
         p.innerHTML = "<em><small>" + config.multiplemlang + "</small></em>";
-        this.document
+        document
           .querySelector(
             '.local-coursetranslator__editor[data-key="' + key + '"]'
           )

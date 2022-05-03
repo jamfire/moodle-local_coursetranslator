@@ -428,7 +428,6 @@ export const init = (config) => {
    * @returns {string}
    */
   const getupdatedtext = (fieldtext, text) => {
-    window.console.log(fieldtext, text);
     let lang = config.lang;
 
     // Search for {mlang} not found.
@@ -456,25 +455,10 @@ export const init = (config) => {
     let replacex = new RegExp(pattern, "dgis");
     let matches = fieldtext.match(replacex);
 
-    window.console.log(matches);
-
-    // Build updated text
-    // let updatedtext = "";
-    // matches.forEach(match => {
-    //   let blocks = match.split(searchex);
-    //   if (blocks[1] === lang) {
-    //     updatedtext += '{mlang ' + lang + '}' + blocks[2] + '{mlang}';
-    //   } else {
-    //     updatedtext += match;
-    //   }
-    // });
-
     // Return the updated string
     if (!matches) {
       return fieldtext + "{mlang " + lang + "}" + text + "{mlang}";
     } else {
-      window.console.log(matches, text, fieldtext);
-
       return fieldtext.replace(
         replacex,
         "{mlang " + lang + "}" + text + "{mlang}"

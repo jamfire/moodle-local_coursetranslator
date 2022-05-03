@@ -129,17 +129,6 @@ class translate_form extends moodleform {
             data-key="' . $key . '"
         >');
         $mform->addElement('html', '<div data-sourcetext-key="' . $key . '">' . $mlangfilter->filter($item->text) . '</div>');
-        $mform->addElement('html', '<div>');
-
-        $mform->addElement('html', '<div class="collapse" id="' . $keyid . '">');
-        $mform->addElement(
-            'html',
-            '<div data-key="' . $key
-            . '" class="mt-3 card card-body local-coursetranslator__textarea">'
-            . trim($item->text) . '</div>'
-        );
-        $mform->addElement('html', '</div>');
-        $mform->addElement('html', '</div>');
         $mform->addElement('html', '</div>');
 
         // Translation Input.
@@ -151,6 +140,7 @@ class translate_form extends moodleform {
             data-field="' . $item->field . '"
             data-tid="' . $item->tid . '"
         >');
+
         // Plain text input.
         if ($item->format === 0) {
             $mform->addElement('html', '<div
@@ -164,6 +154,20 @@ class translate_form extends moodleform {
             $mform->addElement('cteditor', $key, $key);
             $mform->setType($key, PARAM_RAW);
         }
+
+        // Textarea editor.
+        $mform->addElement('html', '<div class="collapse" id="' . $keyid . '">');
+        $mform->addElement('html', '<textarea data-key="' . $key
+            . '" class="form-control local-coursetranslator__textarea_editor" rows="10">'
+            . trim($item->text) . '</textarea>');
+        $mform->addElement(
+            'html',
+            '<div data-key="' . $key
+            . '" class="d-none mt-3 card card-body local-coursetranslator__textarea">'
+            . trim($item->text) . '</div>'
+        );
+        $mform->addElement('html', '</div>');
+
 
         $mform->addElement('html', '</div>');
 

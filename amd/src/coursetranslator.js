@@ -337,6 +337,10 @@ export const init = (config) => {
             let textarea = document.querySelector(
               '.local-coursetranslator__textarea[data-key="' + key + '"]'
             );
+            // Get Textarea Editor
+            let textareaeditor = document.querySelector(
+              '.local-coursetranslator__textarea_editor[data-key="' + key + '"]'
+            );
             // Get the updated text
             let updatedtext = getupdatedtext(fieldtext, text);
 
@@ -401,6 +405,7 @@ export const init = (config) => {
                   if (data.length > 0) {
                     successMessage();
                     textarea.innerHTML = data[0].text;
+                    textareaeditor.innerHTML = data[0].text;
 
                     // Update source lang if necessary
                     if (config.currentlang === config.lang) {
@@ -554,6 +559,16 @@ export const init = (config) => {
       } else {
         editor.innerHTML = parsedtext;
       }
+    });
+
+    let textareaeditors = document.querySelectorAll(
+      ".local-coursetranslator__textarea_editor"
+    );
+    textareaeditors.forEach(textareaeditor => {
+      textareaeditor.addEventListener('focusout', () => {
+        let text = textareaeditor.value;
+        window.console.log(text);
+      });
     });
   });
 };

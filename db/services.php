@@ -25,11 +25,14 @@
 
 defined('MOODLE_INTERNAL') || die();
 
+// Define edittranslation capability.
+define('LOCAL_COURSETRANSLATOR_CAP', 'local/coursetranslator:edittranslations');
+
 // Add services definition.
 $services = array(
     'Course Translator' => array(
         'functions' => array ('local_coursetranslator_update_translation'),
-        'requiredcapability' => 'local/coursetranslator:edittranslations',
+        'requiredcapability' => LOCAL_COURSETRANSLATOR_CAP,
         'restrictedusers' => 0,
         'enabled' => 1,
         'shortname' => 'CourseTranslator',
@@ -47,7 +50,7 @@ $functions = array(
         'description'   => 'Update translation',
         'type'          => 'write',
         'ajax'          => true,
-        'capabilities'  => 'local/coursetranslator:edittranslations',
+        'capabilities'  => LOCAL_COURSETRANSLATOR_CAP,
     ),
     'local_coursetranslator_get_field' => array(
         'classname'     => 'local_coursetranslator_external',
@@ -56,6 +59,6 @@ $functions = array(
         'description'   => 'Get field data',
         'type'          => 'read',
         'ajax'          => true,
-        'capabilities'  => 'local/coursetranslator:edittranslations',
+        'capabilities'  => LOCAL_COURSETRANSLATOR_CAP,
     ),
 );

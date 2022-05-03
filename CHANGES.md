@@ -12,6 +12,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Fixed
 - Edit links that were broken in amd module
+- Allow users to edit content in different languages at same time
 
 ### Changed
 - Using SonarCloud automatic analysis instead of github action

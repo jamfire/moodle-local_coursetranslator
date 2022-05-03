@@ -86,15 +86,27 @@ export const init = (config) => {
       let blocktext = match.split(searchex)[2];
       if (blocklang === lang) {
         return blocktext;
+      } else {
+        return "";
       }
-      return "";
     };
 
     // Get searchex results.
     let result = text.replace(searchex, (match) => {
       let lang = config.lang;
-      return replacecallback(lang, match);
+      let text = replacecallback(lang, match);
+      return text;
     });
+
+    // No results were found, return text in mlang other
+    if (result.length === 0) {
+      let mlangpattern = "{mlang other}(.*?){mlang}";
+      let mlangex = new RegExp(mlangpattern, "dgis");
+      let matches = text.match(mlangex);
+      if (matches[0].split(searchex)[2]) {
+        return matches[0].split(searchex)[2];
+      }
+    }
 
     // Return the found string.
     return result;
@@ -470,7 +482,7 @@ export const init = (config) => {
    * Get the Translation using Moodle Web Service
    * @returns void
    */
-  window.addEventListener("load", function () {
+  window.addEventListener("load", () => {
     document
       .querySelectorAll(
         '.local-coursetranslator__editor [contenteditable="true"]'

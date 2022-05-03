@@ -29,6 +29,13 @@ require_once("$CFG->libdir/externallib.php");
  */
 class local_coursetranslator_external extends external_api {
 
+    /**
+     * Get field parameters
+     *
+     * Adds validation parameters for getting db fields
+     *
+     * @return external_function_parameters
+     */
     public static function get_field_parameters() {
         return new external_function_parameters(
             array(
@@ -46,6 +53,14 @@ class local_coursetranslator_external extends external_api {
         );
     }
 
+    /**
+     * Get DB Field
+     *
+     * Dynamically get db field to allow simultaenous editing
+     *
+     * @param object $data
+     * @return array
+     */
     public static function get_field($data) {
         global $CFG, $DB;
 
@@ -76,6 +91,13 @@ class local_coursetranslator_external extends external_api {
         return $response;
     }
 
+    /**
+     * Return Field
+     *
+     * Returns field data to the user from web service.
+     *
+     * @return external_multiple_structure
+     */
     public static function get_field_returns() {
         return new external_multiple_structure(
             new external_single_structure(

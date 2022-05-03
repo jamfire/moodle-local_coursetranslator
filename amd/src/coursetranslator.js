@@ -94,8 +94,7 @@ export const init = (config) => {
     // Get searchex results.
     let result = text.replace(searchex, (match) => {
       let lang = config.lang;
-      let text = replacecallback(lang, match);
-      return text;
+      return replacecallback(lang, match);
     });
 
     // No results were found, return text in mlang other
@@ -342,13 +341,13 @@ export const init = (config) => {
             let updatedtext = getupdatedtext(fieldtext, text);
 
             // Build the data object
-            let data = {};
-            data.courseid = config.courseid;
-            data.id = parseInt(id);
-            data.tid = tid;
-            data.table = table;
-            data.field = field;
-            data.text = updatedtext;
+            let tdata = {};
+            tdata.courseid = config.courseid;
+            tdata.id = parseInt(id);
+            tdata.tid = tid;
+            tdata.table = table;
+            tdata.field = field;
+            tdata.text = updatedtext;
 
             // Success Message
             const successMessage = () => {
@@ -390,7 +389,7 @@ export const init = (config) => {
               {
                 methodname: "local_coursetranslator_update_translation",
                 args: {
-                  data: [data],
+                  data: [tdata],
                 },
                 done: (data) => {
                   // Print response to console log

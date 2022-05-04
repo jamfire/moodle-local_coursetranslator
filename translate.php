@@ -70,6 +70,7 @@ $PAGE->set_heading($title);
 $PAGE->set_pagelayout('base');
 $PAGE->set_course($course);
 $PAGE->requires->css('/local/coursetranslator/styles.css');
+$PAGE->requires->js_call_amd('local_coursetranslator/coursetranslator-ui', 'init', array($jsconfig));
 $PAGE->requires->js_call_amd('local_coursetranslator/coursetranslator', 'init', array($jsconfig));
 
 // Get the renderer.

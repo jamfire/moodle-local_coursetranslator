@@ -27,6 +27,7 @@ import ajax from "core/ajax";
  * @param {Object} config JS Config
  */
 export const init = (config) => {
+
   /**
    * Convert a template string into HTML DOM nodes
    * @param  {String} string The template string
@@ -112,134 +113,12 @@ export const init = (config) => {
   };
 
   /**
-   * Switch Translation Language
-   */
-  let localeSwitcher = document.querySelector(
-    ".local-coursetranslator__localeswitcher"
-  );
-  localeSwitcher.addEventListener("change", (e) => {
-    let url = new URL(window.location.href);
-    let searchParams = url.searchParams;
-    searchParams.set("course_lang", e.target.value);
-    let newUrl = url.toString();
-
-    window.location = newUrl;
-  });
-
-  /**
-   * Show Updated Checkbox
-   */
-  let showUpdatedCheckbox = document.querySelector(
-    ".local-coursetranslator__show-updated"
-  );
-  showUpdatedCheckbox.addEventListener("change", (e) => {
-    let items = document.querySelectorAll('[data-status="updated"]');
-    if (e.target.checked) {
-      items.forEach((item) => {
-        item.classList.remove("d-none");
-      });
-    } else {
-      items.forEach((item) => {
-        item.classList.add("d-none");
-      });
-    }
-  });
-
-  /**
-   * Show Update Needed Checkbox
-   */
-  let showUpdateNeededCheckbox = document.querySelector(
-    ".local-coursetranslator__show-needsupdate"
-  );
-  showUpdateNeededCheckbox.addEventListener("change", (e) => {
-    let items = document.querySelectorAll('[data-status="needsupdate"]');
-    if (e.target.checked) {
-      items.forEach((item) => {
-        item.classList.remove("d-none");
-      });
-    } else {
-      items.forEach((item) => {
-        item.classList.add("d-none");
-      });
-    }
-  });
-
-  /**
-   * Select All Checkbox
-   */
-  const selectAll = document.querySelector(
-    ".local-coursetranslator__select-all"
-  );
-  if (config.autotranslate) {
-    selectAll.disabled = false;
-  }
-  selectAll.addEventListener("click", (e) => {
-    // See if select all is checked
-    let checked = e.target.checked;
-    let checkboxes = document.querySelectorAll(
-      ".local-coursetranslator__checkbox"
-    );
-
-    // Check/uncheck checkboxes
-    if (checked) {
-      checkboxes.forEach((e) => {
-        e.checked = true;
-      });
-    } else {
-      checkboxes.forEach((e) => {
-        e.checked = false;
-      });
-    }
-    toggleAutotranslateButton();
-  });
-
-  /**
-   * Autotranslate Checkboxes
-   */
-  const checkboxes = document.querySelectorAll(
-    ".local-coursetranslator__checkbox"
-  );
-  if (config.autotranslate) {
-    checkboxes.forEach((e) => {
-      e.disabled = false;
-    });
-  }
-  checkboxes.forEach((e) => {
-    e.addEventListener("change", () => {
-      toggleAutotranslateButton();
-    });
-  });
-
-  /**
-   * Autotranslate Button Display
+   * Autotranslate Button Click
    * @returns void
    */
   const autotranslateButton = document.querySelector(
     ".local-coursetranslator__autotranslate-btn"
   );
-
-  /**
-   * Toggle Autotranslate Button
-   */
-  const toggleAutotranslateButton = () => {
-    let checkboxItems = [];
-    checkboxes.forEach((e) => {
-      checkboxItems.push(e.checked);
-    });
-    let checked = checkboxItems.find((checked) => checked === true)
-      ? true
-      : false;
-    if (config.autotranslate && checked) {
-      autotranslateButton.disabled = false;
-    } else {
-      autotranslateButton.disabled = true;
-    }
-  };
-
-  /**
-   * Autotranslate Button Click
-   * @returns void
-   */
   autotranslateButton.addEventListener("click", () => {
     document
       .querySelectorAll(".local-coursetranslator__checkbox:checked")

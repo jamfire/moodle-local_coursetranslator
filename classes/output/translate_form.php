@@ -81,7 +81,7 @@ class translate_form extends moodleform {
         $mlangfilter = $this->_customdata['mlangfilter'];
 
         // Build a key for js interaction.
-        $key = "$item->table[$item->id][$item->field]";
+        $key = "{$item->table}-{$item->field}-{$item->id}-{$item->tid}";
         $keyid = "{$item->table}-{$item->id}-{$item->field}";
 
         // Data status.
@@ -135,11 +135,14 @@ class translate_form extends moodleform {
         $mform->addElement('html', '<div
             class="col-5 px-0 local-coursetranslator__translation local-coursetranslator__editor"
             data-key="' . $key . '"
-            data-table="' . $item->table . '"
-            data-id="' . $item->id . '"
-            data-field="' . $item->field . '"
-            data-tid="' . $item->tid . '"
         >');
+
+        // Textarea editor.
+        $mform->addElement('html', '<div class="collapse" id="' . $keyid . '">');
+        $mform->addElement('html', '<textarea disabled data-key="' . $key
+            . '" class="form-control local-coursetranslator__textarea" rows="6">'
+            . trim($item->text) . '</textarea>');
+        $mform->addElement('html', '</div>');
 
         // Plain text input.
         if ($item->format === 0) {
@@ -154,20 +157,6 @@ class translate_form extends moodleform {
             $mform->addElement('cteditor', $key, $key);
             $mform->setType($key, PARAM_RAW);
         }
-
-        // Textarea editor.
-        $mform->addElement('html', '<div class="collapse" id="' . $keyid . '">');
-        $mform->addElement('html', '<textarea data-key="' . $key
-            . '" class="form-control local-coursetranslator__textarea_editor" rows="10">'
-            . trim($item->text) . '</textarea>');
-        $mform->addElement(
-            'html',
-            '<div data-key="' . $key
-            . '" class="d-none mt-3 card card-body local-coursetranslator__textarea">'
-            . trim($item->text) . '</div>'
-        );
-        $mform->addElement('html', '</div>');
-
 
         $mform->addElement('html', '</div>');
 

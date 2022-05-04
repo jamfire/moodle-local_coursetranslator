@@ -306,19 +306,14 @@ export const init = (config) => {
    * @param  {String} text Updated Text
    */
   const saveTranslation = (key, editor, text) => {
-    // Get processing vars
-    let element = editor.closest(".local-coursetranslator__editor");
-    let id = element.getAttribute("data-id");
-    let tid = element.getAttribute("data-tid");
-    let table = element.getAttribute("data-table");
-    let field = element.getAttribute("data-field");
+    let params = keyparser(key);
 
     // Get the latest field data
     let fielddata = {};
     fielddata.courseid = config.courseid;
-    fielddata.id = parseInt(id);
-    fielddata.table = table;
-    fielddata.field = field;
+    fielddata.id = parseInt(params.id);
+    fielddata.table = params.table;
+    fielddata.field = params.field;
 
     // Get the latest data to parse text against.
     ajax.call([
@@ -328,30 +323,24 @@ export const init = (config) => {
           data: [fielddata],
         },
         done: (data) => {
-          // The latests field text so multiple translators can work at the same time
-          let fieldtext = data[0].text;
-
           // Field text exists
           if (data.length > 0) {
+            // The latests field text so multiple translators can work at the same time
+            let fieldtext = data[0].text;
+            window.console.log(fieldtext);
+
             // Updated hidden textarea with updatedtext
             let textarea = document.querySelector(
               '.local-coursetranslator__textarea[data-key="' + key + '"]'
-            );
-            // Get Textarea Editor
-            let textareaeditor = document.querySelector(
-              '.local-coursetranslator__textarea_editor[data-key="' + key + '"]'
             );
             // Get the updated text
             let updatedtext = getupdatedtext(fieldtext, text);
 
             // Build the data object
-            let tdata = {};
-            tdata.courseid = config.courseid;
-            tdata.id = parseInt(id);
-            tdata.tid = tid;
-            tdata.table = table;
-            tdata.field = field;
-            tdata.text = updatedtext;
+            let tdata = Object.assign(params, {
+              courseid: config.courseid,
+              text: updatedtext
+            });
 
             // Success Message
             const successMessage = () => {
@@ -396,16 +385,10 @@ export const init = (config) => {
                   data: [tdata],
                 },
                 done: (data) => {
-                  // Print response to console log
-                  if (config.debug > 0) {
-                    window.console.log("ws: ", key, data);
-                  }
-
                   // Display success message
                   if (data.length > 0) {
                     successMessage();
-                    textarea.innerHTML = data[0].text;
-                    textareaeditor.innerHTML = data[0].text;
+                    textarea.value = data[0].text;
 
                     // Update source lang if necessary
                     if (config.currentlang === config.lang) {
@@ -435,6 +418,21 @@ export const init = (config) => {
         },
       },
     ]);
+  };
+
+  /**
+   * Key Parser to return params
+   * @param {string} key Key string
+   * @returns {object}
+   */
+  const keyparser = (key) => {
+    let keys = key.split('-');
+    let params = {};
+    params.table = keys[0];
+    params.field = keys[1];
+    params.id = parseInt(keys[2]);
+    params.tid = parseInt(keys[3]);
+    return params;
   };
 
   /**
@@ -514,17 +512,23 @@ export const init = (config) => {
    * Get text from processing areas and add them to contenteditables
    */
   window.addEventListener("load", () => {
+
+    // Get all textareas
     let textareas = document.querySelectorAll(
       ".local-coursetranslator__textarea"
     );
+
+    // Populate editors based on textarea text
     textareas.forEach((textarea) => {
+
       // Get relevent keys and text
       let key = textarea.getAttribute("data-key");
-      let text = textarea.innerHTML;
+      let text = textarea.value;
       let editor = document.querySelector(
         '[data-key="' + key + '"] [contenteditable="true"]'
       );
 
+      // Get mlang matches
       let langpattern = "{mlang " + config.lang + "}(.*?){mlang}";
       let langex = new RegExp(langpattern, "dgis");
       let matches = text.match(langex);
@@ -561,13 +565,21 @@ export const init = (config) => {
       }
     });
 
-    let textareaeditors = document.querySelectorAll(
-      ".local-coursetranslator__textarea_editor"
-    );
-    textareaeditors.forEach(textareaeditor => {
-      textareaeditor.addEventListener('focusout', () => {
-        let text = textareaeditor.value;
-        window.console.log(text);
+    // Listen for textarea changes and update db/editors
+    textareas.forEach(textarea => {
+      textarea.addEventListener('focusout', () => {
+
+        // Get relevant keys and text
+        let key = textarea.getAttribute("data-key");
+        let text = textarea.value;
+        let editor = document.querySelector(
+          '[data-key="' + key + '"] [contenteditable="true"]'
+        );
+
+        // Parse the text for mlang
+        let parsedtext = mlangparser(text);
+        saveTranslation(key, editor, parsedtext);
+
       });
     });
   });

@@ -431,11 +431,6 @@ export const init = (config) => {
             '.local-coursetranslator__editor[data-key="' + key + '"] > *'
           )
           .remove();
-        document
-          .querySelector(
-            '.local-coursetranslator__textarea[data-key="' + key + '"]'
-          )
-          .remove();
         let p = document.createElement("p");
         p.innerHTML = "<em><small>" + config.multiplemlang + "</small></em>";
         document

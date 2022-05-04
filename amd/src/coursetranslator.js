@@ -99,6 +99,7 @@ export const init = (config) => {
     });
 
     // No results were found, return text in mlang other
+    // @todo: rewrite this to use searchex instead for more consistency
     if (result.length === 0) {
       let mlangpattern = "{mlang other}(.*?){mlang}";
       let mlangex = new RegExp(mlangpattern, "dgis");
@@ -167,7 +168,7 @@ export const init = (config) => {
           // Display translation
           editor.innerHTML = data.translations[0].text;
           // Save translation
-          saveTranslation(key, editor, data.translations[0].text);
+          savetranslation(key, editor, data.translations[0].text);
         } else {
           // Oh no! There has been an error with the request!
           window.console.log("error", status);
@@ -184,15 +185,16 @@ export const init = (config) => {
    * @param  {Node} editor HTML Editor Node
    * @param  {String} text Updated Text
    */
-  const saveTranslation = (key, editor, text) => {
+  const savetranslation = (key, editor, text) => {
     let params = keyparser(key);
 
     // Get the latest field data
-    let fielddata = {};
-    fielddata.courseid = config.courseid;
-    fielddata.id = parseInt(params.id);
-    fielddata.table = params.table;
-    fielddata.field = params.field;
+    let fielddata = Object.assign({}, {
+      courseid: config.courseid,
+      id: params.id,
+      table: params.table,
+      field: params.field,
+    });
 
     // Get the latest data to parse text against.
     ajax.call([
@@ -206,7 +208,6 @@ export const init = (config) => {
           if (data.length > 0) {
             // The latests field text so multiple translators can work at the same time
             let fieldtext = data[0].text;
-            window.console.log(fieldtext);
 
             // Updated hidden textarea with updatedtext
             let textarea = document.querySelector(
@@ -321,42 +322,40 @@ export const init = (config) => {
    * @returns {string}
    */
   const getupdatedtext = (fieldtext, text) => {
+    // Get current lang
     let lang = config.lang;
 
     // Search for {mlang} not found.
     let mlangtext = '{mlang ' + lang + '}' + text + '{mlang}';
 
-    // Return new mlang text if mlang has not been used before
+    /**
+     * {mlang} not found
+     * Create new mlang text if mlang has not been used before
+     */
     if (fieldtext.indexOf("{mlang") === -1) {
       if (lang === "other") {
         return mlangtext;
       } else {
-        return (
-          "{mlang other}" +
-          fieldtext +
-          "{mlang}{mlang " +
-          lang +
-          "}" +
-          text +
-          "{mlang}"
-        );
+        return "{mlang other}" + fieldtext + "{mlang}{mlang " + lang + "}" + text + "{mlang}";
       }
     }
 
-    // Use regex to replace the string
-    let pattern = `{*mlang +(${lang})}(.*?){*mlang*}`;
-    let replacex = new RegExp(pattern, "dgis");
-    let matches = fieldtext.match(replacex);
+    // Replace callback for searchex results.
+    const replacecallback = (match) => {
+      let blocklang = match.split(searchex)[1];
+      if (blocklang === config.lang) {
+        return '{mlang ' + config.lang + '}' + text + '{mlang}';
+      } else {
+        return match;
+      }
+    };
 
-    // Return the updated string
-    if (!matches) {
-      return fieldtext + "{mlang " + lang + "}" + text + "{mlang}";
-    } else {
-      return fieldtext.replace(
-        replacex,
-        "{mlang " + lang + "}" + text + "{mlang}"
-      );
-    }
+    // Get searchex results.
+    let result = fieldtext.replace(searchex, (match) => {
+      return replacecallback(match);
+    });
+
+    return result;
   };
 
   /**
@@ -376,7 +375,7 @@ export const init = (config) => {
           let element = editor.closest(".local-coursetranslator__editor");
           let key = element.getAttribute("data-key");
 
-          saveTranslation(key, editor, text);
+          savetranslation(key, editor, text);
         });
 
         // Remove status classes
@@ -388,7 +387,9 @@ export const init = (config) => {
   });
 
   /**
-   * Get text from processing areas and add them to contenteditables
+   * Get text from processing areas and add them to contenteditables.
+   * Listen for focusout event and save field.
+   * @returns void
    */
   window.addEventListener("load", () => {
 
@@ -457,7 +458,7 @@ export const init = (config) => {
 
         // Parse the text for mlang
         let parsedtext = mlangparser(text);
-        saveTranslation(key, editor, parsedtext);
+        savetranslation(key, editor, parsedtext);
 
       });
     });

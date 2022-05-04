@@ -253,11 +253,7 @@ export const init = (config) => {
 
             // Error Mesage
             const errorMessage = (error) => {
-              if (error.mesage) {
-                notification.alert(config.error, error.message, config.continue);
-              } else if (error.error) {
-                notification.alert(config.error, error.error, config.continue);
-              }
+              notification.alert(config.error, error, config.continue);
               editor.classList.add("local-coursetranslator__error");
             };
 
@@ -289,7 +285,7 @@ export const init = (config) => {
                 },
                 fail: (error) => {
                   // An error occurred
-                  errorMessage(error);
+                  errorMessage(error.message);
                 },
               },
             ]);
@@ -343,22 +339,39 @@ export const init = (config) => {
       }
     }
 
-    // Replace callback for searchex results.
-    const replacecallback = (match) => {
-      let blocklang = match.split(searchex)[1];
+    // Check if mlang exists on text
+    let mlangexists = false;
+    let splits = fieldtext.match(searchex);
+    splits.forEach(split => {
+      let blocklang = split.split(searchex)[1];
       if (blocklang === config.lang) {
-        return '{mlang ' + config.lang + '}' + text + '{mlang}';
-      } else {
-        return match;
+        mlangexists = true;
       }
-    };
-
-    // Get searchex results.
-    let result = fieldtext.replace(searchex, (match) => {
-      return replacecallback(match);
     });
 
-    return result;
+    // Return updated text based on existing mlang
+    if (mlangexists) {
+      // Replace callback for searchex results.
+      const replacecallback = (match) => {
+        let blocklang = match.split(searchex)[1];
+        if (blocklang === config.lang) {
+          return '{mlang ' + config.lang + '}' + text + '{mlang}';
+        } else {
+          return match;
+        }
+      };
+
+      // Get searchex results.
+      let result = fieldtext.replace(searchex, (match) => {
+        return replacecallback(match);
+      });
+
+      return result;
+    } else {
+      // Append new mlang text to field text
+      return fieldtext + '{mlang ' + config.lang + '}' + text + '{mlang}';
+    }
+
   };
 
   /**

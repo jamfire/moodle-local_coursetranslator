@@ -82,7 +82,6 @@ class translate_form extends moodleform {
 
         // Build a key for js interaction.
         $key = "{$item->table}-{$item->field}-{$item->id}-{$item->tid}";
-        $keyid = "{$item->table}-{$item->id}-{$item->field}";
 
         // Data status.
         $status = $item->tneeded ? 'needsupdate' : 'updated';
@@ -117,8 +116,8 @@ class translate_form extends moodleform {
         $label .= '<i class="fa fa-pencil-square-o mr-1" aria-hidden="true"></i>';
         $label .= '</a>';
         $label .= '<a data-toggle="collapse" title="' . get_string('t_viewsource', 'local_coursetranslator') . '" href="#'
-            . $keyid . '" role="button" aria-expanded="false" aria-controls="'
-            . $keyid . '"><i class="fa fa-code" aria-hidden="true"></i></a>';
+            . $key . '" role="button" aria-expanded="false" aria-controls="'
+            . $key . '"><i class="fa fa-code" aria-hidden="true"></i></a>';
         $mform->addElement('html', $label);
         $mform->addElement('html', '</div>');
         $mform->addElement('html', '</div>');
@@ -138,7 +137,7 @@ class translate_form extends moodleform {
         >');
 
         // Textarea editor.
-        $mform->addElement('html', '<div class="collapse" id="' . $keyid . '">');
+        $mform->addElement('html', '<div class="collapse" id="' . $key . '">');
         $mform->addElement('html', '<textarea disabled data-key="' . $key
             . '" class="form-control local-coursetranslator__textarea" rows="6">'
             . trim($item->text) . '</textarea>');

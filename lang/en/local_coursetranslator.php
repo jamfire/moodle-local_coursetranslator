@@ -58,3 +58,5 @@ $string['t_needsupdate'] = 'Update Needed';
 $string['t_uptodate'] = 'Updated';
 $string['t_edit'] = 'Edit';
 $string['t_viewsource'] = 'View Source';
+$string['t_error'] = 'Error';
+$string['t_continue'] = 'Continue';

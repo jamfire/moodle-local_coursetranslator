@@ -21,6 +21,7 @@
 
 // import libs
 import ajax from "core/ajax";
+import notification from "core/notification";
 
 /**
  * Translation Editor UI
@@ -164,14 +165,13 @@ export const init = (config) => {
         if (status === 0 || (status >= 200 && status < 400)) {
           // The request has been completed successfully
           let data = JSON.parse(xhr.responseText);
-          window.console.log("deepl:", key, data);
           // Display translation
           editor.innerHTML = data.translations[0].text;
           // Save translation
           savetranslation(key, editor, data.translations[0].text);
         } else {
           // Oh no! There has been an error with the request!
-          window.console.log("error", status);
+          notification.alert(config.error, status, config.continue);
         }
       }
     };
@@ -253,7 +253,11 @@ export const init = (config) => {
 
             // Error Mesage
             const errorMessage = (error) => {
-              window.console.log(error);
+              if (error.mesage) {
+                notification.alert(config.error, error.message, config.continue);
+              } else if (error.error) {
+                notification.alert(config.error, error.error, config.continue);
+              }
               editor.classList.add("local-coursetranslator__error");
             };
 
@@ -269,16 +273,18 @@ export const init = (config) => {
                   if (data.length > 0) {
                     successMessage();
                     textarea.value = data[0].text;
-
                     // Update source lang if necessary
-                    if (config.currentlang === config.lang) {
+                    if (
+                      config.currentlang === config.lang
+                      || config.lang === 'other'
+                    ) {
                       document.querySelector(
                         '[data-sourcetext-key="' + key + '"]'
                       ).innerHTML = text;
                     }
                   } else {
                     // Something went wrong with the data
-                    errorMessage();
+                    errorMessage(data);
                   }
                 },
                 fail: (error) => {
@@ -287,14 +293,11 @@ export const init = (config) => {
                 },
               },
             ]);
-          } else {
-            // Something went wrong with field retrieval
-            window.console.log(data);
           }
         },
         fail: (error) => {
           // An error occurred
-          window.console.log(error);
+          notification.alert(config.error, error.error, config.continue);
         },
       },
     ]);

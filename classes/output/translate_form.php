@@ -134,6 +134,7 @@ class translate_form extends moodleform {
         $mform->addElement('html', '<div
             class="col-5 px-0 local-coursetranslator__translation local-coursetranslator__editor"
             data-key="' . $key . '"
+            data-format="' . $item->format . '"
         >');
 
         // Textarea editor.
@@ -148,7 +149,6 @@ class translate_form extends moodleform {
             $mform->addElement('html', '<div
                 class="format-' . $item->format . ' border py-2 px-3"
                 contenteditable="true"
-                data-format="' . $item->format . '"
             ></div>');
         }
         // HTML input.

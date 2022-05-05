@@ -60,6 +60,7 @@ $jsconfig->needsupdate = get_string('t_needsupdate', 'local_coursetranslator');
 $jsconfig->uptodate = get_string('t_uptodate', 'local_coursetranslator');
 $jsconfig->error = get_string('t_error', 'local_coursetranslator');
 $jsconfig->continue = get_string('t_continue', 'local_coursetranslator');
+$jsconfig->textlengtherror = get_string('t_textlengtherror', 'local_coursetranslator');
 $jsconfig->debug = $CFG->debug;
 
 $mlangfilter = new \filter_multilang2($context, array());

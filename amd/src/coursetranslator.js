@@ -30,39 +30,6 @@ import notification from "core/notification";
 export const init = (config) => {
 
   /**
-   * Convert a template string into HTML DOM nodes
-   * @param  {String} string The template string
-   * @return {Node}       The template HTML
-   */
-  const stringToHTML = (string) => {
-    // See if DOMParser is supported
-    var support = (() => {
-      if (!window.DOMParser) {
-        return false;
-      }
-      var parser = new DOMParser();
-      try {
-        parser.parseFromString("x", "text/html");
-      } catch (err) {
-        return false;
-      }
-      return true;
-    })();
-
-    // If DOMParser is supported, use it
-    if (support) {
-      var parser = new DOMParser();
-      var doc = parser.parseFromString(string, "text/html");
-      return doc.body.childNodes;
-    }
-
-    // Otherwise, fallback to old-school method
-    var dom = document.createElement("div");
-    dom.innerHTML = string;
-    return dom;
-  };
-
-  /**
    * {mlang} searchex regex
    */
   const searchex =
@@ -187,6 +154,9 @@ export const init = (config) => {
    */
   const savetranslation = (key, editor, text) => {
     let params = keyparser(key);
+    let format = parseInt(editor
+      .closest('.local-coursetranslator__editor')
+      .getAttribute('data-format'));
 
     // Get the latest field data
     let fielddata = Object.assign({}, {
@@ -226,13 +196,11 @@ export const init = (config) => {
             const successMessage = () => {
               editor.classList.add("local-coursetranslator__success");
               // Add saved indicator
-              let indicator =
-                '<div class="local-coursetranslator__success-message" data-key="' +
-                key +
-                '">' +
-                config.autosavedmsg +
-                "</div>";
-              editor.after(...stringToHTML(indicator));
+              let indicator = document.createElement('div');
+              indicator.classList.add('local-coursetranslator__success-message');
+              indicator.setAttribute('data-key', key);
+              indicator.innerHTML = config.autosavedmsg;
+              editor.after(indicator);
 
               let status = document.querySelector(
                 '[data-status-key="' + key + '"'
@@ -256,6 +224,23 @@ export const init = (config) => {
               notification.alert(config.error, error, config.continue);
               editor.classList.add("local-coursetranslator__error");
             };
+
+            // Text too long
+            const textLengthError = () => {
+              let p = document.createElement('p');
+              p.classList.add('local-coursetranslator__textlengtherror');
+              p.setAttribute('data-key', key);
+              p.innerHTML = '<small><em>' + config.textlengtherror + '</em></small>';
+              editor.after(p);
+
+              editor.classList.add("local-coursetranslator__error");
+            };
+
+            // Text is to long for varchar 255 field
+            if (format === 0 && updatedtext.length > 255) {
+              textLengthError();
+              return;
+            }
 
             // Submit the request
             ajax.call([
@@ -396,8 +381,14 @@ export const init = (config) => {
 
         // Remove status classes
         editor.addEventListener("click", () => {
+          let element = editor.closest(".local-coursetranslator__editor");
+          let key = element.getAttribute("data-key");
           editor.classList.remove("local-coursetranslator__success");
           editor.classList.remove("local-coursetranslator__error");
+          let textlengtherror = document.querySelector('.local-coursetranslator__textlengtherror[data-key="' + key + '"]');
+          if (textlengtherror) {
+            textlengtherror.remove();
+          }
         });
       });
   });

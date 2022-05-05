@@ -60,3 +60,4 @@ $string['t_edit'] = 'Edit';
 $string['t_viewsource'] = 'View Source';
 $string['t_error'] = 'Error';
 $string['t_continue'] = 'Continue';
+$string['t_textlengtherror'] = 'Total translations length exceeds 255 characters. Please remove other translations or shorten source and translation length.';

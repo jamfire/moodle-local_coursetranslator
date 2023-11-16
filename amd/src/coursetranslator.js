@@ -269,13 +269,15 @@ export const init = (config) => {
     // Build formData
     let formData = new FormData();
     formData.append("text", sourceText);
-    formData.append("source_lang", "en");
+    //formData.append("source_lang", "en");
+    formData.append("source_lang", "de");
     formData.append("target_lang", config.lang);
     formData.append("preserve_formatting", 1);
     formData.append("auth_key", config.apikey);
     formData.append("tag_handling", "xml");
     formData.append("split_sentences", "nonewlines");
-
+    window.console.log("New");
+    window.console.log("Send deepl:", formData);
     // Update the translation
     let xhr = new XMLHttpRequest();
     xhr.onreadystatechange = () => {

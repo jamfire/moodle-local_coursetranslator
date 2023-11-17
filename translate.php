@@ -31,6 +31,7 @@ require_once('../../config.php');
 require_once('../../filter/multilang2/filter.php');
 require_once('./classes/output/translate_page.php');
 require_once('./classes/data/course_data.php');
+require_once($CFG->dirroot. '/lib/editorlib.php');
 
 // Needed vars for processing.
 $courseid = required_param('course_id', PARAM_INT);
@@ -72,6 +73,14 @@ $PAGE->set_title($title);
 $PAGE->set_heading($title);
 $PAGE->set_pagelayout('base');
 $PAGE->set_course($course);
+
+/**
+ * @todo find ways to get the defaul editor set by admin in case of users pref set to default ...
+ */
+$jsconfig->ed = editors_get_preferred_editor();
+// get users prefrences to pass the dditor's type to js
+$jsconfig->userPrefs = get_user_preferences();
+
 // adding PAges CSS
 $PAGE->requires->css('/local/coursetranslator/styles.css');
 // Adding page's JS

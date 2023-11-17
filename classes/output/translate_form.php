@@ -144,7 +144,7 @@ class translate_form extends moodleform {
 
         // Translation Input.
         $mform->addElement('html', '<div
-            class="col-5 px-0 local-coursetranslator__translation local-coursetranslator__editor"
+            class="col-4 px-0 local-coursetranslator__translation local-coursetranslator__editor"
             data-key="' . $key . '"
             data-table="' . $item->table . '"
             data-id="' . $item->id . '"
@@ -165,8 +165,25 @@ class translate_form extends moodleform {
             $mform->setType($key, PARAM_RAW);
         }
 
-        $mform->addElement('html', '</div>');
 
+        $mform->addElement('html', '</div>');
+        // adding validator btn
+        /*$saveToggleBtn = '<span class="col-1 align-content-center">
+            <a data-toggle="" data-validate-'.$keyid.' class="btn yui3-button-primary">
+            <i class="fa fa-floppy-o mr-1"></i>
+        </a></span>';*/
+        $saveToggleBtn = '<input type="checkbox" checked 
+            data-toggle="toggle" 
+            data-on="Ready" 
+            data-off="Not Ready" 
+            data-onstyle="success" 
+            data-offstyle="danger">';
+
+        $mform->addElement('html','<div class="col-1 align-content-center"
+            data-key-validator="' . $key . '">'.
+               $saveToggleBtn
+                . '</div>'
+        );
         // Close translation item.
         $mform->addElement('html', '</div>');
 

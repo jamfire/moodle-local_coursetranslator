@@ -32,7 +32,11 @@ import ajax from "core/ajax";
  * @param {Object} config JS Config
  */
 export const init = (config) => {
-  // initialize the temporary translations
+  window.console.log(config.userPrefs);
+  window.console.log(config.ed);//
+  // get the users editors prefs
+  let editorType = config.userPrefs.htmleditor;
+  // Initialize the temporary translations
   let tempTranslations = {};
   /**
    * Convert a template string into HTML DOM nodes
@@ -203,6 +207,25 @@ export const init = (config) => {
   });
 
   /**
+   * Validaate translation ck
+   */
+  const validators = document.querySelectorAll(
+      "[data-key-validator]"
+  );
+  validators.forEach((e)=>{
+    // E.addEventListener('click',(e)=> {window.console.log(e.target.parentElement);});
+    e.addEventListener('click', (e)=> {
+      let key = e.target.parentElement.dataset.keyValidator;
+      let editor = findEditor(key);
+      window.console.log(key);
+      window.console.log(editor);
+      window.console.log(editor.innerHTML);
+
+      // SaveTranslation(tempTranslations[key],tempTranslations[key].editor,tempTranslations[key].translation);
+    });
+  });
+  /**
+  /**
    * Autotranslate Checkboxes
    */
   const checkboxes = document.querySelectorAll(
@@ -260,28 +283,60 @@ export const init = (config) => {
   });
 
   /**
+   * Get the editor container
+   * @todo doc
+   * @todo query special for tinymce
+   * @todo query special for marklar
+   * @param {Integer} key Translation Key
+   */
+  const findEditor = (key) => {
+    let q ='';
+    window.console.log("document.querySelector('" + q + "')");
+    window.console.log("editors pref : " + editorType);
+    /**
+     * @todo find default editor
+     */
+    switch(editorType)
+    {
+      case "atto" : return document.querySelectorAll('.local-coursetranslator__editor[data-key="' +
+          key +
+          '"] [contenteditable="true"]');
+      case "tiny": return document.querySelector('.local-coursetranslator__editor[data-key="'+
+          key +'"] iframe').contentWindow.tinymce;
+      case "textarea" : return document.querySelector('.local-coursetranslator__editor[data-key="'
+          + key +
+          '"] textarea[name="'+ key +'[text]"]');
+    }
+    return document.querySelectorAll(q);
+  };
+  /**
    * Send for Translation to DeepL
    * @param {Integer} key Translation Key
    */
   const getTranslation = (key) => {
-    //store the key in the dictionary
-    tempTranslations[key] = "";
+    // Store the key in the dictionary
+    tempTranslations[key] = {};
     // Get the editor
-    let editor = document.querySelector(
+    let editor = findEditor(key);
+    /* Let editor = document.querySelector(
       '.local-coursetranslator__editor[data-key="' +
         key +
         '"] [contenteditable="true"]'
-    );
+    );*/
 
     // Get the source text
     let sourceText = document.querySelector(
       '[data-sourcetext-key="' + key + '"]'
     ).innerHTML;
-
+    tempTranslations[key] = {
+      'editor': editor,
+        'source': sourceText,
+      'translation': ''
+    };
     // Build formData
     let formData = new FormData();
     formData.append("text", sourceText);
-    //formData.append("source_lang", "en");
+    // FormData.append("source_lang", "en");
     formData.append("source_lang", config.currentlang);
     formData.append("target_lang", config.lang);
     formData.append("preserve_formatting", 1);
@@ -303,7 +358,8 @@ export const init = (config) => {
           // Display translation
           editor.innerHTML = data.translations[0].text;
           // Save translation
-          //saveTranslation(key, editor, data.translations[0].text);
+          // saveTranslation(key, editor, data.translations[0].text);
+          tempTranslations[key].translation = data.translations[0].text;
         } else {
           // Oh no! There has been an error with the request!
           window.console.log("error", status);

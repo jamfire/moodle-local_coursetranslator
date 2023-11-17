@@ -19,6 +19,11 @@
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
+/**
+ * @todo refactor query selectors to dat-* attributes as recommended by
+ * https://moodledev.io/docs/guides/javascript#listen-to-a-dom-event
+ */
+
 // import libs
 import ajax from "core/ajax";
 
@@ -27,6 +32,8 @@ import ajax from "core/ajax";
  * @param {Object} config JS Config
  */
 export const init = (config) => {
+  // initialize the temporary translations
+  let tempTranslations = {};
   /**
    * Convert a template string into HTML DOM nodes
    * @param  {String} string The template string
@@ -124,6 +131,7 @@ export const init = (config) => {
     let newUrl = url.toString();
 
     window.location = newUrl;
+
   });
 
   /**
@@ -191,6 +199,7 @@ export const init = (config) => {
       });
     }
     toggleAutotranslateButton();
+
   });
 
   /**
@@ -247,6 +256,7 @@ export const init = (config) => {
         let key = e.getAttribute("data-key");
         getTranslation(key);
       });
+
   });
 
   /**
@@ -254,6 +264,8 @@ export const init = (config) => {
    * @param {Integer} key Translation Key
    */
   const getTranslation = (key) => {
+    //store the key in the dictionary
+    tempTranslations[key] = "";
     // Get the editor
     let editor = document.querySelector(
       '.local-coursetranslator__editor[data-key="' +
@@ -270,13 +282,13 @@ export const init = (config) => {
     let formData = new FormData();
     formData.append("text", sourceText);
     //formData.append("source_lang", "en");
-    formData.append("source_lang", "de");
+    formData.append("source_lang", config.currentlang);
     formData.append("target_lang", config.lang);
     formData.append("preserve_formatting", 1);
     formData.append("auth_key", config.apikey);
     formData.append("tag_handling", "xml");
     formData.append("split_sentences", "nonewlines");
-    window.console.log("New");
+    window.console.log(config.currentlang);
     window.console.log("Send deepl:", formData);
     // Update the translation
     let xhr = new XMLHttpRequest();
@@ -287,10 +299,11 @@ export const init = (config) => {
           // The request has been completed successfully
           let data = JSON.parse(xhr.responseText);
           window.console.log("deepl:", key, data);
+          window.console.log(config.currentlang);
           // Display translation
           editor.innerHTML = data.translations[0].text;
           // Save translation
-          saveTranslation(key, editor, data.translations[0].text);
+          //saveTranslation(key, editor, data.translations[0].text);
         } else {
           // Oh no! There has been an error with the request!
           window.console.log("error", status);

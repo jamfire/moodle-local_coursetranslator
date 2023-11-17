@@ -13,7 +13,10 @@
 //
 // You should have received a copy of the GNU General Public License
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
-
+/**
+ * @todo use deepl-php instead of js ajax for further maintainability and absctraction
+ * (
+ */
 /**
  * Local Course Translator Translate Page
  *
@@ -69,9 +72,11 @@ $PAGE->set_title($title);
 $PAGE->set_heading($title);
 $PAGE->set_pagelayout('base');
 $PAGE->set_course($course);
+// adding PAges CSS
 $PAGE->requires->css('/local/coursetranslator/styles.css');
-
+// Adding page's JS
 $PAGE->requires->js_call_amd('local_coursetranslator/coursetranslator', 'init', array($jsconfig));
+
 
 // Get the renderer.
 $output = $PAGE->get_renderer('local_coursetranslator');

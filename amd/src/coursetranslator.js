@@ -33,16 +33,8 @@ import ajax from "core/ajax";
  */
 export const init = (config) => {
   //window.console.log(config.userPrefs);
-  /*window.console.log(config.ed);
-  window.console.log(config.ed_conf);
-  for (const ed in config.ed) {
-    window.console.log(ed);
-  }
-  window.console.log(config.ed[0]);
-  // Get the users editors prefs
-  let editorType = config.userPrefs.htmleditor;*/
   let editorType = config.userPrefs;
-  // Initialize the temporary translations
+  // Initialize the temporary translations dictionary @todo make external class
   let tempTranslations = {};
   /**
    * Convert a template string into HTML DOM nodes
@@ -64,14 +56,12 @@ export const init = (config) => {
       }
       return true;
     })();
-
     // If DOMParser is supported, use it
     if (support) {
       parser = new DOMParser();
       const doc = parser.parseFromString(string, "text/html");
       return doc.body.childNodes;
     }
-
     // Otherwise, fallback to old-school method
     const dom = document.createElement("div");
     dom.innerHTML = string;
@@ -97,7 +87,6 @@ export const init = (config) => {
     if (text.match(searchex) === null) {
       return text;
     }
-
     // Replace callback for searchex results.
     const replacecallback = (lang, match) => {
       let blocklang = match.split(searchex)[1];
@@ -519,7 +508,11 @@ export const init = (config) => {
     let lang = config.lang;
 
     // Search for {mlang} not found.
+<<<<<<< HEAD
     let mlangtext = `{mlang ${key}}${text}{mlang}`;
+=======
+    let mlangtext = `{mlang ${lang}}${text}{mlang}`;
+>>>>>>> 0e456be (es2015 house cleaning)
 
     // Return new mlang text if mlang has not been used before
     if (fieldtext.indexOf("{mlang") === -1) {

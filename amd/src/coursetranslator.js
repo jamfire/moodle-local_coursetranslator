@@ -51,11 +51,12 @@ export const init = (config) => {
    */
   const stringToHTML = (string) => {
     // See if DOMParser is supported
-    var support = (() => {
+    let parser;
+    const support = (() => {
       if (!window.DOMParser) {
         return false;
       }
-      var parser = new DOMParser();
+      parser = new DOMParser();
       try {
         parser.parseFromString("x", "text/html");
       } catch (err) {
@@ -66,13 +67,13 @@ export const init = (config) => {
 
     // If DOMParser is supported, use it
     if (support) {
-      var parser = new DOMParser();
-      var doc = parser.parseFromString(string, "text/html");
+      parser = new DOMParser();
+      const doc = parser.parseFromString(string, "text/html");
       return doc.body.childNodes;
     }
 
     // Otherwise, fallback to old-school method
-    var dom = document.createElement("div");
+    const dom = document.createElement("div");
     dom.innerHTML = string;
     return dom;
   };
@@ -219,16 +220,20 @@ export const init = (config) => {
       "[data-key-validator]"
   );
   validators.forEach((e)=>{
-    // E.addEventListener('click',(e)=> {window.console.log(e.target.parentElement);});
+    // get the stored data and do the saving from editors content
     e.addEventListener('click', (e)=> {
       let key = e.target.parentElement.dataset.keyValidator;
-      let editor = findEditor(key);
-      window.console.log(e.target);
-      window.console.log(key);
-      window.console.log(editor);
-      window.console.log(editor.innerHTML);
+      //let editor = findEditor(key);
+      //window.console.log(e.target);
+      //window.console.log(key);
+      //window.console.log(editor);
+      //window.console.log(editor.innerHTML);
 
-      saveTranslation(key, tempTranslations[key].editor, tempTranslations[key].editor.innerHTML);
+      saveTranslation(
+          key,
+          tempTranslations[key].editor,
+          tempTranslations[key].editor.innerHTML
+      );
     });
   });
   /**
@@ -290,35 +295,29 @@ export const init = (config) => {
   });
 
   /**
-   * Get the editor container
-   * @todo doc
-   * @todo query special for tinymce
-   * @todo query special for marklar
+   * Get the editor container based on recieved current user's
+   * editor preference.
    * @param {Integer} key Translation Key
    */
   const findEditor = (key) => {
-    let q = '';
-    window.console.log("document.querySelector('" + q + "')");
-    window.console.log("editors pref : " + editorType);
-    /**
-     * @todo find default editor
-     */
+    //let q = '';
+    //window.console.log("document.querySelector('" + q + "')");
+    //window.console.log("editors pref : " + editorType);
+    let dataKey = `data-key="${key}"`;
     switch (editorType) {
 
       case "atto" :
-        return document.querySelector('.local-coursetranslator__editor[data-key="' +
-          key +
-          '"] [contenteditable="true"]');
+        return document.querySelector(
+            `.local-coursetranslator__editor[${dataKey}] [contenteditable="true"]`);
       case "tiny":
-        return document.querySelector('.local-coursetranslator__editor[data-key="' +
-          key + '"] iframe').contentWindow.tinymce;
+        return document.querySelector(
+            `.local-coursetranslator__editor[${dataKey}] iframe`)
+            .contentWindow.tinymce;
       case 'marklar':
       case "textarea" :
-        return document.querySelector('.local-coursetranslator__editor[data-key="'
-          + key +
-          '"] textarea[name="' + key + '[text]"]');
+        return document.querySelector(
+            `.local-coursetranslator__editor[${dataKey}] textarea[name="${key}[text]"]`);
     }
-    //return document.querySelectorAll(q);
   };
   /**
    * Send for Translation to DeepL
@@ -329,19 +328,15 @@ export const init = (config) => {
     tempTranslations[key] = {};
     // Get the editor
     let editor = findEditor(key);
-    /* Let editor = document.querySelector(
-      '.local-coursetranslator__editor[data-key="' +
-        key +
-        '"] [contenteditable="true"]'
-    );*/
 
     // Get the source text
     let sourceText = document.querySelector(
-      '[data-sourcetext-key="' + key + '"]'
+      `[data-sourcetext-key="${key}"]`
     ).innerHTML;
+    // initialize global dictionary with this key's editor
     tempTranslations[key] = {
       'editor': editor,
-        'source': sourceText,
+      'source': sourceText,
       'translation': ''
     };
     // Build formData
@@ -354,23 +349,24 @@ export const init = (config) => {
     formData.append("auth_key", config.apikey);
     formData.append("tag_handling", "xml");
     formData.append("split_sentences", "nonewlines");
-    window.console.log(config.currentlang);
-    window.console.log("Send deepl:", formData);
+    //window.console.log(config.currentlang);
+    //window.console.log("Send deepl:", formData);
     // Update the translation
     let xhr = new XMLHttpRequest();
     xhr.onreadystatechange = () => {
       if (xhr.readyState === XMLHttpRequest.DONE) {
-        var status = xhr.status;
+        const status = xhr.status;
         if (status === 0 || (status >= 200 && status < 400)) {
           // The request has been completed successfully
           let data = JSON.parse(xhr.responseText);
           window.console.log("deepl:", key, data);
-          window.console.log(config.currentlang);
-          window.console.log(editor);
+          //window.console.log(config.currentlang);
+          //window.console.log(editor);
           // Display translation
           editor.innerHTML = data.translations[0].text;
           // Save translation
           // saveTranslation(key, editor, data.translations[0].text);
+          // store the translation in the global object
           tempTranslations[key].translation = data.translations[0].text;
         } else {
           // Oh no! There has been an error with the request!
@@ -387,6 +383,7 @@ export const init = (config) => {
    * @param  {String} key Data Key
    * @param  {Node} editor HTML Editor Node
    * @param  {String} text Updated Text
+   * @todo 3rd param is to refactor remove as it is the editors content
    */
   const saveTranslation = (key, editor, text) => {
     // Get processing vars
@@ -418,7 +415,7 @@ export const init = (config) => {
           if (data.length > 0) {
             // Updated hidden textarea with updatedtext
             let textarea = document.querySelector(
-              '.local-coursetranslator__textarea[data-key="' + key + '"]'
+              `.local-coursetranslator__textarea[data-key="${key}"]`
             );
             // Get the updated text
             let updatedtext = getupdatedtext(fieldtext, text);
@@ -437,15 +434,14 @@ export const init = (config) => {
               editor.classList.add("local-coursetranslator__success");
               // Add saved indicator
               let indicator =
-                '<div class="local-coursetranslator__success-message" data-key="' +
-                key +
-                '">' +
-                config.autosavedmsg +
-                "</div>";
+                `<div 
+                   class="local-coursetranslator__success-message" 
+                   data-key="${key}"
+                 >${config.autosavedmsg}</div>`;
               editor.after(...stringToHTML(indicator));
 
               let status = document.querySelector(
-                '[data-status-key="' + key + '"'
+                `[data-status-key="${key}"`
               );
               status.classList.replace("badge-danger", "badge-success");
               status.innerHTML = config.uptodate;
@@ -453,9 +449,7 @@ export const init = (config) => {
               // Remove success message after a few seconds
               setTimeout(() => {
                 let indicatorNode = document.querySelector(
-                  '.local-coursetranslator__success-message[data-key="' +
-                    key +
-                    '"]'
+                    `.local-coursetranslator__success-message[data-key="${key}"]`
                 );
                 editor.parentNode.removeChild(indicatorNode);
               }, 3000);
@@ -488,7 +482,7 @@ export const init = (config) => {
                     // Update source lang if necessary
                     if (config.currentlang === config.lang) {
                       document.querySelector(
-                        '[data-sourcetext-key="' + key + '"]'
+                          `[data-sourcetext-key="${key}"]`
                       ).innerHTML = text;
                     }
                   } else {
@@ -525,7 +519,7 @@ export const init = (config) => {
     let lang = config.lang;
 
     // Search for {mlang} not found.
-    let mlangtext = '{mlang ' + lang + '}' + text + '{mlang}';
+    let mlangtext = `{mlang ${key}}${text}{mlang}`;
 
     // Return new mlang text if mlang has not been used before
     if (fieldtext.indexOf("{mlang") === -1) {
@@ -533,13 +527,7 @@ export const init = (config) => {
         return mlangtext;
       } else {
         return (
-          "{mlang other}" +
-          fieldtext +
-          "{mlang}{mlang " +
-          lang +
-          "}" +
-          text +
-          "{mlang}"
+          `{mlang other} ${fieldtext} {mlang}{mlang ${lang}} ${text} {mlang}`
         );
       }
     }
@@ -550,13 +538,11 @@ export const init = (config) => {
     let matches = fieldtext.match(replacex);
 
     // Return the updated string
-    if (!matches) {
-      return fieldtext + "{mlang " + lang + "}" + text + "{mlang}";
+    const updatedString = `{mlang ${lang}} ${text} {mlang}`;
+    if (matches) {
+      return fieldtext.replace(replacex, updatedString);
     } else {
-      return fieldtext.replace(
-        replacex,
-        "{mlang " + lang + "}" + text + "{mlang}"
-      );
+      return fieldtext + updatedString;
     }
   };
 
@@ -565,8 +551,7 @@ export const init = (config) => {
    * @returns void
    */
   window.addEventListener("load", () => {
-    document
-      .querySelectorAll(
+    document.querySelectorAll(
         '.local-coursetranslator__editor [contenteditable="true"]'
       )
       .forEach((editor) => {
@@ -579,7 +564,6 @@ export const init = (config) => {
 
           saveTranslation(key, editor, text);
         });
-
         // Remove status classes
         editor.addEventListener("click", () => {
           editor.classList.remove("local-coursetranslator__success");
@@ -600,10 +584,10 @@ export const init = (config) => {
       let key = textarea.getAttribute("data-key");
       let text = textarea.innerHTML;
       let editor = document.querySelector(
-        '[data-key="' + key + '"] [contenteditable="true"]'
+          `[data-key="${key}"] [contenteditable="true"]`
       );
 
-      let langpattern = "{mlang " + config.lang + "}(.*?){mlang}";
+      let langpattern = `{mlang ${config.lang}}(.*?){mlang}`;
       let langex = new RegExp(langpattern, "dgis");
       let matches = text.match(langex);
 
@@ -614,25 +598,20 @@ export const init = (config) => {
         // Updated contenteditables with parsedtext
         editor.innerHTML = parsedtext;
       } else if (matches && matches.length > 1) {
-        document
-          .querySelector('input[type="checkbox"][data-key="' + key + '"]')
+        const dataKey = `data-key="${key}"`;
+        document.querySelector(
+              `input[type="checkbox"][${dataKey}]`)
           .remove();
-        document
-          .querySelector(
-            '.local-coursetranslator__editor[data-key="' + key + '"] > *'
-          )
+        document.querySelector(
+              `.local-coursetranslator__editor[${dataKey}] > *`)
           .remove();
-        document
-          .querySelector(
-            '.local-coursetranslator__textarea[data-key="' + key + '"]'
-          )
+        document.querySelector(
+              `.local-coursetranslator__textarea[${dataKey}]`)
           .remove();
         let p = document.createElement("p");
-        p.innerHTML = "<em><small>" + config.multiplemlang + "</small></em>";
-        this.document
-          .querySelector(
-            '.local-coursetranslator__editor[data-key="' + key + '"]'
-          )
+        p.innerHTML = `<em><small>${config.multiplemlang}</small></em>`;
+        document.querySelector(
+              `.local-coursetranslator__editor[${dataKey}]`)
           .append(p);
       } else {
         editor.innerHTML = parsedtext;

@@ -32,10 +32,16 @@ import ajax from "core/ajax";
  * @param {Object} config JS Config
  */
 export const init = (config) => {
-  window.console.log(config.userPrefs);
-  window.console.log(config.ed);//
-  // get the users editors prefs
-  let editorType = config.userPrefs.htmleditor;
+  //window.console.log(config.userPrefs);
+  /*window.console.log(config.ed);
+  window.console.log(config.ed_conf);
+  for (const ed in config.ed) {
+    window.console.log(ed);
+  }
+  window.console.log(config.ed[0]);
+  // Get the users editors prefs
+  let editorType = config.userPrefs.htmleditor;*/
+  let editorType = config.userPrefs;
   // Initialize the temporary translations
   let tempTranslations = {};
   /**
@@ -217,11 +223,12 @@ export const init = (config) => {
     e.addEventListener('click', (e)=> {
       let key = e.target.parentElement.dataset.keyValidator;
       let editor = findEditor(key);
+      window.console.log(e.target);
       window.console.log(key);
       window.console.log(editor);
       window.console.log(editor.innerHTML);
 
-      // SaveTranslation(tempTranslations[key],tempTranslations[key].editor,tempTranslations[key].translation);
+      saveTranslation(key, tempTranslations[key].editor, tempTranslations[key].editor.innerHTML);
     });
   });
   /**
@@ -290,24 +297,28 @@ export const init = (config) => {
    * @param {Integer} key Translation Key
    */
   const findEditor = (key) => {
-    let q ='';
+    let q = '';
     window.console.log("document.querySelector('" + q + "')");
     window.console.log("editors pref : " + editorType);
     /**
      * @todo find default editor
      */
-    switch(editorType)
-    {
-      case "atto" : return document.querySelectorAll('.local-coursetranslator__editor[data-key="' +
+    switch (editorType) {
+
+      case "atto" :
+        return document.querySelector('.local-coursetranslator__editor[data-key="' +
           key +
           '"] [contenteditable="true"]');
-      case "tiny": return document.querySelector('.local-coursetranslator__editor[data-key="'+
-          key +'"] iframe').contentWindow.tinymce;
-      case "textarea" : return document.querySelector('.local-coursetranslator__editor[data-key="'
+      case "tiny":
+        return document.querySelector('.local-coursetranslator__editor[data-key="' +
+          key + '"] iframe').contentWindow.tinymce;
+      case 'marklar':
+      case "textarea" :
+        return document.querySelector('.local-coursetranslator__editor[data-key="'
           + key +
-          '"] textarea[name="'+ key +'[text]"]');
+          '"] textarea[name="' + key + '[text]"]');
     }
-    return document.querySelectorAll(q);
+    //return document.querySelectorAll(q);
   };
   /**
    * Send for Translation to DeepL
@@ -355,6 +366,7 @@ export const init = (config) => {
           let data = JSON.parse(xhr.responseText);
           window.console.log("deepl:", key, data);
           window.console.log(config.currentlang);
+          window.console.log(editor);
           // Display translation
           editor.innerHTML = data.translations[0].text;
           // Save translation

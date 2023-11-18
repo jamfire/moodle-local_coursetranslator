@@ -77,9 +77,15 @@ $PAGE->set_course($course);
 /**
  * @todo find ways to get the defaul editor set by admin in case of users pref set to default ...
  */
-$jsconfig->ed = editors_get_preferred_editor();
+
+//$jsconfig->ed = editors_get_enabled();
+$defaultEditor = strstr($CFG->texteditors,',', true);
+$userPrefs = get_user_preferences();
 // get users prefrences to pass the dditor's type to js
-$jsconfig->userPrefs = get_user_preferences();
+$jsconfig->userPrefs = $userPrefs['htmleditor']??$defaultEditor;
+
+
+//$jsconfig->userPrefs = get_user_preferences();
 
 // adding PAges CSS
 $PAGE->requires->css('/local/coursetranslator/styles.css');

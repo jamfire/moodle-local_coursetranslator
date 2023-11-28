@@ -97,7 +97,8 @@ class translate_form extends moodleform {
         $mform->addElement('html', '<div class="col-2">');
         $mform->addElement('html', '<div class="form-check">');
         $mform->addElement('html', '<input
-            class="form-check-input local-coursetranslator__checkbox"
+            class="form-check-input"
+            data-action="local-coursetranslator/checkbox"
             type="checkbox"
             data-key="' . $key . '"
             disabled
@@ -135,10 +136,11 @@ class translate_form extends moodleform {
         /**
          * @todo display source and translated text as tabs
          */
-        $mform->addElement(
-            'html',
-            '<div data-key="' . $key
-            . '" class="mt-3 card card-body local-coursetranslator__textarea">'
+        $mform->addElement('html','<div 
+            data-key="' . $key . '" 
+            class="mt-3 card card-body"
+            data-action="local-coursetranslator/textarea"
+            >'
             . trim($item->text) . '</div>'
         );
         $mform->addElement('html', '</div>');
@@ -147,7 +149,8 @@ class translate_form extends moodleform {
 
         // Translation Input.
         $mform->addElement('html', '<div
-            class="col-4 px-0 local-coursetranslator__translation local-coursetranslator__editor"
+            class="col-4 px-0 local-coursetranslator__translation"
+            data-action="local-coursetranslator/editors"
             data-key="' . $key . '"
             data-table="' . $item->table . '"
             data-id="' . $item->id . '"

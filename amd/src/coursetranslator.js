@@ -26,16 +26,56 @@
 
 // import libs
 import ajax from "core/ajax";
+import Selectors from "./selectors";
+
+// Const Selectors = {
+//   actions :{
+//     localeSwitcher:'[data-action="local-coursetranslator/localeswitcher"]'
+//   }
+// };
+let tempTranslations = {};
+let editorType = '';
+let config = {};
+let autotranslateButton = {};
+let checkboxes = [];
+const registerEventListeners = ()=>{
+  document.addEventListener('change', e=>{
+    if (e.target.closest(Selectors.actions.localeSwitcher)) {
+      switchLocale(e);
+    }
+    if (e.target.closest(Selectors.actions.showUpdated)) {
+      showUpdated(e);
+    }
+    if (e.target.closest(Selectors.actions.showNeedUpdate)) {
+      neededUpdate(e);
+    }
+  });
+  document.addEventListener('click', e=>{
+    if (e.target.closest(Selectors.actions.autoTranslateBtn)) {
+      doAutotranslate(e);
+    }
+    if (e.target.closest(Selectors.actions.selecAllBtn)) {
+      selectAll(e);
+    }
+  });
+};
+const registerUI = ()=>{
+  autotranslateButton = document.querySelector(Selectors.actions.autoTranslateBtn);
+  checkboxes = document.querySelectorAll(Selectors.actions.checkBoxes);
+  window.console.log(Selectors.statuses.checkedCheckBoxes);
+};
 
 /**
  * Translation Editor UI
- * @param {Object} config JS Config
+ * @param {Object} cfg JS Config
  */
-export const init = (config) => {
-  //window.console.log(config.userPrefs);
-  let editorType = config.userPrefs;
+export const init = (cfg) => {
+  config = cfg;
+  // Window.console.log(config.userPrefs);
+  editorType = config.userPrefs;
   // Initialize the temporary translations dictionary @todo make external class
-  let tempTranslations = {};
+  registerUI();
+  registerEventListeners();
   /**
    * Convert a template string into HTML DOM nodes
    * @param  {String} string The template string
@@ -120,7 +160,7 @@ export const init = (config) => {
 
   /**
    * Switch Translation Language
-   */
+   *
   let localeSwitcher = document.querySelector(
     ".local-coursetranslator__localeswitcher"
   );
@@ -129,14 +169,13 @@ export const init = (config) => {
     let searchParams = url.searchParams;
     searchParams.set("course_lang", e.target.value);
     let newUrl = url.toString();
-
     window.location = newUrl;
-
   });
+   */
 
   /**
    * Show Updated Checkbox
-   */
+   *
   let showUpdatedCheckbox = document.querySelector(
     ".local-coursetranslator__show-updated"
   );
@@ -152,10 +191,11 @@ export const init = (config) => {
       });
     }
   });
+   */
 
   /**
    * Show Update Needed Checkbox
-   */
+   *
   let showUpdateNeededCheckbox = document.querySelector(
     ".local-coursetranslator__show-needsupdate"
   );
@@ -171,69 +211,74 @@ export const init = (config) => {
       });
     }
   });
-
+   */
   /**
    * Select All Checkbox
-   */
+   *
   const selectAll = document.querySelector(
     ".local-coursetranslator__select-all"
   );
+   */
   if (config.autotranslate) {
     selectAll.disabled = false;
   }
-  selectAll.addEventListener("click", (e) => {
-    // See if select all is checked
-    let checked = e.target.checked;
-    let checkboxes = document.querySelectorAll(
-      ".local-coursetranslator__checkbox"
-    );
-
-    // Check/uncheck checkboxes
-    if (checked) {
-      checkboxes.forEach((e) => {
-        e.checked = true;
-      });
-    } else {
-      checkboxes.forEach((e) => {
-        e.checked = false;
-      });
-    }
-    toggleAutotranslateButton();
+  /**
+  SelectAll.addEventListener("click", (e) => {
+    // // See if select all is checked
+    // let checked = e.target.checked;
+    // let checkboxes = document.querySelectorAll(
+    //   ".local-coursetranslator__checkbox"
+    // );
+    //
+    // // Check/uncheck checkboxes
+    // if (checked) {
+    //   checkboxes.forEach((e) => {
+    //     e.checked = true;
+    //   });
+    // } else {
+    //   checkboxes.forEach((e) => {
+    //     e.checked = false;
+    //   });
+    // }
+    // toggleAutotranslateButton();
 
   });
-
+   */
   /**
    * Validaate translation ck
    */
-  const validators = document.querySelectorAll(
-      "[data-key-validator]"
-  );
+  // const validators = document.querySelectorAll("[data-key-validator]");
+  const validators = document.querySelectorAll(Selectors.actions.validatorsBtns);
   validators.forEach((e)=>{
-    // get the stored data and do the saving from editors content
+    // Get the stored data and do the saving from editors content
     e.addEventListener('click', (e)=> {
       let key = e.target.parentElement.dataset.keyValidator;
-      //let editor = findEditor(key);
-      //window.console.log(e.target);
-      //window.console.log(key);
-      //window.console.log(editor);
-      //window.console.log(editor.innerHTML);
+      if (tempTranslations[key] === null || tempTranslations[key] === undefined) {
+        /**
+         * @todo do a UI feedback (disable save )
+         */
+        window.console.log(`Transaltion key "${key}" is undefined `);
+      } else {
+        saveTranslation(
+            key,
+            tempTranslations[key].editor,
+            tempTranslations[key].editor.innerHTML
+        );
+      }
 
-      saveTranslation(
-          key,
-          tempTranslations[key].editor,
-          tempTranslations[key].editor.innerHTML
-      );
     });
   });
   /**
   /**
    * Autotranslate Checkboxes
    */
-  const checkboxes = document.querySelectorAll(
+  /*const checkboxes = document.querySelectorAll(
     ".local-coursetranslator__checkbox"
-  );
+  );*/
+  window.console.log(config, config.autotranslate, checkboxes);
   if (config.autotranslate) {
     checkboxes.forEach((e) => {
+      window.console.log(e);
       e.disabled = false;
     });
   }
@@ -246,33 +291,17 @@ export const init = (config) => {
   /**
    * Autotranslate Button Display
    * @returns void
-   */
+   *
   const autotranslateButton = document.querySelector(
     ".local-coursetranslator__autotranslate-btn"
   );
-
-  /**
-   * Toggle Autotranslate Button
    */
-  const toggleAutotranslateButton = () => {
-    let checkboxItems = [];
-    checkboxes.forEach((e) => {
-      checkboxItems.push(e.checked);
-    });
-    let checked = checkboxItems.find((checked) => checked === true)
-      ? true
-      : false;
-    if (config.autotranslate && checked) {
-      autotranslateButton.disabled = false;
-    } else {
-      autotranslateButton.disabled = true;
-    }
-  };
+
 
   /**
    * Autotranslate Button Click
    * @returns void
-   */
+   *
   autotranslateButton.addEventListener("click", () => {
     document
       .querySelectorAll(".local-coursetranslator__checkbox:checked")
@@ -282,90 +311,8 @@ export const init = (config) => {
       });
 
   });
-
-  /**
-   * Get the editor container based on recieved current user's
-   * editor preference.
-   * @param {Integer} key Translation Key
    */
-  const findEditor = (key) => {
-    //let q = '';
-    //window.console.log("document.querySelector('" + q + "')");
-    //window.console.log("editors pref : " + editorType);
-    let dataKey = `data-key="${key}"`;
-    switch (editorType) {
 
-      case "atto" :
-        return document.querySelector(
-            `.local-coursetranslator__editor[${dataKey}] [contenteditable="true"]`);
-      case "tiny":
-        return document.querySelector(
-            `.local-coursetranslator__editor[${dataKey}] iframe`)
-            .contentWindow.tinymce;
-      case 'marklar':
-      case "textarea" :
-        return document.querySelector(
-            `.local-coursetranslator__editor[${dataKey}] textarea[name="${key}[text]"]`);
-    }
-  };
-  /**
-   * Send for Translation to DeepL
-   * @param {Integer} key Translation Key
-   */
-  const getTranslation = (key) => {
-    // Store the key in the dictionary
-    tempTranslations[key] = {};
-    // Get the editor
-    let editor = findEditor(key);
-
-    // Get the source text
-    let sourceText = document.querySelector(
-      `[data-sourcetext-key="${key}"]`
-    ).innerHTML;
-    // initialize global dictionary with this key's editor
-    tempTranslations[key] = {
-      'editor': editor,
-      'source': sourceText,
-      'translation': ''
-    };
-    // Build formData
-    let formData = new FormData();
-    formData.append("text", sourceText);
-    // FormData.append("source_lang", "en");
-    formData.append("source_lang", config.currentlang);
-    formData.append("target_lang", config.lang);
-    formData.append("preserve_formatting", 1);
-    formData.append("auth_key", config.apikey);
-    formData.append("tag_handling", "xml");
-    formData.append("split_sentences", "nonewlines");
-    //window.console.log(config.currentlang);
-    //window.console.log("Send deepl:", formData);
-    // Update the translation
-    let xhr = new XMLHttpRequest();
-    xhr.onreadystatechange = () => {
-      if (xhr.readyState === XMLHttpRequest.DONE) {
-        const status = xhr.status;
-        if (status === 0 || (status >= 200 && status < 400)) {
-          // The request has been completed successfully
-          let data = JSON.parse(xhr.responseText);
-          window.console.log("deepl:", key, data);
-          //window.console.log(config.currentlang);
-          //window.console.log(editor);
-          // Display translation
-          editor.innerHTML = data.translations[0].text;
-          // Save translation
-          // saveTranslation(key, editor, data.translations[0].text);
-          // store the translation in the global object
-          tempTranslations[key].translation = data.translations[0].text;
-        } else {
-          // Oh no! There has been an error with the request!
-          window.console.log("error", status);
-        }
-      }
-    };
-    xhr.open("POST", config.deeplurl);
-    xhr.send(formData);
-  };
 
   /**
    * Save Translation to Moodle
@@ -540,15 +487,15 @@ export const init = (config) => {
    * @returns void
    */
   window.addEventListener("load", () => {
-    document.querySelectorAll(
-        '.local-coursetranslator__editor [contenteditable="true"]'
-      )
+    // document.querySelectorAll('.local-coursetranslator__editor [contenteditable="true"]')
+    document.querySelectorAll(Selectors.editors.contentEditable)
       .forEach((editor) => {
         // Save translation
         editor.addEventListener("focusout", () => {
           // Get Processing Information
           let text = editor.innerHTML;
-          let element = editor.closest(".local-coursetranslator__editor");
+          // let element = editor.closest(".local-coursetranslator__editor");
+          let element = editor.closest(Selectors.editors.all);
           let key = element.getAttribute("data-key");
 
           saveTranslation(key, editor, text);
@@ -565,13 +512,14 @@ export const init = (config) => {
    * Get text from processing areas and add them to contenteditables
    */
   window.addEventListener("load", () => {
-    let textareas = document.querySelectorAll(
-      ".local-coursetranslator__textarea"
-    );
+    let textareas = document.querySelectorAll(Selectors.editors.textarea);
     textareas.forEach((textarea) => {
       // Get relevent keys and text
       let key = textarea.getAttribute("data-key");
       let text = textarea.innerHTML;
+      /**
+       * @todo review selector
+       */
       let editor = document.querySelector(
           `[data-key="${key}"] [contenteditable="true"]`
       );
@@ -607,4 +555,188 @@ export const init = (config) => {
       }
     });
   });
+};
+
+/**
+ * Eventlistener for show update checkbox
+ * @param {Event} e
+ */
+const showUpdated = (e) =>{
+  let items = document.querySelectorAll(Selectors.statuses.updated);
+  if (e.target.checked) {
+    items.forEach((item) => {
+      item.classList.remove("d-none");
+    });
+  } else {
+    items.forEach((item) => {
+      item.classList.add("d-none");
+    });
+  }
+};
+
+/**
+ * Event listener to switch target lang
+ * @param {Event} e
+ */
+const switchLocale = (e) => {
+  let url = new URL(window.location.href);
+  let searchParams = url.searchParams;
+  searchParams.set("course_lang", e.target.value);
+  let newUrl = url.toString();
+  window.location = newUrl;
+};
+
+/**
+ * Event listener to check if update are needed
+ * @param {Event} e
+ */
+const neededUpdate = (e)=> {
+  let items = document.querySelectorAll(Selectors.statuses.needsupdate);
+  if (e.target.checked) {
+    items.forEach((item) => {
+      item.classList.remove("d-none");
+    });
+  } else {
+    items.forEach((item) => {
+      item.classList.add("d-none");
+    });
+  }
+};
+
+/**
+ * Launch autotranslation
+ */
+const doAutotranslate = () => {
+  document
+      // .querySelectorAll(".local-coursetranslator__checkbox:checked")
+      .querySelectorAll(Selectors.statuses.checkedCheckBoxes)
+      .forEach((ckBox) => {
+        let key = ckBox.getAttribute("data-key");
+        getTranslation(key);
+      });
+};
+/**
+ * Send for Translation to DeepL
+ * @param {Integer} key Translation Key
+ */
+const getTranslation = (key) => {
+  // Store the key in the dictionary
+  tempTranslations[key] = {};
+  // Get the editor
+  let editor = findEditor(key);
+
+  // Get the source text
+  let sourceText = document.querySelector(
+      `[data-sourcetext-key="${key}"]`
+  ).innerHTML;
+  // Initialize global dictionary with this key's editor
+  tempTranslations[key] = {
+    'editor': editor,
+    'source': sourceText,
+    'translation': ''
+  };
+  // Build formData
+  let formData = new FormData();
+  formData.append("text", sourceText);
+  // FormData.append("source_lang", "en");
+  formData.append("source_lang", config.currentlang);
+  formData.append("target_lang", config.lang);
+  formData.append("preserve_formatting", 1);
+  formData.append("auth_key", config.apikey);
+  formData.append("tag_handling", "xml");
+  formData.append("split_sentences", "nonewlines");
+  // Window.console.log(config.currentlang);
+  // window.console.log("Send deepl:", formData);
+  // Update the translation
+  let xhr = new XMLHttpRequest();
+  xhr.onreadystatechange = () => {
+    if (xhr.readyState === XMLHttpRequest.DONE) {
+      const status = xhr.status;
+      if (status === 0 || (status >= 200 && status < 400)) {
+        // The request has been completed successfully
+        let data = JSON.parse(xhr.responseText);
+        window.console.log("deepl:", key, data);
+        // Window.console.log(config.currentlang);
+        // window.console.log(editor);
+        // Display translation
+        editor.innerHTML = data.translations[0].text;
+        // Save translation
+        // saveTranslation(key, editor, data.translations[0].text);
+        // store the translation in the global object
+        tempTranslations[key].translation = data.translations[0].text;
+      } else {
+        // Oh no! There has been an error with the request!
+        window.console.log("error", status);
+      }
+    }
+  };
+  xhr.open("POST", config.deeplurl);
+  xhr.send(formData);
+};
+/**
+ * Get the editor container based on recieved current user's
+ * editor preference.
+ * @param {Integer} key Translation Key
+ */
+const findEditor = (key) => {
+  // Let q = '';
+  // window.console.log("document.querySelector('" + q + "')");
+  // window.console.log("editors pref : " + editorType);
+  let dataKey = `data-key="${key}"`;
+  switch (editorType) {
+
+    case "atto" :
+      return document.querySelector(
+          `.local-coursetranslator__editor[${dataKey}] [contenteditable="true"]`);
+    case "tiny":
+      return document.querySelector(
+          `.local-coursetranslator__editor[${dataKey}] iframe`)
+          .contentWindow.tinymce;
+    case 'marklar':
+    case "textarea" :
+      return document.querySelector(
+          `.local-coursetranslator__editor[${dataKey}] textarea[name="${key}[text]"]`);
+  }
+};
+/**
+ *
+ * @param {Event} e
+ */
+const selectAll = (e)=>{
+  // See if select all is checked
+  let checked = e.target.checked;
+  /*checkboxes = document.querySelectorAll(
+      ".local-coursetranslator__checkbox"
+  );
+  */
+
+
+  // Check/uncheck checkboxes
+  if (checked) {
+    checkboxes.forEach((e) => {
+      e.checked = true;
+    });
+  } else {
+    checkboxes.forEach((e) => {
+      e.checked = false;
+    });
+  }
+  toggleAutotranslateButton();
+};
+/**
+ * Toggle Autotranslate Button
+ */
+const toggleAutotranslateButton = () => {
+  let checkboxItems = [];
+  checkboxes.forEach((e) => {
+    checkboxItems.push(e.checked);
+  });
+  let checked = checkboxItems.find((checked) => checked === true)
+      ? true
+      : false;
+  if (config.autotranslate && checked) {
+    autotranslateButton.disabled = false;
+  } else {
+    autotranslateButton.disabled = true;
+  }
 };

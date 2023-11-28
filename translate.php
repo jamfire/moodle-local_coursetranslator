@@ -15,7 +15,7 @@
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 /**
  * @todo use deepl-php instead of js ajax for further maintainability and absctraction
- * (
+ * @todo check images tag handling in deepl.
  */
 /**
  * Local Course Translator Translate Page

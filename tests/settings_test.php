@@ -26,11 +26,11 @@
  */
 
 namespace local_coursetranslator;
-
+use PHPUnit\Framework\TestCase;
 /**
  * Settings Test
  */
-class settings_test extends \advanced_testcase {
+class settings_test extends TestCase {
 
     public function test_usedeepl() {
         $this->assertEquals(2, 1 + 1);

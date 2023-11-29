@@ -18,21 +18,10 @@
  * @copyright  2022 Kaleb Heitzman <kaleb@jamfire.io>
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
-
-/**
- * @todo refactor query selectors to dat-* attributes as recommended by
- * https://moodledev.io/docs/guides/javascript#listen-to-a-dom-event
- */
-
 // import libs
 import ajax from "core/ajax";
 import Selectors from "./selectors";
 
-// Const Selectors = {
-//   actions :{
-//     localeSwitcher:'[data-action="local-coursetranslator/localeswitcher"]'
-//   }
-// };
 let tempTranslations = {};
 let editorType = '';
 let config = {};
@@ -158,92 +147,10 @@ export const init = (cfg) => {
     return result;
   };
 
-  /**
-   * Switch Translation Language
-   *
-  let localeSwitcher = document.querySelector(
-    ".local-coursetranslator__localeswitcher"
-  );
-  localeSwitcher.addEventListener("change", (e) => {
-    let url = new URL(window.location.href);
-    let searchParams = url.searchParams;
-    searchParams.set("course_lang", e.target.value);
-    let newUrl = url.toString();
-    window.location = newUrl;
-  });
-   */
-
-  /**
-   * Show Updated Checkbox
-   *
-  let showUpdatedCheckbox = document.querySelector(
-    ".local-coursetranslator__show-updated"
-  );
-  showUpdatedCheckbox.addEventListener("change", (e) => {
-    let items = document.querySelectorAll('[data-status="updated"]');
-    if (e.target.checked) {
-      items.forEach((item) => {
-        item.classList.remove("d-none");
-      });
-    } else {
-      items.forEach((item) => {
-        item.classList.add("d-none");
-      });
-    }
-  });
-   */
-
-  /**
-   * Show Update Needed Checkbox
-   *
-  let showUpdateNeededCheckbox = document.querySelector(
-    ".local-coursetranslator__show-needsupdate"
-  );
-  showUpdateNeededCheckbox.addEventListener("change", (e) => {
-    let items = document.querySelectorAll('[data-status="needsupdate"]');
-    if (e.target.checked) {
-      items.forEach((item) => {
-        item.classList.remove("d-none");
-      });
-    } else {
-      items.forEach((item) => {
-        item.classList.add("d-none");
-      });
-    }
-  });
-   */
-  /**
-   * Select All Checkbox
-   *
-  const selectAll = document.querySelector(
-    ".local-coursetranslator__select-all"
-  );
-   */
   if (config.autotranslate) {
     selectAll.disabled = false;
   }
-  /**
-  SelectAll.addEventListener("click", (e) => {
-    // // See if select all is checked
-    // let checked = e.target.checked;
-    // let checkboxes = document.querySelectorAll(
-    //   ".local-coursetranslator__checkbox"
-    // );
-    //
-    // // Check/uncheck checkboxes
-    // if (checked) {
-    //   checkboxes.forEach((e) => {
-    //     e.checked = true;
-    //   });
-    // } else {
-    //   checkboxes.forEach((e) => {
-    //     e.checked = false;
-    //   });
-    // }
-    // toggleAutotranslateButton();
 
-  });
-   */
   /**
    * Validaate translation ck
    */
@@ -268,7 +175,7 @@ export const init = (cfg) => {
 
     });
   });
-  /**
+
   /**
    * Autotranslate Checkboxes
    */
@@ -287,31 +194,6 @@ export const init = (cfg) => {
       toggleAutotranslateButton();
     });
   });
-
-  /**
-   * Autotranslate Button Display
-   * @returns void
-   *
-  const autotranslateButton = document.querySelector(
-    ".local-coursetranslator__autotranslate-btn"
-  );
-   */
-
-
-  /**
-   * Autotranslate Button Click
-   * @returns void
-   *
-  autotranslateButton.addEventListener("click", () => {
-    document
-      .querySelectorAll(".local-coursetranslator__checkbox:checked")
-      .forEach((e) => {
-        let key = e.getAttribute("data-key");
-        getTranslation(key);
-      });
-
-  });
-   */
 
 
   /**
@@ -351,8 +233,8 @@ export const init = (cfg) => {
           if (data.length > 0) {
             // Updated hidden textarea with updatedtext
             let textarea = document.querySelector(
-              `.local-coursetranslator__textarea[data-key="${key}"]`
-            );
+                Selectors.editors.multiples.textAreas
+                    .replace("<KEY>", key));
             // Get the updated text
             let updatedtext = getupdatedtext(fieldtext, text);
 
@@ -372,21 +254,22 @@ export const init = (cfg) => {
               let indicator =
                 `<div 
                    class="local-coursetranslator__success-message" 
+                   data-status="local-coursetranslator/success-message" 
                    data-key="${key}"
                  >${config.autosavedmsg}</div>`;
               editor.after(...stringToHTML(indicator));
 
               let status = document.querySelector(
-                `[data-status-key="${key}"`
-              );
+                  Selectors.statuses.keys
+                      .replace("<KEY>",key));
               status.classList.replace("badge-danger", "badge-success");
               status.innerHTML = config.uptodate;
 
               // Remove success message after a few seconds
               setTimeout(() => {
                 let indicatorNode = document.querySelector(
-                    `.local-coursetranslator__success-message[data-key="${key}"]`
-                );
+                    Selectors.statuses.successMessages
+                        .replace("<KEY>",key));
                 editor.parentNode.removeChild(indicatorNode);
               }, 3000);
             };
@@ -417,9 +300,8 @@ export const init = (cfg) => {
 
                     // Update source lang if necessary
                     if (config.currentlang === config.lang) {
-                      document.querySelector(
-                          `[data-sourcetext-key="${key}"]`
-                      ).innerHTML = text;
+                      document.querySelector(Selectors.sourcetexts.keys.replace('<KEY>', key))
+                          .innerHTML = text;
                     }
                   } else {
                     // Something went wrong with the data
@@ -521,8 +403,8 @@ export const init = (cfg) => {
        * @todo review selector
        */
       let editor = document.querySelector(
-          `[data-key="${key}"] [contenteditable="true"]`
-      );
+          Selectors.editors.multiples.contentEditableKeys
+              .replace("<KEY>", key));
 
       let langpattern = `{mlang ${config.lang}}(.*?){mlang}`;
       let langex = new RegExp(langpattern, "dgis");
@@ -535,21 +417,17 @@ export const init = (cfg) => {
         // Updated contenteditables with parsedtext
         editor.innerHTML = parsedtext;
       } else if (matches && matches.length > 1) {
-        const dataKey = `data-key="${key}"`;
-        document.querySelector(
-              `input[type="checkbox"][${dataKey}]`)
-          .remove();
-        document.querySelector(
-              `.local-coursetranslator__editor[${dataKey}] > *`)
-          .remove();
-        document.querySelector(
-              `.local-coursetranslator__textarea[${dataKey}]`)
-          .remove();
+        //const dataKey = `data-key="${key}"`;
+        document.querySelector(Selectors.editors.multiples.checkBoxesWithKey
+            .replace('<KEY>', key)).remove();
+        document.querySelector(Selectors.editors.multiples.editorChilds
+            .replace('<KEY>', key)).remove();
+        document.querySelector(Selectors.editors.multiples.textAreas
+            .replace('<KEY>', key)).remove();
         let p = document.createElement("p");
         p.innerHTML = `<em><small>${config.multiplemlang}</small></em>`;
-        document.querySelector(
-              `.local-coursetranslator__editor[${dataKey}]`)
-          .append(p);
+        document.querySelector(Selectors.editors.multiples.editorsWithKey
+            .replace('<KEY>', key)).append(p);
       } else {
         editor.innerHTML = parsedtext;
       }
@@ -626,9 +504,8 @@ const getTranslation = (key) => {
   let editor = findEditor(key);
 
   // Get the source text
-  let sourceText = document.querySelector(
-      `[data-sourcetext-key="${key}"]`
-  ).innerHTML;
+  let sourceText = document.querySelector(Selectors.sourcetexts.keys.replace("<KEY>",key))
+      .innerHTML;
   // Initialize global dictionary with this key's editor
   tempTranslations[key] = {
     'editor': editor,
@@ -682,20 +559,19 @@ const findEditor = (key) => {
   // Let q = '';
   // window.console.log("document.querySelector('" + q + "')");
   // window.console.log("editors pref : " + editorType);
-  let dataKey = `data-key="${key}"`;
   switch (editorType) {
-
     case "atto" :
       return document.querySelector(
-          `.local-coursetranslator__editor[${dataKey}] [contenteditable="true"]`);
+          Selectors.editors.types.atto
+              .replace("<KEY>",key));
     case "tiny":
-      return document.querySelector(
-          `.local-coursetranslator__editor[${dataKey}] iframe`)
+      return document.querySelector(Selectors.editors.types.tiny
+          .replace("<KEY>",key))
           .contentWindow.tinymce;
     case 'marklar':
     case "textarea" :
-      return document.querySelector(
-          `.local-coursetranslator__editor[${dataKey}] textarea[name="${key}[text]"]`);
+      return document.querySelector(Selectors.editors.types.other
+          .replace("<KEY>",key));
   }
 };
 /**
@@ -705,11 +581,6 @@ const findEditor = (key) => {
 const selectAll = (e)=>{
   // See if select all is checked
   let checked = e.target.checked;
-  /*checkboxes = document.querySelectorAll(
-      ".local-coursetranslator__checkbox"
-  );
-  */
-
 
   // Check/uncheck checkboxes
   if (checked) {

@@ -150,7 +150,7 @@ class translate_form extends moodleform {
         // Translation Input.
         $mform->addElement('html', '<div
             class="col-4 px-0 local-coursetranslator__translation"
-            data-action="local-coursetranslator/editors"
+            data-action="local-coursetranslator/editor"
             data-key="' . $key . '"
             data-table="' . $item->table . '"
             data-id="' . $item->id . '"

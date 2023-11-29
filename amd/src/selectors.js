@@ -11,11 +11,28 @@ export default {
     statuses : {
         checkedCheckBoxes : '[data-action="local-coursetranslator/checkbox"]:checked',
         updated : '[data-status="updated"]',
-        needsupdate : '[data-status="needsupdate"]'
+        needsupdate : '[data-status="needsupdate"]',
+        keys:'[data-status-key="<KEY>"',
+        successMessages:'[data-status="local-coursetranslator/success-message"][data-key="<KEY>"]'
     },
     editors:{
         textarea:'[data-action="local-coursetranslator/textarea"',
-        all:'[data-action="local-coursetranslator/editors"]',
-        contentEditable: '[data-action="local-coursetranslator/editors"] [contenteditable="true"]'
+        all:'[data-action="local-coursetranslator/editor"]',
+        contentEditable: '[data-action="local-coursetranslator/editor"] [contenteditable="true"]',
+        multiples:{
+            checkBoxesWithKey:'input[type="checkbox"][data-key="<KEY>"]',
+            editorChilds:'[data-action="local-coursetranslator/editor"][data-key="<KEY>"] > *',
+            textAreas:'[data-action="local-coursetranslator/textarea"][data-key="<KEY>"]',
+            editorsWithKey:'[data-action="local-coursetranslator/editor"][data-key="<KEY>"]',
+            contentEditableKeys:'[data-key="<KEY>"] [contenteditable="true"]'
+        },
+        types:{
+            atto:'[data-action="local-coursetranslator/editor"][data-key="<KEY>"] [contenteditable="true"]',
+            other:'[data-action="local-coursetranslator/editor"][data-key="<KEY>"] textarea[name="<KEY>[text]"]',
+            tiny:'[data-action="local-coursetranslator/editor"][data-key="<KEY>"] iframe'
+        }
+    },
+    sourcetexts:{
+        keys: '[data-sourcetext-key="<KEY>"]'
     }
 };

@@ -469,6 +469,7 @@ const switchLocale = (e) => {
  * @param {Event} e
  */
 const neededUpdate = (e)=> {
+  window.console.info("Need update toggled");
   let items = document.querySelectorAll(Selectors.statuses.needsupdate);
   if (e.target.checked) {
     items.forEach((item) => {

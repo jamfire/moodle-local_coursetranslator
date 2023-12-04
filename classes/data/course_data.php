@@ -26,7 +26,14 @@ namespace local_coursetranslator\data;
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 class course_data {
-
+    /** @var String */
+    protected $dbtable;
+    /** @var \stdClass */
+    protected $course;
+    /** @var \course_modinfo|null */
+    protected $modinfo;
+    /** @var String*/
+    protected $lang;
     /**
      * Class Construct
      *
@@ -262,14 +269,14 @@ class course_data {
         $link = null;
         switch ($table) {
             case 'course':
-                $link = "/course/edit.php?id=${id}";
+                $link = "/course/edit.php?id={$id}";
                 break;
             case 'course_sections':
-                $link = "/course/editsection.php?id=${id}";
+                $link = "/course/editsection.php?id={$id}";
                 break;
             default:
                 if ($cmid !== 0) {
-                    $link = "/course/modedit.php?update=${cmid}";
+                    $link = "/course/modedit.php?update={$cmid}";
                 }
                 break;
         }

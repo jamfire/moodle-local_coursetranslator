@@ -33,6 +33,7 @@ require_once("$CFG->dirroot/local/coursetranslator/classes/editor/MoodleQuickFor
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 class translate_form extends moodleform {
+    private mixed $lang;
 
     /**
      * Define Moodle Form

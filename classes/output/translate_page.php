@@ -32,6 +32,18 @@ use local_coursetranslator\output\translate_form;
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 class translate_page implements renderable, templatable {
+    private object $course;
+    private array $coursedata;
+    private object $mlangfilter;
+    /**
+     * @var array|false|float|int|mixed|string|null
+     */
+    private mixed $current_lang;
+    /**
+     * @var array|mixed
+     */
+    private mixed $langs;
+    private \local_coursetranslator\output\translate_form $mform;
 
     /**
      * Constructor

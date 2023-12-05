@@ -64,10 +64,35 @@ class course_data {
         $coursedata = $this->getcoursedata();
         $sectiondata = $this->getsectiondata();
         $activitydata = $this->getactivitydata();
+        /*
+         * @todo refactor to sort activity with parent sections
+         * section added to the activity items.
+         * */
+        return $this->prepareData($coursedata, $sectiondata, $activitydata);
 
-        return array_merge($coursedata, $sectiondata, $activitydata);
+        //return array_merge($coursedata, $sectiondata, $activitydata);
     }
+    /**
+     * prepare multidimentional array to re arrange textfields to match course presentation
+     */
+    private function prepareData($coursedata, $sectiondata, $activitydata)
+    {
+        $tab = ['0'=>['section'=>$coursedata,'activities'=>[]]];
+        //$cd = $coursedata;
+        foreach ($sectiondata as $k=>$v ){
+            $tab[$v->id] = ['section'=>[$v],'activities'=>[]];
+        }
+        foreach ($activitydata as $ak=>$av){
+            // if the section is not found place it under the course data as general intro
+            $sectionid = isset($tab[$av->section])? $av->section : "0";
+            $tab[$sectionid]['activities'][$av->id] = $av;
+        }
+        //$sd = $sectiondata;
+        //$ad = $activitydata;
 
+        //return array_merge($coursedata, $sectiondata, $activitydata);
+        return $tab;
+    }
     /**
      * Get Course Data
      *
@@ -137,7 +162,8 @@ class course_data {
                         0,
                         $activity->modname,
                         'name',
-                        $activity->id
+                        $activity->id,
+                            $activity->section
                     );
                     array_push($activitydata, $data);
                 }
@@ -150,7 +176,8 @@ class course_data {
                         $record->introformat,
                         $activity->modname,
                         'intro',
-                        $activity->id
+                        $activity->id,
+                            $activity->section
                     );
                     array_push($activitydata, $data);
                 }
@@ -163,7 +190,8 @@ class course_data {
                         $record->contentformat,
                         $activity->modname,
                         'content',
-                        $activity->id
+                        $activity->id,
+                            $activity->section
                     );
                     array_push($activitydata, $data);
                 }
@@ -175,7 +203,8 @@ class course_data {
                         $record->page_after_submitformat,
                         $activity->modname,
                         'page_after_submit',
-                        $activity->id
+                        $activity->id,
+                            $activity->section
                     );
                     array_push($activitydata, $data);
                 }
@@ -187,7 +216,8 @@ class course_data {
                         $record->instructauthorsformat,
                         $activity->modname,
                         'instructauthors',
-                        $activity->id
+                        $activity->id,
+                            $activity->section
                     );
                     array_push($activitydata, $data);
                 }
@@ -199,7 +229,8 @@ class course_data {
                         $record->instructreviewersformat,
                         $activity->modname,
                         'instructreviewers',
-                        $activity->id
+                        $activity->id,
+                            $activity->section
                     );
                     array_push($activitydata, $data);
                 }
@@ -220,7 +251,7 @@ class course_data {
      * @param integer $cmid
      * @return \stdClass
      */
-    private function build_data($id, $text, $format, $table, $field, $cmid = null) {
+    private function build_data($id, $text, $format, $table, $field, $cmid = null, $sectionId= null) {
         global $DB;
 
         // Build db params.
@@ -252,6 +283,7 @@ class course_data {
         $item->field = $field;
         $item->link = $this->link_builder($id, $table, $cmid);
         $item->tneeded = $record->s_lastmodified >= $record->t_lastmodified;
+        $item->section = $sectionId;
 
         return $item;
     }

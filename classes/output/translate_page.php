@@ -106,27 +106,39 @@ class translate_page implements renderable, templatable {
         $wordcount = 0;
         $charcountspaces = 0;
         $spaces = 0;
-        foreach ($this->coursedata as $item) {
-            $text = $this->mlangfilter->filter($item->text);
 
-            // Get the wordcount.
-            $wcwords = strip_tags($text);
-            $wordcount = $wordcount + str_word_count($wcwords);
-
-            // Get the character count with spaces.
-            $cswords = strip_tags($text);
-            $charcountspaces = $charcountspaces + strlen($cswords);
-
-            // Get the character count without spaces.
-            $ccwords = strip_tags($text);
-            $spaces = $spaces + array_key_last(preg_split('/\s+/', $ccwords));
+        foreach ($this->coursedata as $section){
+            // count for each section's headers
+            foreach ($section['section'] as $s){
+                $this->computeWordcount($s->text, $wordcount, $spaces, $charcountspaces);
+            }
+            // count for each section's activites
+            foreach ($section['activities'] as $a){
+                $this->computeWordcount($a->text, $wordcount, $spaces, $charcountspaces);
+            }
         }
-
         // Set word and character counts to data.
         $data->wordcount = $wordcount;
         $data->charcountspaces = $charcountspaces;
         $data->charcount = $charcountspaces - $spaces;
 
         return $data;
+    }
+    /**
+     * compute word, spaces and character's count for a single text
+     * @param $text
+     * @param $wc Wordcount ref
+     * @param $sc Spaces count ref
+     * @param $csc Char count including sapecs ref
+     * @return void
+     */
+    private function computeWordcount($text, &$wc, &$sc, &$csc){
+        $tagsStriped = strip_tags($text);
+        // Get the wordcount.
+        $wc = $wc + str_word_count($tagsStriped);
+        // Get the character count with spaces.
+        $csc = $csc + strlen($tagsStriped);
+        // Get the character count without spaces.
+        $sc = $sc + array_key_last(preg_split('/\s+/', $tagsStriped));
     }
 }

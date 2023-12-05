@@ -61,8 +61,20 @@ class translate_form extends moodleform {
         $mform->addElement('html', '<div class="container-fluid local-coursetranslator__form">');
 
         // Loop through course data to build form.
-        foreach ($coursedata as $item) {
-            $this->get_formrow($mform, $item);
+        $sectioncount = 1;
+        foreach ($coursedata as $section){
+            // Loop section's headers
+            $mform->addElement('html', "<h3>Section $sectioncount</h3>");
+            //$mform->addElement('html', "<em>$sectioncount</em>");
+            foreach ($section['section'] as $s){
+                $this->get_formrow($mform, $s);
+            }
+            // loop section's activites
+            foreach ($section['activities'] as $a){
+
+                $this->get_formrow($mform, $a);
+            }
+            $sectioncount++;
         }
 
         // Close form.
@@ -84,7 +96,9 @@ class translate_form extends moodleform {
         // Build a key for js interaction.
         $key = "$item->table[$item->id][$item->field]";
         $keyid = "{$item->table}-{$item->id}-{$item->field}";
-
+        /**
+         * @todo check the need update status
+         */
         // Data status.
         $status = $item->tneeded ? 'needsupdate' : 'updated';
 

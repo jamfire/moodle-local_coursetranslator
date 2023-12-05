@@ -21,7 +21,7 @@
 // import libs
 import ajax from "core/ajax";
 import Selectors from "./selectors";
-
+// Initialize the temporary translations dictionary @todo make external class
 let tempTranslations = {};
 let editorType = '';
 let config = {};
@@ -62,7 +62,7 @@ export const init = (cfg) => {
   config = cfg;
   // Window.console.log(config.userPrefs);
   editorType = config.userPrefs;
-  // Initialize the temporary translations dictionary @todo make external class
+
   registerUI();
   registerEventListeners();
   /**

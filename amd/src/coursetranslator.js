@@ -21,16 +21,21 @@
 // import libs
 import ajax from "core/ajax";
 import Selectors from "./selectors";
+import Modal from 'core/modal';
 // Initialize the temporary translations dictionary @todo make external class
 let tempTranslations = {};
 let editorType = '';
 let config = {};
 let autotranslateButton = {};
 let checkboxes = [];
+
 const registerEventListeners = ()=>{
   document.addEventListener('change', e=>{
-    if (e.target.closest(Selectors.actions.localeSwitcher)) {
-      switchLocale(e);
+    if (e.target.closest(Selectors.actions.targetSwitcher)) {
+      switchTarget(e);
+    }
+    if (e.target.closest(Selectors.actions.sourceSwitcher)) {
+      switchSource(e);
     }
     if (e.target.closest(Selectors.actions.showUpdated)) {
       showUpdated(e);
@@ -41,7 +46,16 @@ const registerEventListeners = ()=>{
   });
   document.addEventListener('click', e=>{
     if (e.target.closest(Selectors.actions.autoTranslateBtn)) {
-      doAutotranslate(e);
+      if(config.currentlang == config.lang || config.lang == undefined){
+        Modal.create({
+          title: 'Cannot call deepl',
+          body: `<p>Both languges are the same {$config.lang}</p>`,
+          show: true,
+          removeOnClose: true,
+        });
+      }else{
+        doAutotranslate(e);
+      }
     }
     if (e.target.closest(Selectors.actions.selecAllBtn)) {
       selectAll(e);
@@ -65,6 +79,7 @@ export const init = (cfg) => {
 
   registerUI();
   registerEventListeners();
+
   /**
    * Convert a template string into HTML DOM nodes
    * @param  {String} string The template string
@@ -182,10 +197,10 @@ export const init = (cfg) => {
   /*const checkboxes = document.querySelectorAll(
     ".local-coursetranslator__checkbox"
   );*/
-  window.console.log(config, config.autotranslate, checkboxes);
+  //window.console.log(config, config.autotranslate, checkboxes);
   if (config.autotranslate) {
     checkboxes.forEach((e) => {
-      window.console.log(e);
+      //window.console.log(e);
       e.disabled = false;
     });
   }
@@ -204,8 +219,10 @@ export const init = (cfg) => {
    * @todo 3rd param is to refactor remove as it is the editors content
    */
   const saveTranslation = (key, editor, text) => {
+
     // Get processing vars
-    let element = editor.closest(".local-coursetranslator__editor");
+    // let element = editor.closest(".local-coursetranslator__editor");
+    let element = editor;
     let id = element.getAttribute("data-id");
     let tid = element.getAttribute("data-tid");
     let table = element.getAttribute("data-table");
@@ -246,7 +263,7 @@ export const init = (cfg) => {
             tdata.table = table;
             tdata.field = field;
             tdata.text = updatedtext;
-
+            window.console.log(tdata);
             // Success Message
             const successMessage = () => {
               editor.classList.add("local-coursetranslator__success");
@@ -456,20 +473,36 @@ const showUpdated = (e) =>{
  * Event listener to switch target lang
  * @param {Event} e
  */
-const switchLocale = (e) => {
+const switchTarget = (e) => {
+  window.console.info('switchTarget');
   let url = new URL(window.location.href);
   let searchParams = url.searchParams;
-  searchParams.set("course_lang", e.target.value);
+  searchParams.set("target_lang", e.target.value);
   let newUrl = url.toString();
   window.location = newUrl;
 };
-
+/**
+ * Event listener to switch source lang
+ * Hence reload the page and change the site main lang
+ * @param {Event} e
+ */
+const switchSource = (e) => {
+  window.console.info('switchSource');
+  let url = new URL(window.location.href);
+  let searchParams = url.searchParams;
+  searchParams.set("lang", e.target.value);
+  let newUrl = url.toString();
+  window.location = newUrl;
+};
 /**
  * Event listener to check if update are needed
  * @param {Event} e
  */
 const neededUpdate = (e)=> {
   window.console.info("Need update toggled");
+  window.console.info("source_lang", config.currentlang);
+  window.console.info("target_lang", config.lang);
+
   let items = document.querySelectorAll(Selectors.statuses.needsupdate);
   if (e.target.checked) {
     items.forEach((item) => {
@@ -484,6 +517,7 @@ const neededUpdate = (e)=> {
 
 /**
  * Launch autotranslation
+ * @todo should do in call to the API
  */
 const doAutotranslate = () => {
   document
@@ -517,14 +551,22 @@ const getTranslation = (key) => {
   let formData = new FormData();
   formData.append("text", sourceText);
   // FormData.append("source_lang", "en");
-  formData.append("source_lang", config.currentlang);
-  formData.append("target_lang", config.lang);
-  formData.append("preserve_formatting", 1);
+  formData.append("source_lang", config.currentlang.toUpperCase());
+  formData.append("target_lang", config.lang.toUpperCase());
   formData.append("auth_key", config.apikey);
-  formData.append("tag_handling", "xml");
-  formData.append("split_sentences", "nonewlines");
+  formData.append("tag_handling", document.querySelector(Selectors.deepl.tag_handling).checked?'html': 'xml');//
+  formData.append("context", document.querySelector(Selectors.deepl.context).value??null); //
+  formData.append("split_sentences", document.querySelector(Selectors.deepl.split_sentences).value);//
+  formData.append("preserve_formatting", document.querySelector(Selectors.deepl.preserve_formatting).checked);//
+  formData.append("formality", document.querySelector(Selectors.deepl.formality).value);//
+  formData.append("glossary_id", document.querySelector(Selectors.deepl.glossary_id).value);//
+  formData.append("outline_detection", document.querySelector(Selectors.deepl.outline_detection).checked);//
+  formData.append("non_splitting_tags", toJsonArray(document.querySelector(Selectors.deepl.non_splitting_tags).value));
+  formData.append("splitting_tags", toJsonArray(document.querySelector(Selectors.deepl.splitting_tags).value));
+  formData.append("ignore_tags", toJsonArray(document.querySelector(Selectors.deepl.ignore_tags).value));
+
   // Window.console.log(config.currentlang);
-  // window.console.log("Send deepl:", formData);
+   window.console.log("Send deepl:", formData);
   // Update the translation
   let xhr = new XMLHttpRequest();
   xhr.onreadystatechange = () => {
@@ -548,8 +590,8 @@ const getTranslation = (key) => {
       }
     }
   };
-  xhr.open("POST", config.deeplurl);
-  xhr.send(formData);
+   xhr.open("POST", config.deeplurl);
+   xhr.send(formData);
 };
 /**
  * Get the editor container based on recieved current user's
@@ -611,4 +653,7 @@ const toggleAutotranslateButton = () => {
   } else {
     autotranslateButton.disabled = true;
   }
+};
+const toJsonArray = (s, sep=",") => {
+  return JSON.stringify(s.split(sep));
 };

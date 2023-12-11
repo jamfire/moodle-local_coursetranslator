@@ -42,12 +42,12 @@ $string['useautotranslate_desc'] = 'Enable autotranslate on the translation page
 $string['supported_languages'] = 'bg,cs,da,de,el,en,es,et,fi,fr,hu,it,ja,lt,lv,nl,pl,pt,ro,ru,sk,sl,sv,zh'; // Do not change between translations.
 
 // Template strings.
-$string['t_select_target_language'] = 'Select {mlang} Language';
+$string['t_select_target_language'] = 'Select target language {mlang XX}';
 $string['t_word_count'] = 'Word Count: {$a}';
 $string['t_char_count'] = 'Character Count: {$a}';
 $string['t_char_count_spaces'] = 'Character Count with Spaces: {$a}';
 $string['t_autotranslate'] = 'Autotranslate';
-$string['t_source_text'] = 'Source Text';
+$string['t_source_text'] = 'Source Text :';
 $string['t_translation'] = 'Translation: {$a}';
 $string['t_autosaved'] = 'Autosaved';
 $string['t_selectall'] = 'Select All';

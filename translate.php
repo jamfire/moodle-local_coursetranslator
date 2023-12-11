@@ -35,7 +35,7 @@ require_once($CFG->dirroot. '/lib/editorlib.php');
 
 // Needed vars for processing.
 $courseid = required_param('course_id', PARAM_INT);
-$lang = optional_param('course_lang', 'other', PARAM_NOTAGS);
+$lang = optional_param('target_lang', 'other', PARAM_NOTAGS);
 $course = $DB->get_record('course', array('id' => $courseid), '*', MUST_EXIST);
 
 // Setup page.

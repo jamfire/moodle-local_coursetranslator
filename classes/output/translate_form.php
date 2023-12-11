@@ -16,6 +16,8 @@
 
 namespace local_coursetranslator\output;
 
+global $CFG;
+
 use moodleform;
 
 // Load the files we're going to need.
@@ -33,7 +35,8 @@ require_once("$CFG->dirroot/local/coursetranslator/classes/editor/MoodleQuickFor
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 class translate_form extends moodleform {
-    private mixed $lang;
+    private mixed $target_lang;
+    private mixed $current_lang;
 
     /**
      * Define Moodle Form
@@ -46,7 +49,8 @@ class translate_form extends moodleform {
         // Get course data.
         $course = $this->_customdata['course'];
         $coursedata = $this->_customdata['coursedata'];
-        $this->lang = $this->_customdata['lang'];
+        $this->target_lang = $this->_customdata['target_lang'];
+        $this->current_lang = $this->_customdata['current_lang'];
 
         // Start moodle form.
         $mform = $this->_form;
@@ -63,9 +67,9 @@ class translate_form extends moodleform {
         // Loop through course data to build form.
         $sectioncount = 1;
         foreach ($coursedata as $section){
+            /** @todo better UI */
             // Loop section's headers
             $mform->addElement('html', "<h3>Section $sectioncount</h3>");
-            //$mform->addElement('html', "<em>$sectioncount</em>");
             foreach ($section['section'] as $s){
                 $this->get_formrow($mform, $s);
             }
@@ -97,7 +101,7 @@ class translate_form extends moodleform {
         $key = "$item->table[$item->id][$item->field]";
         $keyid = "{$item->table}-{$item->id}-{$item->field}";
         /**
-         * @todo check the need update status
+         * @todo check the need update status (seems phishy...)
          */
         // Data status.
         $status = $item->tneeded ? 'needsupdate' : 'updated';

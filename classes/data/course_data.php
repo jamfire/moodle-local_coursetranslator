@@ -16,6 +16,8 @@
 
 namespace local_coursetranslator\data;
 
+use core\context;
+
 /**
  * Course Data Processor
  *
@@ -34,19 +36,22 @@ class course_data {
     protected $modinfo;
     /** @var String*/
     protected $lang;
+    /** @var String */
+    protected $contextid;
     /**
      * Class Construct
      *
      * @param \stdClass $course
      * @param string $lang
      */
-    public function __construct(\stdClass $course, string $lang) {
+    public function __construct(\stdClass $course, string $lang, $contextid) {
         // Set db table.
         $this->dbtable = 'local_coursetranslator';
 
         // Set course.
         $this->course = $course;
-
+        // Get the context
+        $this->contextid = $contextid;
         // Set modinfo.
         $modinfo = get_fast_modinfo($course);
         $this->modinfo = $modinfo;
@@ -277,7 +282,7 @@ class course_data {
         $item = new \stdClass();
         $item->id = $id;
         $item->tid = $record->id;
-        $item->text = $text;
+        $item->text = $this->getFileURL($text, $this->getItemId($id, $table, $cmid), $table, $field);
         $item->format = intval($format);
         $item->table = $table;
         $item->field = $field;
@@ -314,5 +319,23 @@ class course_data {
         }
 
         return $link;
+    }
+    function getItemId($id, $table, $cmid = 0){
+        $i = 0;
+        switch($table){
+            case 'course':
+            case 'course_sections':
+                $i = $id;
+            default : $i = $cmid;
+        }
+        return $i;
+    }
+    /**
+     *
+     * @param string $text
+     * @return void
+     */
+    private function getFileURL(string $text, $itemId, $component, $area) {
+       return file_rewrite_pluginfile_urls($text, 'pluginfile.php',$this->contextid, $component, $area, $itemId);
     }
 }

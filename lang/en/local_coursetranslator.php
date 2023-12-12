@@ -56,5 +56,5 @@ $string['t_other'] = 'Other (other)';
 $string['t_multiplemlang'] = 'This field is using advanced {mlang} usage. Please edit translation using standard Moodle editor or simplify to a single mlang tag per language.';
 $string['t_needsupdate'] = 'Update Needed';
 $string['t_uptodate'] = 'Updated';
-$string['t_edit'] = 'Edit';
+$string['t_edit'] = 'Edit in place';
 $string['t_viewsource'] = 'View Source';

@@ -262,7 +262,6 @@ export const init = (cfg) => {
             tdata.table = table;
             tdata.field = field;
             tdata.text = updatedtext;
-            window.console.log(tdata);
             // Success Message
             const successMessage = () => {
               editor.classList.add("local-coursetranslator__success");

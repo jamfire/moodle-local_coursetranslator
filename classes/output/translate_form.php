@@ -92,7 +92,7 @@ class translate_form extends moodleform {
      * @param \stdClass $item
      * @return void
      */
-    private function get_formrow(\MoodleQuickForm $mform, \stdClass $item) {
+    private function get_formrow(\MoodleQuickForm $mform, \stdClass $item, $cssClass="") {
 
         // Get mlangfilter to filter text.
         $mlangfilter = $this->_customdata['mlangfilter'];
@@ -108,8 +108,8 @@ class translate_form extends moodleform {
 
         // Open translation item.
         $mform->addElement(
-            'html',
-            '<div class="row align-items-start border-bottom py-3" data-row-id="' . $key . '" data-status="' . $status . '">'
+            'html', "<div class='$cssClass row align-items-start border-bottom py-3' data-row-id='$key' data-status='$status'>"
+            //'html', '<div class='row align-items-start border-bottom py-3' data-row-id='$key' data-status='$status">"
         );
 
         // First column.

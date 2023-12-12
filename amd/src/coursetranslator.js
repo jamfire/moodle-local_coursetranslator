@@ -221,8 +221,7 @@ export const init = (cfg) => {
   const saveTranslation = (key, editor, text) => {
 
     // Get processing vars
-    // let element = editor.closest(".local-coursetranslator__editor");
-    let element = editor;
+    let element = editor.closest(Selectors.editors.all);
     let id = element.getAttribute("data-id");
     let tid = element.getAttribute("data-tid");
     let table = element.getAttribute("data-table");

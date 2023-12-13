@@ -16,6 +16,8 @@
 
 namespace local_coursetranslator\data;
 
+use core\context;
+
 /**
  * Course Data Processor
  *
@@ -26,20 +28,30 @@ namespace local_coursetranslator\data;
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 class course_data {
-
+    /** @var String */
+    protected $dbtable;
+    /** @var \stdClass */
+    protected $course;
+    /** @var \course_modinfo|null */
+    protected $modinfo;
+    /** @var String*/
+    protected $lang;
+    /** @var String */
+    protected $contextid;
     /**
      * Class Construct
      *
      * @param \stdClass $course
      * @param string $lang
      */
-    public function __construct(\stdClass $course, string $lang) {
+    public function __construct(\stdClass $course, string $lang, $contextid) {
         // Set db table.
         $this->dbtable = 'local_coursetranslator';
 
         // Set course.
         $this->course = $course;
-
+        // Get the context
+        $this->contextid = $contextid;
         // Set modinfo.
         $modinfo = get_fast_modinfo($course);
         $this->modinfo = $modinfo;
@@ -57,10 +69,35 @@ class course_data {
         $coursedata = $this->getcoursedata();
         $sectiondata = $this->getsectiondata();
         $activitydata = $this->getactivitydata();
+        /*
+         * @todo refactor to sort activity with parent sections
+         * section added to the activity items.
+         * */
+        return $this->prepareData($coursedata, $sectiondata, $activitydata);
 
-        return array_merge($coursedata, $sectiondata, $activitydata);
+        //return array_merge($coursedata, $sectiondata, $activitydata);
     }
+    /**
+     * prepare multidimentional array to re arrange textfields to match course presentation
+     */
+    private function prepareData($coursedata, $sectiondata, $activitydata)
+    {
+        $tab = ['0'=>['section'=>$coursedata,'activities'=>[]]];
+        //$cd = $coursedata;
+        foreach ($sectiondata as $k=>$v ){
+            $tab[$v->id] = ['section'=>[$v],'activities'=>[]];
+        }
+        foreach ($activitydata as $ak=>$av){
+            // if the section is not found place it under the course data as general intro
+            $sectionid = isset($tab[$av->section])? $av->section : "0";
+            $tab[$sectionid]['activities'][$av->id] = $av;
+        }
+        //$sd = $sectiondata;
+        //$ad = $activitydata;
 
+        //return array_merge($coursedata, $sectiondata, $activitydata);
+        return $tab;
+    }
     /**
      * Get Course Data
      *
@@ -130,7 +167,8 @@ class course_data {
                         0,
                         $activity->modname,
                         'name',
-                        $activity->id
+                        $activity->id,
+                            $activity->section
                     );
                     array_push($activitydata, $data);
                 }
@@ -143,7 +181,8 @@ class course_data {
                         $record->introformat,
                         $activity->modname,
                         'intro',
-                        $activity->id
+                        $activity->id,
+                            $activity->section
                     );
                     array_push($activitydata, $data);
                 }
@@ -156,7 +195,8 @@ class course_data {
                         $record->contentformat,
                         $activity->modname,
                         'content',
-                        $activity->id
+                        $activity->id,
+                            $activity->section
                     );
                     array_push($activitydata, $data);
                 }
@@ -168,7 +208,8 @@ class course_data {
                         $record->page_after_submitformat,
                         $activity->modname,
                         'page_after_submit',
-                        $activity->id
+                        $activity->id,
+                            $activity->section
                     );
                     array_push($activitydata, $data);
                 }
@@ -180,7 +221,8 @@ class course_data {
                         $record->instructauthorsformat,
                         $activity->modname,
                         'instructauthors',
-                        $activity->id
+                        $activity->id,
+                            $activity->section
                     );
                     array_push($activitydata, $data);
                 }
@@ -192,7 +234,8 @@ class course_data {
                         $record->instructreviewersformat,
                         $activity->modname,
                         'instructreviewers',
-                        $activity->id
+                        $activity->id,
+                            $activity->section
                     );
                     array_push($activitydata, $data);
                 }
@@ -213,7 +256,7 @@ class course_data {
      * @param integer $cmid
      * @return \stdClass
      */
-    private function build_data($id, $text, $format, $table, $field, $cmid = null) {
+    private function build_data($id, $text, $format, $table, $field, $cmid = null, $sectionId= null) {
         global $DB;
 
         // Build db params.
@@ -239,12 +282,15 @@ class course_data {
         $item = new \stdClass();
         $item->id = $id;
         $item->tid = $record->id;
+
+        $item->displaytext = $this->getFileURL($text, $this->getItemId($id, $table, $cmid), $table, $field);
         $item->text = $text;
         $item->format = intval($format);
         $item->table = $table;
         $item->field = $field;
         $item->link = $this->link_builder($id, $table, $cmid);
         $item->tneeded = $record->s_lastmodified >= $record->t_lastmodified;
+        $item->section = $sectionId;
 
         return $item;
     }
@@ -262,18 +308,36 @@ class course_data {
         $link = null;
         switch ($table) {
             case 'course':
-                $link = "/course/edit.php?id=${id}";
+                $link = "/course/edit.php?id={$id}";
                 break;
             case 'course_sections':
-                $link = "/course/editsection.php?id=${id}";
+                $link = "/course/editsection.php?id={$id}";
                 break;
             default:
                 if ($cmid !== 0) {
-                    $link = "/course/modedit.php?update=${cmid}";
+                    $link = "/course/modedit.php?update={$cmid}";
                 }
                 break;
         }
 
         return $link;
+    }
+    function getItemId($id, $table, $cmid = 0){
+        $i = 0;
+        switch($table){
+            case 'course':
+            case 'course_sections':
+                $i = $id;
+            default : $i = $cmid;
+        }
+        return $i;
+    }
+    /**
+     * @todo refactor to use in preview
+     * @param string $text
+     * @return void
+     */
+    private function getFileURL(string $text, $itemId, $component, $area) {
+       return file_rewrite_pluginfile_urls($text, 'pluginfile.php',$this->contextid, $component, $area, $itemId);
     }
 }

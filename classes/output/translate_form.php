@@ -16,6 +16,8 @@
 
 namespace local_coursetranslator\output;
 
+global $CFG;
+
 use moodleform;
 
 // Load the files we're going to need.
@@ -33,6 +35,8 @@ require_once("$CFG->dirroot/local/coursetranslator/classes/editor/MoodleQuickFor
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 class translate_form extends moodleform {
+    private mixed $target_lang;
+    private mixed $current_lang;
 
     /**
      * Define Moodle Form
@@ -45,7 +49,8 @@ class translate_form extends moodleform {
         // Get course data.
         $course = $this->_customdata['course'];
         $coursedata = $this->_customdata['coursedata'];
-        $this->lang = $this->_customdata['lang'];
+        $this->target_lang = $this->_customdata['target_lang'];
+        $this->current_lang = $this->_customdata['current_lang'];
 
         // Start moodle form.
         $mform = $this->_form;
@@ -60,8 +65,20 @@ class translate_form extends moodleform {
         $mform->addElement('html', '<div class="container-fluid local-coursetranslator__form">');
 
         // Loop through course data to build form.
-        foreach ($coursedata as $item) {
-            $this->get_formrow($mform, $item);
+        $sectioncount = 1;
+        foreach ($coursedata as $section){
+            /** @todo better UI */
+            // Loop section's headers
+            $mform->addElement('html', "<h3>Section $sectioncount</h3>");
+            foreach ($section['section'] as $s){
+                $this->get_formrow($mform, $s);
+            }
+            // loop section's activites
+            foreach ($section['activities'] as $a){
+
+                $this->get_formrow($mform, $a);
+            }
+            $sectioncount++;
         }
 
         // Close form.
@@ -75,7 +92,7 @@ class translate_form extends moodleform {
      * @param \stdClass $item
      * @return void
      */
-    private function get_formrow(\MoodleQuickForm $mform, \stdClass $item) {
+    private function get_formrow(\MoodleQuickForm $mform, \stdClass $item, $cssClass="") {
 
         // Get mlangfilter to filter text.
         $mlangfilter = $this->_customdata['mlangfilter'];
@@ -83,14 +100,16 @@ class translate_form extends moodleform {
         // Build a key for js interaction.
         $key = "$item->table[$item->id][$item->field]";
         $keyid = "{$item->table}-{$item->id}-{$item->field}";
-
+        /**
+         * @todo check the need update status (seems phishy...)
+         */
         // Data status.
         $status = $item->tneeded ? 'needsupdate' : 'updated';
 
         // Open translation item.
         $mform->addElement(
-            'html',
-            '<div class="row align-items-start border-bottom py-3" data-row-id="' . $key . '" data-status="' . $status . '">'
+            'html', "<div class='$cssClass row align-items-start border-bottom py-3' data-row-id='$key' data-status='$status'>"
+            //'html', '<div class='row align-items-start border-bottom py-3' data-row-id='$key' data-status='$status">"
         );
 
         // First column.
@@ -129,7 +148,11 @@ class translate_form extends moodleform {
             class="col-5 px-0 pr-5 local-coursetranslator__source-text"
             data-key="' . $key . '"
         >');
-        $mform->addElement('html', '<div data-sourcetext-key="' . $key . '">' . $mlangfilter->filter($item->text) . '</div>');
+
+        $mform->addElement('html', '<div data-sourcetext-key="' . $key . '"
+                data-sourcetext-raw="'.htmlentities($mlangfilter->filter($item->text)). '">' .
+                $mlangfilter->filter($item->displaytext) .
+                '</div>');
         $mform->addElement('html', '<div>');
 
         $mform->addElement('html', '<div class="collapse" id="' . $keyid . '">');
@@ -146,7 +169,9 @@ class translate_form extends moodleform {
         $mform->addElement('html', '</div>');
         $mform->addElement('html', '</div>');
         $mform->addElement('html', '</div>');
-
+        /**
+         * @todo style editor content to highlight images ALT text
+         */
         // Translation Input.
         $mform->addElement('html', '<div
             class="col-4 px-0 local-coursetranslator__translation"

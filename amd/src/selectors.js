@@ -4,7 +4,8 @@ export default {
         checkBoxes:'[data-action="local-coursetranslator/checkbox"]',
         selecAllBtn:'[data-action="local-coursetranslator/select-all"]',
         autoTranslateBtn:'[data-action="local-coursetranslator/autotranslate-btn"]',
-        localeSwitcher:'[data-action="local-coursetranslator/localeswitcher"]',
+        targetSwitcher:'[data-action="local-coursetranslator/target-switcher"]',
+        sourceSwitcher:'[data-action="local-coursetranslator/source-switcher"]',
         showNeedUpdate:'[data-action="local-coursetranslator/show-needsupdate"]',
         showUpdated:'[data-action="local-coursetranslator/show-updated"]'
     },
@@ -33,6 +34,19 @@ export default {
         }
     },
     sourcetexts:{
+        /*keys: '[data-sourcetext-key="<KEY>"]',*/
         keys: '[data-sourcetext-key="<KEY>"]'
+    },
+    deepl:{
+        context: '[data-id="local-coursetranslator/context"]',
+        non_splitting_tags: '[data-id="local-coursetranslator/non_splitting_tags"]',
+        splitting_tags: '[data-id="local-coursetranslator/splitting_tags"]',
+        ignore_tags: '[data-id="local-coursetranslator/ignore_tags"]',
+        preserve_formatting: '[data-id="local-coursetranslator/preserve_formatting"]',
+        formality: '[data-id="local-coursetranslator/formality"]',
+        glossary_id: '[data-id="local-coursetranslator/glossary_id"]',
+        tag_handling: '[data-id="local-coursetranslator/tag_handling"]',
+        outline_detection: '[data-id="local-coursetranslator/outline_detection"]',
+        split_sentences: 'input[name="local-coursetranslator/split_sentences"]'
     }
 };

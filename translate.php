@@ -35,7 +35,7 @@ require_once($CFG->dirroot. '/lib/editorlib.php');
 
 // Needed vars for processing.
 $courseid = required_param('course_id', PARAM_INT);
-$lang = optional_param('course_lang', 'other', PARAM_NOTAGS);
+$lang = optional_param('target_lang', 'other', PARAM_NOTAGS);
 $course = $DB->get_record('course', array('id' => $courseid), '*', MUST_EXIST);
 
 // Setup page.
@@ -103,7 +103,7 @@ echo $output->header();
 echo $output->heading($mlangfilter->filter($course->fullname));
 
 // Output translation grid.
-$coursedata = new \local_coursetranslator\data\course_data($course, $lang);
+$coursedata = new \local_coursetranslator\data\course_data($course, $lang, $context->id);
 $renderable = new \local_coursetranslator\output\translate_page($course, $coursedata->getdata(), $mlangfilter);
 echo $output->render($renderable, $course);
 

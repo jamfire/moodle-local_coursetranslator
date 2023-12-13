@@ -36,7 +36,9 @@ function local_coursetranslator_extend_navigation_course($navigation, $course) {
     $lang = current_language();
 
     // Build a moodle url.
-    $url = new moodle_url("/local/coursetranslator/translate.php?course_id=$course->id&course_lang=other");
+
+    //$url = new moodle_url("/local/coursetranslator/translate.php?course_id=$course->id&course_lang=other");
+    $url = new moodle_url("/local/coursetranslator/translate.php?course_id=$course->id&lang=$lang");
 
     // Get title of translate page for navigation menu.
     $title = get_string('pluginname', 'local_coursetranslator');
@@ -52,4 +54,3 @@ function local_coursetranslator_extend_navigation_course($navigation, $course) {
     );
     $navigation->add_node($translatecontent);
 }
-

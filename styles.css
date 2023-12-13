@@ -28,11 +28,11 @@ along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 }
 
 /* editor tweaks */
-.local-coursetranslator__translation .local-coursetranslator__editor,
+.local-coursetranslator__translation [data-action="local-coursetranslator/editor"],
 .local-coursetranslator__translation [data-fieldtype="editor"] {
     width: 100%;
 }
-.local-coursetranslator__translation textarea.local-coursetranslator__editor {
+.local-coursetranslator__translation textarea[data-action="local-coursetranslator/editor"] {
     width: 100%;
     min-height: 300px;
 }
@@ -48,7 +48,7 @@ along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 .local-coursetranslator__success {
     background: #e3fadc;
 }
-.local-coursetranslator__success-message {
+[data-status="local-coursetranslator/success-message"] {
     background: #b4fa9f;
     font-size: 0.6rem;
     text-transform: uppercase;

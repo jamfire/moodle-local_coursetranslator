@@ -46,14 +46,14 @@ const registerEventListeners = ()=>{
   });
   document.addEventListener('click', e=>{
     if (e.target.closest(Selectors.actions.autoTranslateBtn)) {
-      if(config.currentlang == config.lang || config.lang == undefined){
+      if (config.currentlang == config.lang || config.lang == undefined) {
         Modal.create({
           title: 'Cannot call deepl',
           body: `<p>Both languges are the same {$config.lang}</p>`,
           show: true,
           removeOnClose: true,
         });
-      }else{
+      } else {
         doAutotranslate(e);
       }
     }
@@ -74,7 +74,7 @@ const registerUI = ()=>{
  */
 export const init = (cfg) => {
   config = cfg;
-  // Window.console.log(config.userPrefs);
+  window.console.log(config);
   editorType = config.userPrefs;
 
   registerUI();
@@ -175,6 +175,7 @@ export const init = (cfg) => {
     // Get the stored data and do the saving from editors content
     e.addEventListener('click', (e)=> {
       let key = e.target.parentElement.dataset.keyValidator;
+      //window.console.log(key, "save");
       if (tempTranslations[key] === null || tempTranslations[key] === undefined) {
         /**
          * @todo do a UI feedback (disable save )
@@ -194,13 +195,13 @@ export const init = (cfg) => {
   /**
    * Autotranslate Checkboxes
    */
-  /*const checkboxes = document.querySelectorAll(
+  /* const checkboxes = document.querySelectorAll(
     ".local-coursetranslator__checkbox"
   );*/
-  //window.console.log(config, config.autotranslate, checkboxes);
+  // window.console.log(config, config.autotranslate, checkboxes);
   if (config.autotranslate) {
     checkboxes.forEach((e) => {
-      //window.console.log(e);
+      // Window.console.log(e);
       e.disabled = false;
     });
   }
@@ -219,9 +220,13 @@ export const init = (cfg) => {
    * @todo 3rd param is to refactor remove as it is the editors content
    */
   const saveTranslation = (key, editor, text) => {
-
+    window.console.log(key);
     // Get processing vars
-    let element = editor.closest(Selectors.editors.all);
+    //let element = editor.closest(Selectors.editors.all);
+    let selector =Selectors.editors.multiples.editorsWithKey.replace("<KEY>", key);
+    window.console.log(selector);
+    window.console.log(document.querySelector(selector));
+    let element = document.querySelector(selector);
     let id = element.getAttribute("data-id");
     let tid = element.getAttribute("data-tid");
     let table = element.getAttribute("data-table");
@@ -242,6 +247,7 @@ export const init = (cfg) => {
           data: [fielddata],
         },
         done: (data) => {
+          window.console.log(data);
           // The latests field text so multiple translators can work at the same time
           let fieldtext = data[0].text;
 
@@ -264,7 +270,9 @@ export const init = (cfg) => {
             tdata.text = updatedtext;
             // Success Message
             const successMessage = () => {
-              editor.classList.add("local-coursetranslator__success");
+              /** @todo simplify by just changing the css rather than messing up with the makup*/
+              //editor.classList.add("local-coursetranslator__success");
+              element.classList.add("local-coursetranslator__success");
               // Add saved indicator
               let indicator =
                 `<div 
@@ -272,11 +280,11 @@ export const init = (cfg) => {
                    data-status="local-coursetranslator/success-message" 
                    data-key="${key}"
                  >${config.autosavedmsg}</div>`;
-              editor.after(...stringToHTML(indicator));
+              element.after(...stringToHTML(indicator));
 
               let status = document.querySelector(
                   Selectors.statuses.keys
-                      .replace("<KEY>",key));
+                      .replace("<KEY>", key));
               status.classList.replace("badge-danger", "badge-success");
               status.innerHTML = config.uptodate;
 
@@ -284,8 +292,8 @@ export const init = (cfg) => {
               setTimeout(() => {
                 let indicatorNode = document.querySelector(
                     Selectors.statuses.successMessages
-                        .replace("<KEY>",key));
-                editor.parentNode.removeChild(indicatorNode);
+                        .replace("<KEY>", key));
+                element.parentNode.removeChild(indicatorNode);
               }, 3000);
             };
 
@@ -384,14 +392,15 @@ export const init = (cfg) => {
    * @returns void
    */
   window.addEventListener("load", () => {
-    // document.querySelectorAll('.local-coursetranslator__editor [contenteditable="true"]')
+    // Document.querySelectorAll('.local-coursetranslator__editor [contenteditable="true"]')
     document.querySelectorAll(Selectors.editors.contentEditable)
       .forEach((editor) => {
         // Save translation
         editor.addEventListener("focusout", () => {
+          return;
           // Get Processing Information
           let text = editor.innerHTML;
-          // let element = editor.closest(".local-coursetranslator__editor");
+          // Let element = editor.closest(".local-coursetranslator__editor");
           let element = editor.closest(Selectors.editors.all);
           let key = element.getAttribute("data-key");
 
@@ -432,7 +441,7 @@ export const init = (cfg) => {
         // Updated contenteditables with parsedtext
         editor.innerHTML = parsedtext;
       } else if (matches && matches.length > 1) {
-        //const dataKey = `data-key="${key}"`;
+        // Const dataKey = `data-key="${key}"`;
         document.querySelector(Selectors.editors.multiples.checkBoxesWithKey
             .replace('<KEY>', key)).remove();
         document.querySelector(Selectors.editors.multiples.editorChilds
@@ -527,6 +536,7 @@ const doAutotranslate = () => {
       });
 };
 /**
+ * @todo extract images ALT tags to send for translation
  * Send for Translation to DeepL
  * @param {Integer} key Translation Key
  */
@@ -537,14 +547,17 @@ const getTranslation = (key) => {
   let editor = findEditor(key);
 
   // Get the source text
-  let sourceText = document.querySelector(Selectors.sourcetexts.keys.replace("<KEY>",key))
-      .innerHTML;
+  let sourceText = document.querySelector(Selectors.sourcetexts.keys.replace("<KEY>", key)).getAttribute("data-sourcetext-raw");
+/*  Let sourceText = document.querySelector(Selectors.sourcetexts.keys.replace("<KEY>",key))
+      .innerHTML;*/
+  // window.console.log(sourceText);
   // Initialize global dictionary with this key's editor
   tempTranslations[key] = {
     'editor': editor,
     'source': sourceText,
     'translation': ''
   };
+  window.console.log(tempTranslations);
   // Build formData
   let formData = new FormData();
   formData.append("text", sourceText);
@@ -552,8 +565,8 @@ const getTranslation = (key) => {
   formData.append("source_lang", config.currentlang.toUpperCase());
   formData.append("target_lang", config.lang.toUpperCase());
   formData.append("auth_key", config.apikey);
-  formData.append("tag_handling", document.querySelector(Selectors.deepl.tag_handling).checked?'html': 'xml');//
-  formData.append("context", document.querySelector(Selectors.deepl.context).value??null); //
+  formData.append("tag_handling", document.querySelector(Selectors.deepl.tag_handling).checked ? 'html' : 'xml');//
+  formData.append("context", document.querySelector(Selectors.deepl.context).value ?? null); //
   formData.append("split_sentences", document.querySelector(Selectors.deepl.split_sentences).value);//
   formData.append("preserve_formatting", document.querySelector(Selectors.deepl.preserve_formatting).checked);//
   formData.append("formality", document.querySelector(Selectors.deepl.formality).value);//
@@ -604,15 +617,15 @@ const findEditor = (key) => {
     case "atto" :
       return document.querySelector(
           Selectors.editors.types.atto
-              .replace("<KEY>",key));
+              .replace("<KEY>", key));
     case "tiny":
       return document.querySelector(Selectors.editors.types.tiny
-          .replace("<KEY>",key))
+          .replace("<KEY>", key))
           .contentWindow.tinymce;
     case 'marklar':
     case "textarea" :
       return document.querySelector(Selectors.editors.types.other
-          .replace("<KEY>",key));
+          .replace("<KEY>", key));
   }
 };
 /**
@@ -652,6 +665,6 @@ const toggleAutotranslateButton = () => {
     autotranslateButton.disabled = true;
   }
 };
-const toJsonArray = (s, sep=",") => {
+const toJsonArray = (s, sep = ",") => {
   return JSON.stringify(s.split(sep));
 };

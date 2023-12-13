@@ -282,7 +282,9 @@ class course_data {
         $item = new \stdClass();
         $item->id = $id;
         $item->tid = $record->id;
-        $item->text = $this->getFileURL($text, $this->getItemId($id, $table, $cmid), $table, $field);
+
+        $item->displaytext = $this->getFileURL($text, $this->getItemId($id, $table, $cmid), $table, $field);
+        $item->text = $text;
         $item->format = intval($format);
         $item->table = $table;
         $item->field = $field;
@@ -331,7 +333,7 @@ class course_data {
         return $i;
     }
     /**
-     *
+     * @todo refactor to use in preview
      * @param string $text
      * @return void
      */

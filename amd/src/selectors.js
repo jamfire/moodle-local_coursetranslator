@@ -34,6 +34,7 @@ export default {
         }
     },
     sourcetexts:{
+        /*keys: '[data-sourcetext-key="<KEY>"]',*/
         keys: '[data-sourcetext-key="<KEY>"]'
     },
     deepl:{

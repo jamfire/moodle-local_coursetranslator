@@ -148,7 +148,11 @@ class translate_form extends moodleform {
             class="col-5 px-0 pr-5 local-coursetranslator__source-text"
             data-key="' . $key . '"
         >');
-        $mform->addElement('html', '<div data-sourcetext-key="' . $key . '">' . $mlangfilter->filter($item->text) . '</div>');
+
+        $mform->addElement('html', '<div data-sourcetext-key="' . $key . '"
+                data-sourcetext-raw="'.htmlentities($mlangfilter->filter($item->text)). '">' .
+                $mlangfilter->filter($item->displaytext) .
+                '</div>');
         $mform->addElement('html', '<div>');
 
         $mform->addElement('html', '<div class="collapse" id="' . $keyid . '">');
@@ -165,7 +169,9 @@ class translate_form extends moodleform {
         $mform->addElement('html', '</div>');
         $mform->addElement('html', '</div>');
         $mform->addElement('html', '</div>');
-
+        /**
+         * @todo style editor content to highlight images ALT text
+         */
         // Translation Input.
         $mform->addElement('html', '<div
             class="col-4 px-0 local-coursetranslator__translation"

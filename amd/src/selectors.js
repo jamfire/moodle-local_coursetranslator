@@ -28,6 +28,7 @@ export default {
             contentEditableKeys:'[data-key="<KEY>"] [contenteditable="true"]'
         },
         types:{
+            basic: '[data-action="local-coursetranslator/editor"][data-key="<KEY>"] [contenteditable="true"]',
             atto:'[data-action="local-coursetranslator/editor"][data-key="<KEY>"] [contenteditable="true"]',
             other:'[data-action="local-coursetranslator/editor"][data-key="<KEY>"] textarea[name="<KEY>[text]"]',
             tiny:'[data-action="local-coursetranslator/editor"][data-key="<KEY>"] iframe'

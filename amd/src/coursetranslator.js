@@ -161,9 +161,9 @@ export const init = (cfg) => {
     // Return the found string.
     return result;
   };
-
+  const selectAllBtn = document.querySelector(Selectors.actions.selecAllBtn);
   if (config.autotranslate) {
-    selectAll.disabled = false;
+    selectAllBtn.disabled = false;
   }
 
   /**
@@ -524,7 +524,6 @@ const neededUpdate = (e)=> {
 
 /**
  * Launch autotranslation
- * @todo should do in call to the API
  */
 const doAutotranslate = () => {
   document
@@ -605,6 +604,7 @@ const getTranslation = (key) => {
    xhr.send(formData);
 };
 /**
+ * @todo URGENT something got broken with finding editor ...
  * Get the editor container based on recieved current user's
  * editor preference.
  * @param {Integer} key Translation Key
@@ -613,20 +613,25 @@ const findEditor = (key) => {
   // Let q = '';
   // window.console.log("document.querySelector('" + q + "')");
   // window.console.log("editors pref : " + editorType);
-  switch (editorType) {
-    case "atto" :
-      return document.querySelector(
-          Selectors.editors.types.atto
-              .replace("<KEY>", key));
-    case "tiny":
-      return document.querySelector(Selectors.editors.types.tiny
-          .replace("<KEY>", key))
-          .contentWindow.tinymce;
-    case 'marklar':
-    case "textarea" :
-      return document.querySelector(Selectors.editors.types.other
-          .replace("<KEY>", key));
+  let e = document.querySelector(Selectors.editors.types.basic
+      .replace("<KEY>", key));
+  if(e===null){
+    switch (editorType) {
+      case "atto" :
+        e = document.querySelector(
+            Selectors.editors.types.atto
+                .replace("<KEY>", key));break;
+      case "tiny":
+        e = document.querySelector(Selectors.editors.types.tiny
+            .replace("<KEY>", key))
+            .contentWindow.tinymce;break;
+      case 'marklar':
+      case "textarea" :
+        e = document.querySelector(Selectors.editors.types.other
+            .replace("<KEY>", key));break;
+    }
   }
+  return e;
 };
 /**
  *

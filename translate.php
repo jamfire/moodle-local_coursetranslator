@@ -74,10 +74,6 @@ $PAGE->set_heading($title);
 $PAGE->set_pagelayout('base');
 $PAGE->set_course($course);
 
-/**
- * @todo find ways to get the defaul editor set by admin in case of users pref set to default ...
- */
-
 //$jsconfig->ed = editors_get_enabled();
 $defaultEditor = strstr($CFG->texteditors,',', true);
 $userPrefs = get_user_preferences();

@@ -101,7 +101,7 @@ class translate_form extends moodleform {
         $key = "$item->table[$item->id][$item->field]";
         $keyid = "{$item->table}-{$item->id}-{$item->field}";
         /**
-         * @todo check the need update status (seems phishy...)
+         * @todo improve the need update status (seems phishy... with the languages)
          */
         // Data status.
         $status = $item->tneeded ? 'needsupdate' : 'updated';
@@ -156,9 +156,6 @@ class translate_form extends moodleform {
         $mform->addElement('html', '<div>');
 
         $mform->addElement('html', '<div class="collapse" id="' . $keyid . '">');
-        /**
-         * @todo display source and translated text as tabs
-         */
         $mform->addElement('html','<div 
             data-key="' . $key . '" 
             class="mt-3 card card-body"

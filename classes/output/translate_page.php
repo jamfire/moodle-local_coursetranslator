@@ -60,8 +60,6 @@ class translate_page implements renderable, templatable {
          * @todo source lang should be identified and fixed to OTHER
          * if source lang is changed for a course than the whole translation should be void
          */
-        //$this->langs['other'] = get_string('t_other', 'local_coursetranslator');
-        //$this->current_lang = current_language();
 
         $this->current_lang = optional_param('lang', current_language(), PARAM_NOTAGS);
         $this->target_lang = optional_param('target_lang', 'en', PARAM_NOTAGS);
@@ -136,10 +134,14 @@ class translate_page implements renderable, templatable {
             }
         }
         // Set word and character counts to data.
-        $data->wordcount = $wordcount;
+        $counts = new \stdClass;
+        $counts->wordcount = $wordcount;
+        $counts->charcountspaces = $charcountspaces;
+        $counts->charcount = $charcountspaces - $spaces;
+/*        $data->wordcount = $wordcount;
         $data->charcountspaces = $charcountspaces;
-        $data->charcount = $charcountspaces - $spaces;
-
+        $data->charcount = $charcountspaces - $spaces;*/
+        $data->counts = get_string('t_word_count_sentence','local_coursetranslator',$counts);
         return $data;
     }
     /**

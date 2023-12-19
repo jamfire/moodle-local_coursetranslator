@@ -70,12 +70,9 @@ class course_data {
         $sectiondata = $this->getsectiondata();
         $activitydata = $this->getactivitydata();
         /*
-         * @todo refactor to sort activity with parent sections
          * section added to the activity items.
          * */
         return $this->prepareData($coursedata, $sectiondata, $activitydata);
-
-        //return array_merge($coursedata, $sectiondata, $activitydata);
     }
     /**
      * prepare multidimentional array to re arrange textfields to match course presentation
@@ -333,7 +330,6 @@ class course_data {
         return $i;
     }
     /**
-     * @todo refactor to use in preview
      * @param string $text
      * @return void
      */

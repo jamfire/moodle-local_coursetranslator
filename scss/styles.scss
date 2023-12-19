@@ -14,47 +14,72 @@ GNU General Public License for more details.
 You should have received a copy of the GNU General Public License
 along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 */
-
-/* content */
 .local-coursetranslator__form .row.border-bottom:last-child {
-    /* stylelint-disable-next-line */
-    border-bottom: 0 !important;
+  /* stylelint-disable-next-line */
+  border-bottom: 0 !important;
 }
 
 /* responsive iframes */
-.local-coursetranslator__source-text iframe,
-.local-coursetranslator__translation iframe {
-    max-width: 100%;
+.local-coursetranslator__source-text iframe {
+  max-width: 100%;
 }
 
-/* editor tweaks */
-.local-coursetranslator__translation [data-action="local-coursetranslator/editor"],
-.local-coursetranslator__translation [data-fieldtype="editor"] {
+.local-coursetranslator__translation {
+  /* responsive iframes */
+  iframe {
+    max-width: 100%;
+  }
+
+  /* editor tweaks */
+  [data-action="local-coursetranslator/editor"],
+  [data-fieldtype="editor"] {
     width: 100%;
-}
-.local-coursetranslator__translation textarea[data-action="local-coursetranslator/editor"] {
+  }
+
+  textarea[data-action="local-coursetranslator/editor"] {
     width: 100%;
     min-height: 300px;
-}
-.local-coursetranslator__translation .form-group.row {
+  }
+
+  .form-group.row {
     margin-left: 0;
     margin-right: 0;
+  }
 }
 
 /* ui notices */
 .local-coursetranslator__error {
-    background: #facbcb;
+  background: #facbcb;
 }
+
 .local-coursetranslator__success {
-    background: #e3fadc;
+  background: #e3fadc;
 }
+
 [data-status="local-coursetranslator/success-message"] {
-    background: #b4fa9f;
-    font-size: 0.6rem;
-    text-transform: uppercase;
-    padding: 0.25rem 1rem;
-    position: absolute;
-    bottom: 9px;
-    right: 9px;
-    border-radius: 4px;
+  background: #b4fa9f;
+  font-size: 0.6rem;
+  text-transform: uppercase;
+  padding: 0.25rem 1rem;
+  position: absolute;
+  bottom: 9px;
+  right: 9px;
+  border-radius: 4px;
+}
+
+#page-local-coursetranslator-translate {
+  /* page setting menu */
+  a[aria-expanded=true] .fa-caret-right {
+    display: none;
+  }
+
+  a[aria-expanded=false] .fa-caret-down {
+    display: none;
+  }
+
+  /* content */
+  #collapseExample {
+    /* border: gray 1px solid;*/
+    background-color: #EAF3FCFF;
+  }
 }

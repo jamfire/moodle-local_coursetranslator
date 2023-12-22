@@ -17,7 +17,7 @@ along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
   @template local_coursetranslator/translate_page
 
   Provides translation form header and controls
-{#@todo correct doc with dataa attributes#}
+{#@todo correct doc with data attributes#}
   Classes required for JS:
   * local-coursetranslator__localeswitcher
   * local-coursetranslator__select-all
@@ -57,12 +57,15 @@ along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 >Context</label
 >
 <textarea id="translation-context" width="800px" /-->
-<a class="link link-underline" data-toggle="collapse" data-target="#collapseExample" aria-expanded="false" aria-controls="collapseExample">
+<div class="px-3 align-items-end">
+  <a class="link link-underline px-3" data-toggle="collapse" data-target="#collapseExample" aria-expanded="false" aria-controls="collapseExample">
     {{#str}}t_seeSetting,local_coursetranslator{{/str}} <i class="fa fa-caret-right"></i><i class="fa fa-caret-down"></i>
 </a>
-<div class="container-fluid collapse" id="collapseExample">
+</div>
 
-    <div class="row py-3">
+<div class="container-fluid collapse card bg-primary-light" id="collapseExample">
+
+    <div class="row py-3  card-body">
 
 
         <div class="col">
@@ -89,16 +92,17 @@ along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
             </div>
 
         </div>
-        <div class="col"><a href="https://www.deepl.com/docs-api/translate-text/translate-text">{{#str}}t_deeplapidoc,local_coursetranslator{{/str}}</a>
+        <div class="col" data-id="local_coursetranslator/moresettings">
+            <a href="https://www.deepl.com/docs-api/translate-text/translate-text">{{#str}}t_deeplapidoc,local_coursetranslator{{/str}}</a>
 
 
                 <div class="row  py-1">
                     <div class="col">
                         <div class="d-flex my-switch">
-                            <div class="form-text text-1"> {{#str}}t_taghandling,local_coursetranslator{{/str}}XML</div>
+                            <div class="form-text text-1"> {{#str}}t_taghandling,local_coursetranslator{{/str}}XML&nbsp;</div>
                             <div class="custom-control custom-switch">
-                                <input id="tag_handling" class="custom-control-input" type="checkbox" data-id="local-coursetranslator/tag_handling">
-                                <label class="custom-control-label" for="tag_handling">HTML</label></div></div></div>
+                                <input id="tag_handling" class="custom-control-input" type="checkbox" data-id="local-coursetranslator/tag_handling" checked>
+                                <label class="custom-control-label" for="tag_handling">&nbsp;HTML</label></div></div></div>
                 </div>
                 <div class="row a py-1">
                     <div class="col">
@@ -151,7 +155,7 @@ along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 </div>
 <div class="container-fluid">
     <div class="row py-1">
-        <div class="col-2 ">
+        <div class="col-3 ">
             <label for="source_lang">{{#str}}t_sourceLang,local_coursetranslator{{/str}}</label>
             <select class="form-control" id="source_lang"
                     data-action="local-coursetranslator/source-switcher">
@@ -173,13 +177,12 @@ along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
                 {{/target_langs}}
             </select>
         </div>
-        <div class="col-10 form-group ">
+        <div class="col-9 form-group ">
             <label for="context">{{#str}}t_contextDeepl,local_coursetranslator{{/str}}</label>
             <textarea class="form-control" id="context" data-id="local-coursetranslator/context" rows="3" placeholder="{{#str}}t_contextDeeplPlaceholder,local_coursetranslator{{/str}}"></textarea></div>
-
     </div>
 
-    <div class="row py-3">
+<!--    <div class="row py-3">
         <div class="form-check form-check-inline">
             <input type="checkbox" id="show-updated"
                    checked="checked"
@@ -200,25 +203,39 @@ along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
                 {{ counts }}
             </p>
         </div>
-
-        <!--div class="col-2 px-0">
-            <div class="text-right">
-                <button
-                        type="button"
-                        class="btn btn-primary local-coursetranslator__autotranslate-btn"
-                        data-action="local-coursetranslator/autotranslate-btn"
-                        disabled
-                >
-                    {{#str}}t_autotranslate,local_coursetranslator{{/str}}
-                </button>
-            </div>
-        </div-->
-    </div>
+    </div>-->
 </div>
 
 <div class="container-fluid">
-    <div class="row align-items-start border-bottom py-3 bg-primary bg-gradient text-white">
-        <div class="col-2">
+    <div class="row align-items-center border-bottom py-2 bg-dark text-white">
+        <div class="col-6 px-3 ">
+            <div class="form-check form-check-inline">
+                <input type="checkbox" id="show-updated"
+                       checked="checked"
+                       class="local-coursetranslator__show-updated"
+                       data-action="local-coursetranslator/show-updated"
+                />
+                <label for="show-updated" class="mb-0 pl-1">{{#str}}t_uptodate,local_coursetranslator{{/str}}</label>
+            </div>
+            <div class="form-check form-check-inline">
+                <input type="checkbox" id="show-needsupdate" checked="checked"
+                       class="local-coursetranslator__show-needsupdate"
+                       data-action="local-coursetranslator/show-needsupdate"
+                />
+                <label for="show-needsupdate" class="mb-0 pl-1">{{#str}}t_needsupdate,local_coursetranslator{{/str}}</label>
+            </div>
+        </div>
+        <div class="col-6 px-0">
+            <p class="my-0 text-center">
+                {{! counts }}
+                {{#str}} t_word_count_sentence,
+                    local_coursetranslator,
+                    { "wordcount": {{#quote}}{{ wordcount }}{{/quote}}, "charcount": {{#quote}}{{ charcount }}{{/quote}},"charcountspaces":{{#quote}}{{ charcountspaces }}{{/quote}} } {{/str}}
+            </p>
+        </div>
+    </div>
+    <div class="row align-items-center border-bottom py-2 bg-dark text-white">
+        <div class="col-1">
             <div class="form-check">
                 <input
                         class="form-check-input local-coursetranslator__select-all"
@@ -236,17 +253,13 @@ along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
             </div>
         </div>
         <div class="col-5 px-0 pr-5">
-            {{#str}}t_source_text,local_coursetranslator{{/str}} {{current_lang}}
-        </div>
-        <div class="col-4 px-0">
-            {{#str}}t_translation,local_coursetranslator,{{ target_lang }}{{/str}}
-
+            {{#str}}t_source_text,local_coursetranslator, {{ current_lang }} {{/str}}
         </div>
         <div class="col-1 px-0">
             <div class="text-left">
                 <button
                         type="button"
-                        class="btn btn-dark local-coursetranslator__autotranslate-btn"
+                        class="btn btn-primary btn-sm local-coursetranslator__autotranslate-btn"
                         data-action="local-coursetranslator/autotranslate-btn"
                         disabled
                 >
@@ -254,6 +267,11 @@ along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
                 </button>
             </div>
         </div>
+        <div class="col-5 px-0">
+            {{#str}}t_translation,local_coursetranslator, {{ target_lang }} {{/str}}
+
+        </div>
+
 
     </div>
 </div>

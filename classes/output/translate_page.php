@@ -64,7 +64,7 @@ class translate_page implements renderable, templatable {
         $this->current_lang = optional_param('lang', current_language(), PARAM_NOTAGS);
         $this->target_lang = optional_param('target_lang', 'en', PARAM_NOTAGS);
         $this->mlangfilter = $mlangfilter;
-
+        /** @todo no need form if treatment and api call is done by js */
         // Moodle Form.
         $mform = new translate_form(null, [
             'course' => $course,
@@ -138,10 +138,15 @@ class translate_page implements renderable, templatable {
         $counts->wordcount = $wordcount;
         $counts->charcountspaces = $charcountspaces;
         $counts->charcount = $charcountspaces - $spaces;
-/*        $data->wordcount = $wordcount;
+        $data->wordcount = $wordcount;
         $data->charcountspaces = $charcountspaces;
-        $data->charcount = $charcountspaces - $spaces;*/
-        $data->counts = get_string('t_word_count_sentence','local_coursetranslator',$counts);
+        $data->charcount = $charcountspaces - $spaces;
+        $data->current_lang = $this->current_lang;
+        $data->target_lang = $this->target_lang;
+        $data->mlangfilter = $this->mlangfilter;
+        $data->course = $this->course;
+        $data->coursedata = $this->coursedata;
+        //$data->counts = get_string('t_word_count_sentence','local_coursetranslator',$counts);
         return $data;
     }
     /**

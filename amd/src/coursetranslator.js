@@ -38,13 +38,22 @@ const registerEventListeners = ()=>{
       switchSource(e);
     }
     if (e.target.closest(Selectors.actions.showUpdated)) {
-      showUpdated(e);
+      // showUpdated(e);
+      showRows(Selectors.statuses.updated, e.target.checked);
     }
     if (e.target.closest(Selectors.actions.showNeedUpdate)) {
-      neededUpdate(e);
+      //neededUpdate(e);
+      showRows(Selectors.statuses.needsupdate, e.target.checked);
+    }
+    if (e.target.closest(Selectors.actions.checkBoxes)) {
+        onItemChecked(e);
     }
   });
   document.addEventListener('click', e=>{
+    if(e.target.closest(Selectors.actions.toggleMultilang)){
+      //window.console.info(e.target.id);
+      onToggleMultilang(e.target.closest(Selectors.actions.toggleMultilang));
+    }
     if (e.target.closest(Selectors.actions.autoTranslateBtn)) {
       if (config.currentlang == config.lang || config.lang == undefined) {
         Modal.create({
@@ -58,7 +67,7 @@ const registerEventListeners = ()=>{
       }
     }
     if (e.target.closest(Selectors.actions.selecAllBtn)) {
-      selectAll(e);
+      toggleAllCheckboxes(e);
     }
   });
 };
@@ -79,12 +88,11 @@ export const init = (cfg) => {
 
   registerUI();
   registerEventListeners();
-
   /**
    * Convert a template string into HTML DOM nodes
    * @param  {String} string The template string
    * @return {Node}       The template HTML
-   */
+   *
   const stringToHTML = (string) => {
     // See if DOMParser is supported
     let parser;
@@ -111,6 +119,7 @@ export const init = (cfg) => {
     dom.innerHTML = string;
     return dom;
   };
+   */
 
   /**
    * {mlang} searchex regex
@@ -175,7 +184,7 @@ export const init = (cfg) => {
     // Get the stored data and do the saving from editors content
     e.addEventListener('click', (e)=> {
       let key = e.target.parentElement.dataset.keyValidator;
-      //window.console.log(key, "save");
+      // Window.console.log(key, "save");
       if (tempTranslations[key] === null || tempTranslations[key] === undefined) {
         /**
          * @todo do a UI feedback (disable save )
@@ -222,8 +231,9 @@ export const init = (cfg) => {
   const saveTranslation = (key, editor, text) => {
     window.console.log(key);
     // Get processing vars
-    //let element = editor.closest(Selectors.editors.all);
-    let selector =Selectors.editors.multiples.editorsWithKey.replace("<KEY>", key);
+    // let element = editor.closest(Selectors.editors.all);
+    let icon = document.querySelector(replaceKey(Selectors.actions.validatorIcon, key));
+    let selector = Selectors.editors.multiples.editorsWithKey.replace("<KEY>", key);
     window.console.log(selector);
     window.console.log(document.querySelector(selector));
     let element = document.querySelector(selector);
@@ -270,37 +280,45 @@ export const init = (cfg) => {
             tdata.text = updatedtext;
             // Success Message
             const successMessage = () => {
-              /** @todo simplify by just changing the css rather than messing up with the makup*/
-              //editor.classList.add("local-coursetranslator__success");
+              /** @todo cleanup comments*/
+              // editor.classList.add("local-coursetranslator__success");
               element.classList.add("local-coursetranslator__success");
-              // Add saved indicator
+              /* // Add saved indicator
               let indicator =
-                `<div 
-                   class="local-coursetranslator__success-message" 
-                   data-status="local-coursetranslator/success-message" 
+                `<div
+                   <!--class="local-coursetranslator__success-message"-->
+                   data-status="local-coursetranslator/success-message"
                    data-key="${key}"
                  >${config.autosavedmsg}</div>`;
               element.after(...stringToHTML(indicator));
-
-              let status = document.querySelector(
+              */
+              icon.setAttribute('data-status', "local-coursetranslator/success");
+              /* Let status = document.querySelector(
                   Selectors.statuses.keys
                       .replace("<KEY>", key));
               status.classList.replace("badge-danger", "badge-success");
-              status.innerHTML = config.uptodate;
+              status.innerHTML = config.uptodate;*/
 
               // Remove success message after a few seconds
-              setTimeout(() => {
+              /* setTimeout(() => {
                 let indicatorNode = document.querySelector(
                     Selectors.statuses.successMessages
                         .replace("<KEY>", key));
                 element.parentNode.removeChild(indicatorNode);
-              }, 3000);
+              }, 3000);*/
+              setTimeout(()=>{
+ icon.setAttribute('data-status', "local-coursetranslator/saved");
+});
             };
 
             // Error Mesage
             const errorMessage = (error) => {
               window.console.log(error);
               editor.classList.add("local-coursetranslator__error");
+              icon.setAttribute('data-status', "local-coursetranslator/failed");
+              if (error) {
+                textarea.innerHTML = error;
+              }
             };
 
             // Submit the request
@@ -458,24 +476,96 @@ export const init = (cfg) => {
     });
   });
 };
+const onItemChecked = (e) => {
+  // If(e.target.checked)
+  //window.console.info(e.target.attributes['data-key'].value);
+  toggleStatus(e.target.getAttribute('data-key'), e.target.checked);
+  /*
+  let k = e.target.attributes['data-key'].value;
+  let statusItem = document.querySelector(replaceKey(Selectors.actions.validatorIcon, k));
+  window.console.info(statusItem);
+  if (e.target.checked) {
+    statusItem.setAttribute('data-status', "local-coursetranslator/totranslate");
+  } else {
+    statusItem.setAttribute('data-status', "local-coursetranslator/wait");
+  }
+  */
 
+};
+const toggleStatus=(key, checked)=>{
+  let s = 'wait';
+  //let statusItem = document.querySelector(replaceKey(Selectors.actions.validatorIcon, key));
+  if (checked) {
+    s = "totranslate";
+  }
+  document.querySelector(replaceKey(Selectors.actions.validatorIcon, key))
+      .setAttribute('data-status',`local-coursetranslator/${s}`);
+};
 /**
  * Eventlistener for show update checkbox
  * @param {Event} e
  */
+/*
 const showUpdated = (e) =>{
   let items = document.querySelectorAll(Selectors.statuses.updated);
-  if (e.target.checked) {
-    items.forEach((item) => {
-      item.classList.remove("d-none");
-    });
-  } else {
-    items.forEach((item) => {
-      item.classList.add("d-none");
-    });
+  items.forEach((item) => {
+    toggleRowVisibility(item, e.target.checked);
+    toggleStatus(item.getAttribute('data-row-id'), e.target.checked);
+  });
+  // if (e.target.checked) {
+  //   items.forEach((item) => {
+  //     item.classList.remove("d-none");
+  //   });
+  // } else {
+  //   items.forEach((item) => {
+  //     item.classList.add("d-none");
+  //   });
+  // }
+};
+*/
+
+/**
+ * Event listener to check if update are needed
+ * @param {Event} e
+ */
+/*const neededUpdate = (e)=> {
+    // Window.console.info("Need update toggled");
+    // window.console.info("source_lang", config.currentlang);
+    // window.console.info("target_lang", config.lang);
+
+  let items = document.querySelectorAll(Selectors.statuses.needsupdate);
+  items.forEach((item) => {
+    toggleRowVisibility(item, e.target.checked);
+    toggleStatus(item.getAttribute('data-row-id'), e.target.checked);
+  });
+  // if (e.target.checked) {
+  //   items.forEach((item) => {
+  //     item.classList.remove("d-none");
+  //   });
+  // } else {
+  //   items.forEach((item) => {
+  //     item.classList.add("d-none");
+  //   });
+  // }
+};*/
+const showRows=(selector, selected)=>{
+  window.console.log(selector, selected);
+  let items = document.querySelectorAll(selector);
+  items.forEach((item) => {
+    let k = item.getAttribute('data-row-id');
+    toggleRowVisibility(item, selected);
+    // when a row is toggled then we don't want it to be selected and sent from translation.
+    item.querySelector(replaceKey(Selectors.editors.multiples.checkBoxesWithKey,k)).checked = false;
+    toggleStatus(k, false);
+  });
+};
+const toggleRowVisibility=(row, checked)=>{
+  if(checked){
+    row.classList.remove("d-none");
+  }else{
+    row.classList.add("d-none");
   }
 };
-
 /**
  * Event listener to switch target lang
  * @param {Event} e
@@ -501,26 +591,6 @@ const switchSource = (e) => {
   let newUrl = url.toString();
   window.location = newUrl;
 };
-/**
- * Event listener to check if update are needed
- * @param {Event} e
- */
-const neededUpdate = (e)=> {
-  window.console.info("Need update toggled");
-  window.console.info("source_lang", config.currentlang);
-  window.console.info("target_lang", config.lang);
-
-  let items = document.querySelectorAll(Selectors.statuses.needsupdate);
-  if (e.target.checked) {
-    items.forEach((item) => {
-      item.classList.remove("d-none");
-    });
-  } else {
-    items.forEach((item) => {
-      item.classList.add("d-none");
-    });
-  }
-};
 
 /**
  * Launch autotranslation
@@ -544,13 +614,14 @@ const getTranslation = (key) => {
   tempTranslations[key] = {};
   // Get the editor
   let editor = findEditor(key);
-
   // Get the source text
   let sourceText = document.querySelector(Selectors.sourcetexts.keys.replace("<KEY>", key)).getAttribute("data-sourcetext-raw");
 /*  Let sourceText = document.querySelector(Selectors.sourcetexts.keys.replace("<KEY>",key))
       .innerHTML;*/
   // window.console.log(sourceText);
+  let icon = document.querySelector(replaceKey(Selectors.actions.validatorIcon, key));
   // Initialize global dictionary with this key's editor
+
   tempTranslations[key] = {
     'editor': editor,
     'source': sourceText,
@@ -568,13 +639,12 @@ const getTranslation = (key) => {
   formData.append("context", document.querySelector(Selectors.deepl.context).value ?? null); //
   formData.append("split_sentences", document.querySelector(Selectors.deepl.split_sentences).value);//
   formData.append("preserve_formatting", document.querySelector(Selectors.deepl.preserve_formatting).checked);//
-  formData.append("formality", document.querySelector(Selectors.deepl.formality).value);//
+  formData.append("formality", document.querySelector('[name="local-coursetranslator/formality"]:checked').value);
   formData.append("glossary_id", document.querySelector(Selectors.deepl.glossary_id).value);//
   formData.append("outline_detection", document.querySelector(Selectors.deepl.outline_detection).checked);//
   formData.append("non_splitting_tags", toJsonArray(document.querySelector(Selectors.deepl.non_splitting_tags).value));
   formData.append("splitting_tags", toJsonArray(document.querySelector(Selectors.deepl.splitting_tags).value));
   formData.append("ignore_tags", toJsonArray(document.querySelector(Selectors.deepl.ignore_tags).value));
-
   // Window.console.log(config.currentlang);
    window.console.log("Send deepl:", formData);
   // Update the translation
@@ -594,9 +664,12 @@ const getTranslation = (key) => {
         // saveTranslation(key, editor, data.translations[0].text);
         // store the translation in the global object
         tempTranslations[key].translation = data.translations[0].text;
+        icon.setAttribute('data-status', 'local-coursetranslator/tosave');
       } else {
         // Oh no! There has been an error with the request!
         window.console.log("error", status);
+        // Let icon=  document.querySelector(replaceKey(Selectors.actions.validatorIcon,key));
+        icon.setAttribute('data-status', 'local-coursetranslator/failed');
       }
     }
   };
@@ -615,43 +688,49 @@ const findEditor = (key) => {
   // window.console.log("editors pref : " + editorType);
   let e = document.querySelector(Selectors.editors.types.basic
       .replace("<KEY>", key));
-  if(e===null){
+  if (e === null) {
     switch (editorType) {
       case "atto" :
         e = document.querySelector(
             Selectors.editors.types.atto
-                .replace("<KEY>", key));break;
+                .replace("<KEY>", key)); break;
       case "tiny":
         e = document.querySelector(Selectors.editors.types.tiny
             .replace("<KEY>", key))
-            .contentWindow.tinymce;break;
+            .contentWindow.tinymce; break;
       case 'marklar':
       case "textarea" :
         e = document.querySelector(Selectors.editors.types.other
-            .replace("<KEY>", key));break;
+            .replace("<KEY>", key)); break;
     }
   }
   return e;
 };
 /**
  *
- * @param {Event} e
+ * @param {Event} e Event
  */
-const selectAll = (e)=>{
+const toggleAllCheckboxes = (e)=>{
   // See if select all is checked
   let checked = e.target.checked;
 
   // Check/uncheck checkboxes
   if (checked) {
-    checkboxes.forEach((e) => {
-      e.checked = true;
+    checkboxes.forEach((i) => {
+      // toggle check box upon visibility
+      i.checked = !getParentRow(i).classList.contains('d-none');
+      toggleStatus(i.getAttribute('data-key'), i.checked);
     });
   } else {
-    checkboxes.forEach((e) => {
-      e.checked = false;
+    checkboxes.forEach((i) => {
+      i.checked = false;
+      toggleStatus(i.getAttribute('data-key'), false);
     });
   }
   toggleAutotranslateButton();
+};
+const getParentRow = (node) =>{
+  return node.closest(replaceKey(Selectors.sourcetexts.parentrow, node.getAttribute('data-key')));
 };
 /**
  * Toggle Autotranslate Button
@@ -670,6 +749,44 @@ const toggleAutotranslateButton = () => {
     autotranslateButton.disabled = true;
   }
 };
+/**
+ *
+ * @param {Event} e Event
+ */
+const onToggleMultilang = (e) =>{
+  window.console.log(e);
+  e.classList.toggle("showing");
+  let keyid = e.getAttribute('aria-controls');
+  let key = keyidToKey(keyid);
+  window.console.log(e, key, keyid);
+  let source = document.querySelector(replaceKey(Selectors.sourcetexts.keys, key));
+  let multilang = document.querySelector(replaceKey(Selectors.sourcetexts.multilangs, keyid));
+  source.classList.toggle("show");
+  multilang.classList.toggle("show");
+};
+/**
+ *
+ * @param {string} s
+ * @param {string} sep
+ * @returns {string}
+ */
 const toJsonArray = (s, sep = ",") => {
   return JSON.stringify(s.split(sep));
+};
+const replaceKey = (s, k)=>{
+  return s.replace("<KEY>", k);
+};
+/*const regFrom = /^(.+)\[(.+)\]\[(.+)\]$/i;*/
+const regTo = /^(.+)-(.+)-(.+)$/i;
+/*
+const keyToKeyid=(k)=>{
+
+  let m = regFrom.match(k);
+  return `${m[1]}-${m[1]}-${m[1]}`;
+};
+
+ */
+const keyidToKey=(k)=>{
+  let m = k.match(regTo);
+  return `${m[1]}[${m[2]}][${m[3]}]`;
 };

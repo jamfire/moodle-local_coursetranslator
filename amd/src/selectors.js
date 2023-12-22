@@ -1,13 +1,16 @@
 export default {
     actions :{
         validatorsBtns:'[data-key-validator]',
+        validator:'[data-key-validator="<KEY>"]',
+        validatorIcon:'[data-key-validator="<KEY>"] i',
         checkBoxes:'[data-action="local-coursetranslator/checkbox"]',
         selecAllBtn:'[data-action="local-coursetranslator/select-all"]',
         autoTranslateBtn:'[data-action="local-coursetranslator/autotranslate-btn"]',
         targetSwitcher:'[data-action="local-coursetranslator/target-switcher"]',
         sourceSwitcher:'[data-action="local-coursetranslator/source-switcher"]',
         showNeedUpdate:'[data-action="local-coursetranslator/show-needsupdate"]',
-        showUpdated:'[data-action="local-coursetranslator/show-updated"]'
+        showUpdated:'[data-action="local-coursetranslator/show-updated"]',
+        toggleMultilang:'#toggleMultilang'
     },
     statuses : {
         checkedCheckBoxes : '[data-action="local-coursetranslator/checkbox"]:checked',
@@ -36,7 +39,10 @@ export default {
     },
     sourcetexts:{
         /*keys: '[data-sourcetext-key="<KEY>"]',*/
-        keys: '[data-sourcetext-key="<KEY>"]'
+        keys: '[data-sourcetext-key="<KEY>"]',
+        multilangs:'#<KEY>',
+
+        parentrow :'[data-row-id="<KEY>"]'
     },
     deepl:{
         context: '[data-id="local-coursetranslator/context"]',
@@ -44,10 +50,10 @@ export default {
         splitting_tags: '[data-id="local-coursetranslator/splitting_tags"]',
         ignore_tags: '[data-id="local-coursetranslator/ignore_tags"]',
         preserve_formatting: '[data-id="local-coursetranslator/preserve_formatting"]',
-        formality: '[data-id="local-coursetranslator/formality"]',
+        formality: '[name="local-coursetranslator/formality"]:checked',
         glossary_id: '[data-id="local-coursetranslator/glossary_id"]',
         tag_handling: '[data-id="local-coursetranslator/tag_handling"]',
         outline_detection: '[data-id="local-coursetranslator/outline_detection"]',
-        split_sentences: 'input[name="local-coursetranslator/split_sentences"]'
+        split_sentences: '[name="local-coursetranslator/split_sentences"]:checked'
     }
 };

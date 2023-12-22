@@ -27,8 +27,8 @@
  */
 
 // Get libs.
-require_once('../../config.php');
-require_once('../../filter/multilang2/filter.php');
+require_once(__DIR__ .'/../../config.php');
+require_once(__DIR__ .'/../../filter/multilang2/filter.php');
 require_once('./classes/output/translate_page.php');
 require_once('./classes/data/course_data.php');
 require_once($CFG->dirroot. '/lib/editorlib.php');

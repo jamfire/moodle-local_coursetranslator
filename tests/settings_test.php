@@ -1,4 +1,5 @@
 <?php
+
 // This file is part of Moodle - http://moodle.org/
 //
 // Moodle is free software: you can redistribute it and/or modify
@@ -26,14 +27,25 @@
  */
 
 namespace local_coursetranslator;
+define('CLI_SCRIPT', true);
 use PHPUnit\Framework\TestCase;
+require_once (__DIR__.'/../../../lib/phpunit/classes/advanced_testcase.php');
+
 /**
  * Settings Test
  */
-class settings_test extends TestCase {
+final class settings_test extends core\advanced_testcase {
 
     public function test_usedeepl() {
+        require_once(__DIR__ . '/../../../config.php');
+        global $CFG;
+        require_once($CFG->dirroot . '/local/coursetranslator/settings.php');
+
+        $this->assertNotNull($CFG);
         $this->assertEquals(2, 1 + 1);
+    }
+    public function test_settings(){
+
     }
 
 }

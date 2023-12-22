@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8" ?>
 <phpunit>
-    <testsuite name='moodle_moduler_test'>
+    <testsuite name='local_coursetranslator_test'>
         <directory suffix='.php'>./</directory>
     </testsuite>
 </phpunit>

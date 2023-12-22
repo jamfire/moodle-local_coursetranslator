@@ -14,72 +14,119 @@ GNU General Public License for more details.
 You should have received a copy of the GNU General Public License
 along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 */
-.local-coursetranslator__form .row.border-bottom:last-child {
-  /* stylelint-disable-next-line */
-  border-bottom: 0 !important;
-}
-
-/* responsive iframes */
-.local-coursetranslator__source-text iframe {
-  max-width: 100%;
-}
-
-.local-coursetranslator__translation {
-  /* responsive iframes */
-  iframe {
-    max-width: 100%;
-  }
-
-  /* editor tweaks */
-  [data-action="local-coursetranslator/editor"],
-  [data-fieldtype="editor"] {
-    width: 100%;
-  }
-
-  textarea[data-action="local-coursetranslator/editor"] {
-    width: 100%;
-    min-height: 300px;
-  }
-
-  .form-group.row {
-    margin-left: 0;
-    margin-right: 0;
-  }
-}
-
-/* ui notices */
-.local-coursetranslator__error {
-  background: #facbcb;
-}
-
-.local-coursetranslator__success {
-  background: #e3fadc;
-}
-
-[data-status="local-coursetranslator/success-message"] {
-  background: #b4fa9f;
-  font-size: 0.6rem;
-  text-transform: uppercase;
-  padding: 0.25rem 1rem;
-  position: absolute;
-  bottom: 9px;
-  right: 9px;
-  border-radius: 4px;
-}
-
 #page-local-coursetranslator-translate {
-  /* page setting menu */
-  a[aria-expanded=true] .fa-caret-right {
-    display: none;
-  }
+    /* page setting menu */
+    a[aria-expanded=true] .fa-caret-right {
+        display: none;
+    }
 
-  a[aria-expanded=false] .fa-caret-down {
-    display: none;
-  }
+    a[aria-expanded=false] .fa-caret-down {
+        display: none;
+    }
 
-  /* content */
-  #collapseExample {
-    /* border: gray 1px solid;*/
-    background-color: #EAF3FCFF;
-  }
+    [data-id="local_coursetranslator/moresettings"] {
+        cursor: pointer !important;
+    }
+
+    /*Form icons*/
+    .fa-floppy-o {
+        cursor: pointer;
+    }
+
+    .fa-floppy-o:hover {
+        color: #0a4b84;
+    }
+    [contenteditable="true"] img,img{background-color:yellow !important;font-style: italic;}
+    img:before{content:'pic:' !important;}
+    /* content
+    #collapseExample {
+       border: gray 1px solid;
+      background-color: #EAF3FCFF;
+    }
+  */
+    /* stylelint-disable-next-line */
+    .local-coursetranslator__form .row.border-bottom:last-child {
+        border-bottom: 0 !important;
+    }
+    /* responsive iframes */
+    .local-coursetranslator__source-text iframe {
+        max-width: 100%;
+    }
+    .local-coursetranslator__translation {
+        /* responsive iframes */
+        iframe {
+            max-width: 100%;
+        }
+        /* editor tweaks */
+        [data-action="local-coursetranslator/editor"],
+        [data-fieldtype="editor"] {
+            width: 100%;
+        }
+
+        textarea[data-action="local-coursetranslator/editor"] {
+            width: 100%;
+            min-height: 300px;
+        }
+
+        .form-group.row {
+            margin-left: 0;
+            margin-right: 0;
+        }
+    }
+
+    /* ui notices */
+    .local-coursetranslator__error {
+        background: #facbcb;
+        border: 12px solid #facbcb;
+        border-radius: 6px;
+    }
+
+    .local-coursetranslator__success {
+        background: #e3fadc;
+        border: 12px solid #e3fadc;
+        border-radius: 6px;
+    }
+    [data-status="local-coursetranslator/success-message"] {
+            background: #b4fa9f;
+            font-size: 0.6rem;
+            text-transform: uppercase;
+            padding: 0.25rem 1rem;
+            margin-top:2rem;
+            /*position: absolute;*/
+            top:12px;
+            bottom: 9px;
+            right: 9px;
+            border-radius: 4px;
+    }
+    [data-status="local-coursetranslator/wait"]:before{
+        content:'\f141';/*3 dots ellipse*/
+        color:gray;
+    }
+    [data-status="local-coursetranslator/totranslate"]:before{
+        content:'\f251';/* Sand icon*/
+        color:blue;
+    }
+    [data-status="local-coursetranslator/tosave"]{
+        cursor: pointer;
+    }
+    [data-status="local-coursetranslator/tosave"]:before{
+        content:'\f0c7';/*floppy (save) icon*/
+        color:blue;
+        cursor: pointer;
+    }
+    [data-status="local-coursetranslator/success"]:before{
+        content:'\f00c';/*check  icon*/
+        color:green;
+    }
+    [data-status="local-coursetranslator/saved"]:before{
+        content:'\f1c0';/*database  icon*/
+        color:black;
+    }
+    [data-status="local-coursetranslator/failed"]:before{
+        content:'\f071';/*exclamation triangle  icon*/
+        color:red;
+    }
+    #toggleMultilang.showing{
+        background-color: yellow;
+    }
 }

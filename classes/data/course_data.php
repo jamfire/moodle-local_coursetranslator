@@ -330,6 +330,7 @@ class course_data {
         return $i;
     }
     /**
+     * @todo context ID is not the course context id... We should find the item id somewhere in the db i guess...
      * @param string $text
      * @return void
      */

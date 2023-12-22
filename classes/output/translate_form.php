@@ -69,7 +69,7 @@ class translate_form extends moodleform {
         foreach ($coursedata as $section){
             /** @todo better UI */
             // Loop section's headers
-            $mform->addElement('html', "<h3>Section $sectioncount</h3>");
+            $mform->addElement('html', "<h3 class='bg-light'>Section $sectioncount</h3>");
             foreach ($section['section'] as $s){
                 $this->get_formrow($mform, $s);
             }
@@ -100,20 +100,17 @@ class translate_form extends moodleform {
         // Build a key for js interaction.
         $key = "$item->table[$item->id][$item->field]";
         $keyid = "{$item->table}-{$item->id}-{$item->field}";
-        /**
-         * @todo improve the need update status (seems phishy... with the languages)
-         */
         // Data status.
         $status = $item->tneeded ? 'needsupdate' : 'updated';
 
         // Open translation item.
         $mform->addElement(
-            'html', "<div class='$cssClass row align-items-start border-bottom py-3' data-row-id='$key' data-status='$status'>"
+            'html', "<div class='$cssClass row align-items-start border-bottom py-2' data-row-id='$key' data-status='$status'>"
             //'html', '<div class='row align-items-start border-bottom py-3' data-row-id='$key' data-status='$status">"
         );
 
         // First column.
-        $mform->addElement('html', '<div class="col-2">');
+        $mform->addElement('html', '<div class="col-1">');
         $mform->addElement('html', '<div class="form-check">');
         $mform->addElement('html', '<input
             class="form-check-input"
@@ -134,11 +131,13 @@ class translate_form extends moodleform {
         }
         $label .= '</label>';
         $label .= '<a href="' . $item->link . '" target="_blank" title="' . get_string('t_edit', 'local_coursetranslator') . '">';
-        $label .= '<i class="fa fa-pencil-square-o mr-1" aria-hidden="true"></i>';
+        $label .= '<i class="fa fa-pencil-square-o px-2" aria-hidden="true"></i>';
         $label .= '</a>';
-        $label .= '<a data-toggle="collapse" title="' . get_string('t_viewsource', 'local_coursetranslator') . '" href="#'
+        $label .= '<a class="button px-2" id="toggleMultilang" title="' . get_string('t_viewsource', 'local_coursetranslator') . '" 
+            aria-controls="'. $keyid . '"><i class="fa fa-language" aria-hidden="true"></i></a>';
+        /*$label .= '<a data-toggle="collapse" title="' . get_string('t_viewsource', 'local_coursetranslator') . '" href="#'
             . $keyid . '" role="button" aria-expanded="false" aria-controls="'
-            . $keyid . '"><i class="fa fa-code" aria-hidden="true"></i></a>';
+            . $keyid . '"><i class="fa fa-language" aria-hidden="true"></i></a>';*/
         $mform->addElement('html', $label);
         $mform->addElement('html', '</div>');
         $mform->addElement('html', '</div>');
@@ -149,21 +148,20 @@ class translate_form extends moodleform {
             data-key="' . $key . '"
         >');
 
-        $mform->addElement('html', '<div data-sourcetext-key="' . $key . '"
+        $mform->addElement('html', '<div class="collapse show" data-sourcetext-key="' . $key . '"
                 data-sourcetext-raw="'.htmlentities($mlangfilter->filter($item->text)). '">' .
                 $mlangfilter->filter($item->displaytext) .
-                '</div>');
-        $mform->addElement('html', '<div>');
+                ' </div>');
+        //$mform->addElement('html', '<div>');
 
         $mform->addElement('html', '<div class="collapse" id="' . $keyid . '">');
         $mform->addElement('html','<div 
             data-key="' . $key . '" 
-            class="mt-3 card card-body"
             data-action="local-coursetranslator/textarea"
             >'
             . trim($item->text) . '</div>'
         );
-        $mform->addElement('html', '</div>');
+        //$mform->addElement('html', '</div>');
         $mform->addElement('html', '</div>');
         $mform->addElement('html', '</div>');
         /**
@@ -171,7 +169,7 @@ class translate_form extends moodleform {
          */
         // Translation Input.
         $mform->addElement('html', '<div
-            class="col-4 px-0 local-coursetranslator__translation"
+            class="col-5 px-0 local-coursetranslator__translation"
             data-action="local-coursetranslator/editor"
             data-key="' . $key . '"
             data-table="' . $item->table . '"
@@ -196,14 +194,13 @@ class translate_form extends moodleform {
 
         $mform->addElement('html', '</div>');
         // adding validator btn
-        $saveToggleBtn = '
-            <i class="col-1 align-content-center fa fa-floppy-o mr-1" data-toggle="" data-validate-'.$keyid.' ></i>
-        ';
+        //$saveToggleBtn = '<i class="col-1 align-content-center fa fa-floppy-o mr-1" data-toggle="" data-validate-'.$keyid.' ></i>';
+        $saveToggleBtn = '<i class="col-1 align-content-center fa mr-1" data-status="local-coursetranslator/wait" data-toggle="" data-validate-'.$keyid.' ></i>';
        /* $saveToggleBtn = '<input type="checkbox" checked
-            data-toggle="toggle" 
-            data-on="Ready" 
-            data-off="Not Ready" 
-            data-onstyle="success" 
+            data-toggle="toggle"
+            data-on="Ready"
+            data-off="Not Ready"
+            data-onstyle="success"
             data-offstyle="danger">';
 */
         $mform->addElement('html','<div class="col-1 align-content-center"

@@ -36,7 +36,7 @@ require_once("$CFG->dirroot/local/coursetranslator/classes/editor/MoodleQuickFor
  */
 class translate_form extends moodleform {
     private mixed $target_lang;
-    private mixed $current_lang;
+    //private mixed $current_lang;
 
     /**
      * Define Moodle Form
@@ -50,7 +50,7 @@ class translate_form extends moodleform {
         $course = $this->_customdata['course'];
         $coursedata = $this->_customdata['coursedata'];
         $this->target_lang = $this->_customdata['target_lang'];
-        $this->current_lang = $this->_customdata['current_lang'];
+        //$this->current_lang = $this->_customdata['current_lang'];
 
         // Start moodle form.
         $mform = $this->_form;
@@ -69,7 +69,7 @@ class translate_form extends moodleform {
         foreach ($coursedata as $section){
             /** @todo better UI */
             // Loop section's headers
-            $mform->addElement('html', "<h3 class='bg-light'>Section $sectioncount</h3>");
+            $mform->addElement('html', "<div class='row bg-light py-2'><h3 class='text-center'>Module $sectioncount</h3></div>");
             foreach ($section['section'] as $s){
                 $this->get_formrow($mform, $s);
             }
@@ -110,35 +110,41 @@ class translate_form extends moodleform {
         );
 
         // First column.
-        $mform->addElement('html', '<div class="col-1">');
+        if ($item->tneeded) {
+            if(str_contains($item->text, "{mlang ".$this->target_lang))
+            {
+                $buttonclass =  'badge-warning';
+            $titlestring =  get_string('t_needsupdate', 'local_coursetranslator');
+            }
+            else{
+                $buttonclass =  'badge-danger';
+                $titlestring =  get_string('t_nevertranslated', 'local_coursetranslator', $this->target_lang);
+            }
+
+
+        }
+        else{
+            $buttonclass =  'badge-success';
+            $titlestring =  get_string('t_uptodate', 'local_coursetranslator');
+        }
+        $pill = '<span title="'.$titlestring.'" class="badge badge-pill '.$buttonclass.'" style="font-size:.6rem;top:.3rem;left:-1rem;position:absolute;">&nbsp;</span>';
+        $mform->addElement('html', '<div class="col-1 px-1">');
+        $mform->addElement('html', $pill);
         $mform->addElement('html', '<div class="form-check">');
+
         $mform->addElement('html', '<input
             class="form-check-input"
+            title="'.$titlestring.'"
             data-action="local-coursetranslator/checkbox"
             type="checkbox"
             data-key="' . $key . '"
             disabled
         />');
-        $label = '<label class="form-check-label">';
-        if ($item->tneeded) {
-            $label .= ' <span class="badge badge-pill badge-danger rounded py-1" data-status-key="' . $key . '">'
-                    . get_string('t_needsupdate', 'local_coursetranslator')
-                    . '</span>';
-        } else {
-            $label .= ' <span class="badge badge-pill badge-success rounded py-1" data-status-key="' . $key . '">'
-                    . get_string('t_uptodate', 'local_coursetranslator')
-                    . '</span>';
-        }
-        $label .= '</label>';
-        $label .= '<a href="' . $item->link . '" target="_blank" title="' . get_string('t_edit', 'local_coursetranslator') . '">';
-        $label .= '<i class="fa fa-pencil-square-o px-2" aria-hidden="true"></i>';
-        $label .= '</a>';
-        $label .= '<a class="button px-2" id="toggleMultilang" title="' . get_string('t_viewsource', 'local_coursetranslator') . '" 
-            aria-controls="'. $keyid . '"><i class="fa fa-language" aria-hidden="true"></i></a>';
-        /*$label .= '<a data-toggle="collapse" title="' . get_string('t_viewsource', 'local_coursetranslator') . '" href="#'
-            . $keyid . '" role="button" aria-expanded="false" aria-controls="'
-            . $keyid . '"><i class="fa fa-language" aria-hidden="true"></i></a>';*/
+        $label = '<span title="'.get_string('t_viewsource', 'local_coursetranslator').'" id="toggleMultilang" aria-controls="'. $keyid . '">
+                    <i class="fa fa-language" aria-hidden="true"></i></span>';
         $mform->addElement('html', $label);
+
+
         $mform->addElement('html', '</div>');
         $mform->addElement('html', '</div>');
 
@@ -147,7 +153,12 @@ class translate_form extends moodleform {
             class="col-5 px-0 pr-5 local-coursetranslator__source-text"
             data-key="' . $key . '"
         >');
-
+        // edit button
+        $editbtn = '<a style="top:.4rem;left:-2rem;position:absolute;" href="' . $item->link . '" target="_blank" title="' . get_string('t_edit', 'local_coursetranslator') . '">';
+        $editbtn .= '<i class="fa fa-pencil-square-o px-2" aria-hidden="true"></i>';
+        $editbtn .= '</a>';
+        $mform->addElement('html', '<span class="col-1 px-0 ">'.$editbtn.'</span>');
+        // text editor
         $mform->addElement('html', '<div class="collapse show" data-sourcetext-key="' . $key . '"
                 data-sourcetext-raw="'.htmlentities($mlangfilter->filter($item->text)). '">' .
                 $mlangfilter->filter($item->displaytext) .
@@ -163,6 +174,7 @@ class translate_form extends moodleform {
         );
         //$mform->addElement('html', '</div>');
         $mform->addElement('html', '</div>');
+
         $mform->addElement('html', '</div>');
         /**
          * @todo style editor content to highlight images ALT text
@@ -229,6 +241,6 @@ class translate_form extends moodleform {
      * @return void
      */
     public function require_access() {
-        require_capability('local/multilingual:edittranslations', \context_system::instance()->id);
+        require_capability('local/multilingual:edittranslations', \context_system::instance());
     }
 }

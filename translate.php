@@ -99,7 +99,7 @@ echo $output->header();
 echo $output->heading($mlangfilter->filter($course->fullname));
 
 // Output translation grid.
-$coursedata = new \local_coursetranslator\data\course_data($course, $lang, $context->id);
+$coursedata = new \local_coursetranslator\data\course_data($course, $lang, $context);
 $renderable = new \local_coursetranslator\output\translate_page($course, $coursedata->getdata(), $mlangfilter);
 echo $output->render($renderable, $course);
 

@@ -38,20 +38,23 @@ class course_data {
     protected $lang;
     /** @var String */
     protected $contextid;
+    /** @var \core\context */
+    protected $context;
     /**
      * Class Construct
      *
      * @param \stdClass $course
      * @param string $lang
      */
-    public function __construct(\stdClass $course, string $lang, $contextid) {
+    public function __construct(\stdClass $course, string $lang, context $context) {
         // Set db table.
         $this->dbtable = 'local_coursetranslator';
-
+        // store context
+        $this->context = $context;
         // Set course.
         $this->course = $course;
         // Get the context
-        $this->contextid = $contextid;
+        $this->contextid = $this->context->id;
         // Set modinfo.
         $modinfo = get_fast_modinfo($course);
         $this->modinfo = $modinfo;
@@ -176,7 +179,7 @@ class course_data {
                         $record->id,
                         $record->intro,
                         $record->introformat,
-                        $activity->modname,
+                        'mod_'.$activity->modname,
                         'intro',
                         $activity->id,
                             $activity->section
@@ -332,7 +335,7 @@ class course_data {
     /**
      * @todo context ID is not the course context id... We should find the item id somewhere in the db i guess...
      * @param string $text
-     * @return void
+     * @return array|string|string[]
      */
     private function getFileURL(string $text, $itemId, $component, $area) {
        return file_rewrite_pluginfile_urls($text, 'pluginfile.php',$this->contextid, $component, $area, $itemId);

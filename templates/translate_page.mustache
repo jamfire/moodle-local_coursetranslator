@@ -71,7 +71,7 @@ along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
         <div class="col">
             {{#str}}t_formality,local_coursetranslator{{/str}}
             <div class="custom-control custom-radio">
-                <input type="radio" value="default" checked="true" id="formality1" name="local-coursetranslator/formality" class="custom-control-input" >
+                <input type="radio" value="default" checked="checked" id="formality1" name="local-coursetranslator/formality" class="custom-control-input" >
                 <label class="custom-control-label" for="formality1">{{#str}}t_formality_default,local_coursetranslator{{/str}}</label>
             </div>
             <div class="custom-control custom-radio">
@@ -134,7 +134,7 @@ along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
                 <label class="custom-control-label" for="split_sentences1">{{#str}}t_splitsentences_0,local_coursetranslator{{/str}}</label>
             </div>
             <div class="custom-control custom-radio">
-                <input type="radio" id="split_sentences2" name="local-coursetranslator/split_sentences" class="custom-control-input" checked="true" value="1">
+                <input type="radio" id="split_sentences2" name="local-coursetranslator/split_sentences" class="custom-control-input" checked="checked" value="1">
                 <label class="custom-control-label" for="split_sentences2">{{#str}}t_splitsentences_1,local_coursetranslator{{/str}}</label>
             </div>
             <div class="custom-control custom-radio">
@@ -182,28 +182,6 @@ along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
             <textarea class="form-control" id="context" data-id="local-coursetranslator/context" rows="3" placeholder="{{#str}}t_contextDeeplPlaceholder,local_coursetranslator{{/str}}"></textarea></div>
     </div>
 
-<!--    <div class="row py-3">
-        <div class="form-check form-check-inline">
-            <input type="checkbox" id="show-updated"
-                   checked="checked"
-                   class="local-coursetranslator__show-updated"
-                   data-action="local-coursetranslator/show-updated"
-            />
-            <label for="show-updated" class="mb-0 pl-1">{{#str}}t_uptodate,local_coursetranslator{{/str}}</label>
-        </div>
-        <div class="form-check form-check-inline">
-            <input type="checkbox" id="show-needsupdate" checked="checked"
-                   class="local-coursetranslator__show-needsupdate"
-                   data-action="local-coursetranslator/show-needsupdate"
-            />
-            <label for="show-needsupdate" class="mb-0 pl-1">{{#str}}t_needsupdate,local_coursetranslator{{/str}}</label>
-        </div>
-        <div class="col-6 px-0">
-            <p class="my-0 text-center">
-                {{ counts }}
-            </p>
-        </div>
-    </div>-->
 </div>
 
 <div class="container-fluid">

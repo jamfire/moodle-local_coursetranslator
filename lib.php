@@ -52,5 +52,9 @@ function local_coursetranslator_extend_navigation_course($navigation, $course) {
         'translate',
         new pix_icon('icon', 'icon', 'local_coursetranslator')
     );
-    $navigation->add_node($translatecontent);
+    // do not show in menu if no capability
+    if(has_capability('local/coursetranslator:edittranslations',context_course::instance($course->id))){
+        $navigation->add_node($translatecontent);
+    }
+
 }

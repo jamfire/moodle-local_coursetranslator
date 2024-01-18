@@ -34,12 +34,13 @@ class course_data {
     protected $course;
     /** @var \course_modinfo|null */
     protected $modinfo;
-    /** @var String*/
+    /** @var String */
     protected $lang;
     /** @var String */
     protected $contextid;
     /** @var \core\context */
     protected $context;
+
     /**
      * Class Construct
      *
@@ -77,27 +78,23 @@ class course_data {
          * */
         return $this->prepareData($coursedata, $sectiondata, $activitydata);
     }
+
     /**
      * prepare multidimentional array to re arrange textfields to match course presentation
      */
-    private function prepareData($coursedata, $sectiondata, $activitydata)
-    {
-        $tab = ['0'=>['section'=>$coursedata,'activities'=>[]]];
-        //$cd = $coursedata;
-        foreach ($sectiondata as $k=>$v ){
-            $tab[$v->id] = ['section'=>[$v],'activities'=>[]];
+    private function prepareData($coursedata, $sectiondata, $activitydata) {
+        $tab = ['0' => ['section' => $coursedata, 'activities' => []]];
+        foreach ($sectiondata as $k => $v) {
+            $tab[$v->id] = ['section' => [$v], 'activities' => []];
         }
-        foreach ($activitydata as $ak=>$av){
+        foreach ($activitydata as $ak => $av) {
             // if the section is not found place it under the course data as general intro
-            $sectionid = isset($tab[$av->section])? $av->section : "0";
-            $tab[$sectionid]['activities'][$av->id] = $av;
+            $sectionid = isset($tab[$av->section]) ? $av->section : "0";
+            $tab[$sectionid]['activities'][] = $av;
         }
-        //$sd = $sectiondata;
-        //$ad = $activitydata;
-
-        //return array_merge($coursedata, $sectiondata, $activitydata);
         return $tab;
     }
+
     /**
      * Get Course Data
      *
@@ -106,17 +103,38 @@ class course_data {
     private function getcoursedata() {
         $coursedata = array();
         $course = $this->modinfo->get_course();
-
+        $activity = new \stdClass();
+        $activity->modname = 'course';
+        $activity->id = null;
+        $activity->section = null;;
         if ($course->fullname) {
-            $data = $this->build_data($course->id, $course->fullname, 0, 'course', 'fullname');
+            $data = $this->build_data(
+                    $course->id,
+                    $course->fullname,
+                    0,
+                    'fullname',
+                    $activity
+            );
             array_push($coursedata, $data);
         }
         if ($course->shortname) {
-            $data = $this->build_data($course->id, $course->shortname, 0, 'course', 'shortname');
+            $data = $this->build_data(
+                    $course->id,
+                    $course->shortname,
+                    0,
+                    'shortname',
+                    $activity
+            );
             array_push($coursedata, $data);
         }
         if ($course->summary) {
-            $data = $this->build_data($course->id, $course->summary, $course->summaryformat, 'course', 'summary');
+            $data = $this->build_data(
+                    $course->id,
+                    $course->summary,
+                    $course->summaryformat,
+                    'summary',
+                    $activity
+            );
             array_push($coursedata, $data);
         }
 
@@ -132,14 +150,30 @@ class course_data {
         global $DB;
         $sections = $this->modinfo->get_section_info_all();
         $sectiondata = array();
+        $activity = new \stdClass();
+        $activity->modname = 'course_sections';
+        $activity->id = null;
+        $activity->section = null;
         foreach ($sections as $sk => $section) {
             $record = $DB->get_record('course_sections', array('course' => $this->course->id, 'section' => $sk));
             if ($record->name) {
-                $data = $this->build_data($record->id, $record->name, 0, 'course_sections', 'name');
+                $data = $this->build_data(
+                        $record->id,
+                        $record->name,
+                        0,
+                        'name',
+                        $activity
+                );
                 array_push($sectiondata, $data);
             }
             if ($record->summary) {
-                $data = $this->build_data($record->id, $record->summary, $record->summaryformat, 'course_sections', 'summary');
+                $data = $this->build_data(
+                        $record->id,
+                        $record->summary,
+                        $record->summaryformat,
+                        'summary',
+                        $activity
+                );
                 array_push($sectiondata, $data);
             }
         }
@@ -162,13 +196,11 @@ class course_data {
                 // Standard name.
                 if (isset($record->name) && !empty($record->name)) {
                     $data = $this->build_data(
-                        $record->id,
-                        $record->name,
-                        0,
-                        $activity->modname,
-                        'name',
-                        $activity->id,
-                            $activity->section
+                            $record->id,
+                            $record->name,
+                            0,
+                            'name',
+                            $activity
                     );
                     array_push($activitydata, $data);
                 }
@@ -176,66 +208,67 @@ class course_data {
                 // Standard intro.
                 if (isset($record->intro) && !empty($record->intro) && trim(strip_tags($record->intro)) !== "") {
                     $data = $this->build_data(
-                        $record->id,
-                        $record->intro,
-                        $record->introformat,
-                        'mod_'.$activity->modname,
-                        'intro',
-                        $activity->id,
-                            $activity->section
+                            $record->id,//id
+                            $record->intro,//text
+                            $record->introformat,//format
+                            'intro',//field
+                            $activity
                     );
                     array_push($activitydata, $data);
                 }
 
                 // Standard content.
-                if (isset($record->content) && !empty($record->content) && trim(strip_tags($record->content)) === "") {
+                if (isset($record->content) && !empty($record->content) && trim(strip_tags($record->content)) !== "") {
                     $data = $this->build_data(
-                        $record->id,
-                        $record->content,
-                        $record->contentformat,
-                        $activity->modname,
-                        'content',
-                        $activity->id,
-                            $activity->section
+                            $record->id,
+                            $record->content,
+                            $record->contentformat,
+                            'content',
+                            $activity
+                    );
+                    array_push($activitydata, $data);
+                }
+                // Standard activity.
+                if (isset($record->activity) && !empty($record->activity) && trim(strip_tags($record->activity)) !== "") {
+                    $data = $this->build_data(
+                            $record->id,
+                            $record->activity,
+                            $record->activityformat,
+                            'activity',
+                            $activity
                     );
                     array_push($activitydata, $data);
                 }
 
                 if (isset($record->page_after_submit) && !empty($record->page_after_submit)) {
                     $data = $this->build_data(
-                        $record->id,
-                        $record->page_after_submit,
-                        $record->page_after_submitformat,
-                        $activity->modname,
-                        'page_after_submit',
-                        $activity->id,
-                            $activity->section
+                            $record->id,
+                            $record->page_after_submit,
+                            $record->page_after_submitformat,
+                            'page_after_submit',
+                            $activity
                     );
                     array_push($activitydata, $data);
                 }
 
                 if (isset($record->instructauthors) && !empty($record->instructauthors)) {
                     $data = $this->build_data(
-                        $record->id,
-                        $record->instructauthors,
-                        $record->instructauthorsformat,
-                        $activity->modname,
-                        'instructauthors',
-                        $activity->id,
-                            $activity->section
+                            $record->id,
+                            $record->instructauthors,
+                            $record->instructauthorsformat,
+                            'instructauthors',
+                            $activity
                     );
                     array_push($activitydata, $data);
                 }
 
                 if (isset($record->instructreviewers) && !empty($record->instructreviewers)) {
                     $data = $this->build_data(
-                        $record->id,
-                        $record->instructreviewers,
-                        $record->instructreviewersformat,
-                        $activity->modname,
-                        'instructreviewers',
-                        $activity->id,
-                            $activity->section
+                            $record->id,
+                            $record->instructreviewers,
+                            $record->instructreviewersformat,
+                            'instructreviewers',
+                            $activity
                     );
                     array_push($activitydata, $data);
                 }
@@ -256,15 +289,18 @@ class course_data {
      * @param integer $cmid
      * @return \stdClass
      */
-    private function build_data($id, $text, $format, $table, $field, $cmid = null, $sectionId= null) {
+    //private function build_data($id, $text, $format, $table, $field, $cmid = null, $sectionId= null) {
+    private function build_data($id, $text, $format, $field, $activity) {
         global $DB;
-
+        $table = $activity->modname;
+        $cmid = $activity->id;
+        $sectionId = $activity->section;
         // Build db params.
         $params = array(
-            't_id' => $id,
-            't_lang' => $this->lang,
-            't_table' => $table,
-            't_field' => $field
+                't_id' => $id,
+                't_lang' => $this->lang,
+                't_table' => $table,
+                't_field' => $field
         );
 
         // Insert tracking record if it does not exist.
@@ -282,9 +318,17 @@ class course_data {
         $item = new \stdClass();
         $item->id = $id;
         $item->tid = $record->id;
+        $item->displaytext = $item->text = $text;
+        // additional text to display images
+        if (str_contains($text, '@@PLUGINFILE@@')) {
+            //$item->displaytext = $this->getFileURL($text, $this->getItemContextId($id, $table, $cmid), $table, $field, $id);
+            if (isset($activity->content) && $activity->content != '') {
+                $item->displaytext = $activity->content;
+            } else {
+                $item->displaytext = $this->getFileURL($text, $id, $cmid, $table, $field);
+            }
 
-        $item->displaytext = $this->getFileURL($text, $this->getItemId($id, $table, $cmid), $table, $field);
-        $item->text = $text;
+        }
         $item->format = intval($format);
         $item->table = $table;
         $item->field = $field;
@@ -322,22 +366,48 @@ class course_data {
 
         return $link;
     }
-    function getItemId($id, $table, $cmid = 0){
+
+    function getItemContextId($id, $table, $cmid = 0) {
         $i = 0;
-        switch($table){
+        $iscomp = false;
+        /* $field ='';
+         $tempContextModule = \context_module::instance($id)->id;
+         $tempContextCourse = \context_course::instance($id)->id;*/
+        switch ($table) {
             case 'course':
+                $i = \context_course::instance($id)->id;
+                break;
             case 'course_sections':
-                $i = $id;
-            default : $i = $cmid;
+                break;
+            default :
+                {
+                    $i = \context_module::instance($cmid)->id;
+                    $iscomp = true;
+                }
+                break;
         }
-        return $i;
+        return ['contextid' => $i, 'component' => $iscomp ? 'mod_' . $table : $table, 'itemid' => $iscomp ? $cmid : ''];
     }
+
     /**
-     * @todo context ID is not the course context id... We should find the item id somewhere in the db i guess...
      * @param string $text
      * @return array|string|string[]
      */
-    private function getFileURL(string $text, $itemId, $component, $area) {
-       return file_rewrite_pluginfile_urls($text, 'pluginfile.php',$this->contextid, $component, $area, $itemId);
+    private function getFileURL(string $text, $itemid, $cmid, $table, $field) {
+        global $DB;
+        $tmp = $this->getItemContextId($itemid, $table, $cmid);
+        $select =
+                'contextid = :contextid AND component = :component AND filename != "." AND ' . $DB->sql_like('filearea', ':field');
+        $params = ['contextid' => $tmp['contextid'], 'component' => $tmp['component'],
+                'field' => '%' . $DB->sql_like_escape($field) . '%'];
+        $result = $DB->get_recordset_select('files', $select, $params);
+        if ($result->valid()) {
+            $itemid = ($field == 'intro' || $field == 'summary') ? '' : $result->current()->itemid;
+            return file_rewrite_pluginfile_urls($text, 'pluginfile.php', $result->current()->contextid,
+                    $result->current()->component, $result->current()->filearea, $itemid);
+        } else {
+            return file_rewrite_pluginfile_urls($text, 'pluginfile.php', $tmp['contextid'], $tmp['component'], $field,
+                    $tmp['itemid']);
+        }
     }
 }

@@ -27,7 +27,7 @@ require_once("$CFG->dirroot/local/coursetranslator/classes/editor/MoodleQuickFor
 
 /**
  * Translate Form Output
- *
+ * @todo should use Mustache templating rather than extending a form as communication is done with JS...
  * Provides output class for /local/coursetranslator/translate.php
  *
  * @package    local_coursetranslator
@@ -36,7 +36,7 @@ require_once("$CFG->dirroot/local/coursetranslator/classes/editor/MoodleQuickFor
  */
 class translate_form extends moodleform {
     private mixed $target_lang;
-    //private mixed $current_lang;
+    private mixed $current_lang;
 
     /**
      * Define Moodle Form
@@ -50,7 +50,7 @@ class translate_form extends moodleform {
         $course = $this->_customdata['course'];
         $coursedata = $this->_customdata['coursedata'];
         $this->target_lang = $this->_customdata['target_lang'];
-        //$this->current_lang = $this->_customdata['current_lang'];
+        $this->current_lang = $this->_customdata['current_lang'];
 
         // Start moodle form.
         $mform = $this->_form;
@@ -75,7 +75,6 @@ class translate_form extends moodleform {
             }
             // loop section's activites
             foreach ($section['activities'] as $a){
-
                 $this->get_formrow($mform, $a);
             }
             $sectioncount++;
@@ -110,11 +109,15 @@ class translate_form extends moodleform {
         );
 
         // First column.
-        if ($item->tneeded) {
+        if($this->target_lang === $this->current_lang){
+            $buttonclass =  'badge-dark';
+            $titlestring =  get_string('t_canttranslate', 'local_coursetranslator', $this->target_lang);
+        }
+        else if ($item->tneeded) {
             if(str_contains($item->text, "{mlang ".$this->target_lang))
             {
                 $buttonclass =  'badge-warning';
-            $titlestring =  get_string('t_needsupdate', 'local_coursetranslator');
+                $titlestring =  get_string('t_needsupdate', 'local_coursetranslator');
             }
             else{
                 $buttonclass =  'badge-danger';
@@ -127,9 +130,8 @@ class translate_form extends moodleform {
             $buttonclass =  'badge-success';
             $titlestring =  get_string('t_uptodate', 'local_coursetranslator');
         }
-        $pill = '<span title="'.$titlestring.'" class="badge badge-pill '.$buttonclass.'" style="font-size:.6rem;top:.3rem;left:-1rem;position:absolute;">&nbsp;</span>';
         $mform->addElement('html', '<div class="col-1 px-1">');
-        $mform->addElement('html', $pill);
+        $mform->addElement('html', '<span title="'.$titlestring.'" class="badge badge-pill '.$buttonclass.'" style="font-size:.6rem;top:.3rem;left:-1rem;position:absolute;">&nbsp;</span>');
         $mform->addElement('html', '<div class="form-check">');
 
         $mform->addElement('html', '<input
@@ -140,30 +142,31 @@ class translate_form extends moodleform {
             data-key="' . $key . '"
             disabled
         />');
-        $label = '<span title="'.get_string('t_viewsource', 'local_coursetranslator').'" id="toggleMultilang" aria-controls="'. $keyid . '">
-                    <i class="fa fa-language" aria-hidden="true"></i></span>';
-        $mform->addElement('html', $label);
+        $mform->addElement('html', '<span 
+                    title="'.get_string('t_viewsource', 'local_coursetranslator').'" 
+                    id="toggleMultilang" 
+                    aria-controls="'. $keyid . '" 
+                    role="button">
+                       <i class="fa fa-language px-10" aria-hidden="true"></i>
+                    </span>');
 
 
         $mform->addElement('html', '</div>');
         $mform->addElement('html', '</div>');
 
         // Source Text.
-        $mform->addElement('html', '<div
-            class="col-5 px-0 pr-5 local-coursetranslator__source-text"
-            data-key="' . $key . '"
-        >');
+        $mform->addElement('html','<div class="col-5 px-0 pr-5 local-coursetranslator__source-text" data-key="'. $key .'">');
         // edit button
-        $editbtn = '<a style="top:.4rem;left:-2rem;position:absolute;" href="' . $item->link . '" target="_blank" title="' . get_string('t_edit', 'local_coursetranslator') . '">';
-        $editbtn .= '<i class="fa fa-pencil-square-o px-2" aria-hidden="true"></i>';
-        $editbtn .= '</a>';
-        $mform->addElement('html', '<span class="col-1 px-0 ">'.$editbtn.'</span>');
+        $mform->addElement('html', '<span class="col-1 px-0 ">
+                        <a style="top:.4rem;left:-2rem;position:absolute;" href="' . $item->link . '" target="_blank" title="' . get_string('t_edit', 'local_coursetranslator') . '">
+                            <i class="fa fa-pencil-square-o px-2" aria-hidden="true"></i>
+                        </a>
+                     </span>');
         // text editor
         $mform->addElement('html', '<div class="collapse show" data-sourcetext-key="' . $key . '"
                 data-sourcetext-raw="'.htmlentities($mlangfilter->filter($item->text)). '">' .
                 $mlangfilter->filter($item->displaytext) .
                 ' </div>');
-        //$mform->addElement('html', '<div>');
 
         $mform->addElement('html', '<div class="collapse" id="' . $keyid . '">');
         $mform->addElement('html','<div 
@@ -172,7 +175,6 @@ class translate_form extends moodleform {
             >'
             . trim($item->text) . '</div>'
         );
-        //$mform->addElement('html', '</div>');
         $mform->addElement('html', '</div>');
 
         $mform->addElement('html', '</div>');
@@ -207,7 +209,7 @@ class translate_form extends moodleform {
         $mform->addElement('html', '</div>');
         // adding validator btn
         //$saveToggleBtn = '<i class="col-1 align-content-center fa fa-floppy-o mr-1" data-toggle="" data-validate-'.$keyid.' ></i>';
-        $saveToggleBtn = '<i class="col-1 align-content-center fa mr-1" data-status="local-coursetranslator/wait" data-toggle="" data-validate-'.$keyid.' ></i>';
+        $saveToggleBtn = '<i class="col-1 align-content-center fa mr-1" data-status="local-coursetranslator/wait" data-toggle="" data-validate-'.$keyid.' role="status"></i>';
        /* $saveToggleBtn = '<input type="checkbox" checked
             data-toggle="toggle"
             data-on="Ready"

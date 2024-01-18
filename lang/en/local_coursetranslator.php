@@ -63,7 +63,9 @@ $string['t_multiplemlang'] = 'This field is using advanced {mlang} usage. Please
 $string['t_needsupdate'] = 'Needs update';
 $string['t_uptodate'] = 'Up to date';
 $string['t_nevertranslated'] = 'No \'{$a}\' translation yet';
-$string['t_edit'] = 'Edit in place';
+$string['t_canttranslate'] = 'Cannot translate \'{$a}\' to \'{$a}\', please select a different target language';
+
+$string['t_edit'] = 'Edit source in place';
 $string['t_viewsource'] = 'View multilang';
 $string['t_seeSetting'] = 'more Deepl\'s settings';
 $string['t_splitsentences'] = 'Split sentences?';

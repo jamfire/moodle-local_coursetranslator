@@ -19,16 +19,17 @@
  *
  * @package      local_coursetranslator
  * @copyright    2022 Kaleb Heitzman <kaleb@jamfire.io>
+ * @copyright  2024 Bruno Baudry <bruno.baudry@bfh.ch>
  * @license      http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
 /**
  * Add Translate Course to course settings menu.
  *
- * @package      local_coursetranslator
  * @param object $navigation
  * @param object $course
  * @return void
+ * @package      local_coursetranslator
  */
 function local_coursetranslator_extend_navigation_course($navigation, $course) {
 
@@ -45,15 +46,15 @@ function local_coursetranslator_extend_navigation_course($navigation, $course) {
 
     // Navigation node.
     $translatecontent = navigation_node::create(
-        $title,
-        $url,
-        navigation_node::TYPE_CUSTOM,
-        $title,
-        'translate',
-        new pix_icon('icon', 'icon', 'local_coursetranslator')
+            $title,
+            $url,
+            navigation_node::TYPE_CUSTOM,
+            $title,
+            'translate',
+            new pix_icon('icon', 'icon', 'local_coursetranslator')
     );
-    // do not show in menu if no capability
-    if(has_capability('local/coursetranslator:edittranslations',context_course::instance($course->id))){
+    // Do not show in menu if no capability
+    if (has_capability('local/coursetranslator:edittranslations', context_course::instance($course->id))) {
         $navigation->add_node($translatecontent);
     }
 

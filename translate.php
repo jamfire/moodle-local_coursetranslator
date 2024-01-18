@@ -26,12 +26,13 @@
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  * @see        https://docs.moodle.org/dev/Output_API
  */
+
+// Get libs.
+require_once(__DIR__ . '/../../config.php');
 global $CFG;
 global $PAGE;
 global $DB;
-// Get libs.
-require_once(__DIR__ . '/../../config.php');
-require_once(__DIR__ . '/../../filter/multilang2/filter.php');
+require_once($CFG->dirroot . '/filter/multilang2/filter.php');
 require_once('./classes/output/translate_page.php');
 require_once('./classes/data/course_data.php');
 require_once($CFG->dirroot . '/lib/editorlib.php');
@@ -51,9 +52,7 @@ require_capability('local/coursetranslator:edittranslations', $context);
 $jsconfig = new stdClass();
 $jsconfig->apikey = get_config('local_coursetranslator', 'apikey');
 $jsconfig->autotranslate = boolval(get_config('local_coursetranslator', 'useautotranslate'))
-&& in_array($lang, explode(',', get_string('supported_languages', 'local_coursetranslator')))
-        ? true
-        : false;
+        && in_array($lang, explode(',', get_string('supported_languages', 'local_coursetranslator')));
 $jsconfig->lang = $lang;
 $jsconfig->currentlang = current_language();
 $jsconfig->syslang = $CFG->lang;
@@ -80,10 +79,8 @@ $PAGE->set_course($course);
 //$jsconfig->ed = editors_get_enabled();
 $defaultEditor = strstr($CFG->texteditors, ',', true);
 $userPrefs = get_user_preferences();
-// get users prefrences to pass the dditor's type to js
+// get users prefrences to pass the editor's type to js
 $jsconfig->userPrefs = $userPrefs['htmleditor'] ?? $defaultEditor;
-
-//$jsconfig->userPrefs = get_user_preferences();
 
 // adding PAges CSS
 $PAGE->requires->css('/local/coursetranslator/styles.css');

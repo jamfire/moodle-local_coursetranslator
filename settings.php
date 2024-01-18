@@ -24,9 +24,9 @@
  */
 
 defined('MOODLE_INTERNAL') || die();
-
-if ($hassiteconfig) {
-
+//$test = 1;
+if (has_capability('moodle/site:config', \context_system::instance())) {
+    global $ADMIN;
     // Create new settings page.
     $settings = new admin_settingpage('local_coursetranslator', get_string('pluginname', 'local_coursetranslator'));
 
@@ -35,44 +35,44 @@ if ($hassiteconfig) {
 
     // Use deepl machine translation.
     $settings->add(
-        new admin_setting_configcheckbox(
-            'local_coursetranslator/usedeepl',
-            get_string('usedeepl', 'local_coursetranslator'),
-            get_string('usedeepl_desc', 'local_coursetranslator'),
-            false
-        )
+            new admin_setting_configcheckbox(
+                    'local_coursetranslator/usedeepl',
+                    get_string('usedeepl', 'local_coursetranslator'),
+                    get_string('usedeepl_desc', 'local_coursetranslator'),
+                    false
+            )
     );
 
     // DeepL apikey.
     $settings->add(
-        new admin_setting_configtext(
-            'local_coursetranslator/apikey',
-            get_string('apikey', 'local_coursetranslator'),
-            get_string('apikey_desc', 'local_coursetranslator'),
-            null,
-            PARAM_RAW_TRIMMED,
-            40
-        )
+            new admin_setting_configtext(
+                    'local_coursetranslator/apikey',
+                    get_string('apikey', 'local_coursetranslator'),
+                    get_string('apikey_desc', 'local_coursetranslator'),
+                    null,
+                    PARAM_RAW_TRIMMED,
+                    40
+            )
     );
 
     // DeepL Free or Pro?
     $settings->add(
-        new admin_setting_configcheckbox(
-            'local_coursetranslator/deeplpro',
-            get_string('deeplpro', 'local_coursetranslator'),
-            get_string('deeplpro_desc', 'local_coursetranslator'),
-            false
-        )
+            new admin_setting_configcheckbox(
+                    'local_coursetranslator/deeplpro',
+                    get_string('deeplpro', 'local_coursetranslator'),
+                    get_string('deeplpro_desc', 'local_coursetranslator'),
+                    false
+            )
     );
 
     // Use translation page autotranslation.
     $settings->add(
-        new admin_setting_configcheckbox(
-            'local_coursetranslator/useautotranslate',
-            get_string('useautotranslate', 'local_coursetranslator'),
-            get_string('useautotranslate_desc', 'local_coursetranslator'),
-            false
-        )
+            new admin_setting_configcheckbox(
+                    'local_coursetranslator/useautotranslate',
+                    get_string('useautotranslate', 'local_coursetranslator'),
+                    get_string('useautotranslate_desc', 'local_coursetranslator'),
+                    false
+            )
     );
 
 }

@@ -16,35 +16,54 @@
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
 /**
- * Local Course Translator Web Service
- *
- * Adds a webservice available via ajax for the Translate Content page.
+ * Test cases
  *
  * @package    local_coursetranslator
  * @copyright  2022 Kaleb Heitzman <kaleb@jamfire.io>
+ * @copyright  2024 Bruno Baudry <bruno.baudry@bfh.ch>
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  * @see        https://docs.moodle.org/dev/PHPUnit
  */
 
-namespace local_coursetranslator;
-define('CLI_SCRIPT', true);
-use PHPUnit\Framework\TestCase;
-require_once (__DIR__.'/../../../lib/phpunit/classes/advanced_testcase.php');
+namespace local_coursetranslator\tests;
 
 /**
  * Settings Test
  */
-final class settings_test extends core\advanced_testcase {
+class settings_test extends \advanced_testcase {
+    protected function setUp(): void {
+        parent::setUp();
+        $this->resetAfterTest(true);
+    }
 
     public function test_usedeepl() {
-        require_once(__DIR__ . '/../../../config.php');
         global $CFG;
-        require_once($CFG->dirroot . '/local/coursetranslator/settings.php');
-
         $this->assertNotNull($CFG);
         $this->assertEquals(2, 1 + 1);
     }
-    public function test_settings(){
+
+    public function test_settings() {
+        global $CFG;
+
+        //echo $CFG->dirroot . '/lib/adminlib.php';
+        require_once($CFG->dirroot . '/lib/adminlib.php');
+        require_once(__DIR__ . '/../settings.php');
+        $settings1 = new \admin_settingpage('local_coursetranslator', get_string('pluginname', 'local_coursetranslator'));
+        $this->assertFileExists($CFG->dirroot . '/lib/adminlib.php');
+        $this->assertFileExists(__DIR__ . '/../settings.php');
+        $this->assertFalse(has_capability('moodle/site:config', \context_system::instance()));
+        $this->setAdminUser();
+        $this->assertTrue(has_capability('moodle/site:config', \context_system::instance()));
+        //global $ADMIN;
+        //$this->assertNotNull($ADMIN);
+        //$this->assertNotNull($CFG);
+        //$this->assertNotNull($settings);
+        //$this->assertFalse($test_settings === 1);
+        //$this->assertNotNull($ADMIN);
+        //$this->assertTrue(has_capability('moodle/site:config', \context_system::instance()));
+        $this->assertInstanceOf("admin_settingpage", $settings1);
+        //$this->assertInstanceOf("admin_settingpage", $settings);
+        //$settings = new \admin_settingpage('local_coursetranslator', get_string('pluginname', 'local_coursetranslator'));
 
     }
 

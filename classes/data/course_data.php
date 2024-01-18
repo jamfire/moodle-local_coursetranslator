@@ -375,7 +375,7 @@ class course_data {
      * @param int $cmid
      * @return array
      */
-    function getItemContextId($id, $table, $cmid = 0) {
+    private function getItemContextId($id, $table, $cmid = 0) {
         $i = 0;
         $iscomp = false;
         switch ($table) {

@@ -16,6 +16,7 @@
 /*
  * @module     local_coursetranslator/coursetranslator
  * @copyright  2022 Kaleb Heitzman <kaleb@jamfire.io>
+ * @copyright  2024 Bruno Baudry <bruno.baudry@bfh.ch>
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 // import libs
@@ -42,7 +43,6 @@ const registerEventListeners = () => {
             showRows(Selectors.statuses.updated, e.target.checked);
         }
         if (e.target.closest(Selectors.actions.showNeedUpdate)) {
-            //neededUpdate(e);
             showRows(Selectors.statuses.needsupdate, e.target.checked);
         }
         if (e.target.closest(Selectors.actions.checkBoxes)) {
@@ -51,11 +51,10 @@ const registerEventListeners = () => {
     });
     document.addEventListener('click', e => {
         if (e.target.closest(Selectors.actions.toggleMultilang)) {
-            //window.console.info(e.target.id);
             onToggleMultilang(e.target.closest(Selectors.actions.toggleMultilang));
         }
         if (e.target.closest(Selectors.actions.autoTranslateBtn)) {
-            if (config.currentlang == config.lang || config.lang == undefined) {
+            if (config.currentlang === config.lang || config.lang === undefined) {
                 Modal.create({
                     title: 'Cannot call deepl',
                     body: `<p>Both languges are the same {$config.lang}</p>`,
@@ -83,9 +82,8 @@ const registerUI = () => {
  */
 export const init = (cfg) => {
     config = cfg;
-    //window.console.log(config);
     editorType = config.userPrefs;
-    // setup
+    // Setup
     registerUI();
     registerEventListeners();
     toggleAutotranslateButton();
@@ -186,7 +184,6 @@ export const init = (cfg) => {
                         tdata.text = updatedtext;
                         // Success Message
                         const successMessage = () => {
-                            // editor.classList.add("local-coursetranslator__success");
                             element.classList.add("local-coursetranslator__success");
                             // Add saved indicator
                             icon.setAttribute('role', 'status');
@@ -306,7 +303,7 @@ const toggleStatus = (key, checked) => {
 
 
 /**
- * shows/hides rows
+ * Shows/hides rows
  * @param {string} selector
  * @param {boolean} selected
  */
@@ -315,7 +312,7 @@ const showRows = (selector, selected) => {
     items.forEach((item) => {
         let k = item.getAttribute('data-row-id');
         toggleRowVisibility(item, selected);
-        // when a row is toggled then we don't want it to be selected and sent from translation.
+        // When a row is toggled then we don't want it to be selected and sent from translation.
         item.querySelector(replaceKey(Selectors.editors.multiples.checkBoxesWithKey, k)).checked = false;
         toggleStatus(k, false);
     });
@@ -335,8 +332,7 @@ const switchTarget = (e) => {
     let url = new URL(window.location.href);
     let searchParams = url.searchParams;
     searchParams.set("target_lang", e.target.value);
-    let newUrl = url.toString();
-    window.location = newUrl;
+    window.location = url.toString();
 };
 /**
  * Event listener to switch source lang
@@ -347,8 +343,7 @@ const switchSource = (e) => {
     let url = new URL(window.location.href);
     let searchParams = url.searchParams;
     searchParams.set("lang", e.target.value);
-    let newUrl = url.toString();
-    window.location = newUrl;
+    window.location = url.toString();
 };
 /**
  * Launch autotranslation
@@ -401,7 +396,9 @@ const getTranslation = (key) => {
     formData.append("non_splitting_tags", toJsonArray(document.querySelector(Selectors.deepl.nonSplittingTags).value));
     formData.append("splitting_tags", toJsonArray(document.querySelector(Selectors.deepl.splittingTags).value));
     formData.append("ignore_tags", toJsonArray(document.querySelector(Selectors.deepl.ignoreTags).value));
-    // window.console.log("Send deepl:", formData);
+    if (config.debug) {
+        window.console.log("Send deepl:", formData);
+    }
     // Update the translation
     let xhr = new XMLHttpRequest();
     xhr.onreadystatechange = () => {
@@ -410,10 +407,9 @@ const getTranslation = (key) => {
             if (status === 0 || (status >= 200 && status < 400)) {
                 // The request has been completed successfully
                 let data = JSON.parse(xhr.responseText);
-                //window.console.log("deepl:", key, data);
                 // Display translation
                 editor.innerHTML = data.translations[0].text;
-                // store the translation in the global object
+                // Store the translation in the global object
                 tempTranslations[key].translation = data.translations[0].text;
                 icon.setAttribute('role', 'button');
                 icon.setAttribute('data-status', 'local-coursetranslator/tosave');
@@ -459,14 +455,14 @@ const findEditor = (key) => {
     return e;
 };
 /**
- * toggle checkboxes
+ * Toggle checkboxes
  * @param {Event} e Event
  */
 const toggleAllCheckboxes = (e) => {
     // Check/uncheck checkboxes
     if (e.target.checked) {
         checkboxes.forEach((i) => {
-            // toggle check box upon visibility
+            // Toggle check box upon visibility
             i.checked = !getParentRow(i).classList.contains('d-none');
             toggleStatus(i.getAttribute('data-key'), i.checked);
         });
@@ -490,14 +486,8 @@ const toggleAutotranslateButton = () => {
     checkboxes.forEach((e) => {
         checkboxItems.push(e.checked);
     });
-    let checked = checkboxItems.find((checked) => checked === true)
-        ? true
-        : false;
-    if (config.autotranslate && checked) {
-        autotranslateButton.disabled = false;
-    } else {
-        autotranslateButton.disabled = true;
-    }
+    let checked = checkboxItems.find((checked) => checked === true);
+    autotranslateButton.disabled = config.autotranslate && checked;
 };
 /**
  * Multilang button handler
@@ -507,7 +497,6 @@ const onToggleMultilang = (e) => {
     e.classList.toggle("showing");
     let keyid = e.getAttribute('aria-controls');
     let key = keyidToKey(keyid);
-    //window.console.log(e, key, keyid);
     let source = document.querySelector(replaceKey(Selectors.sourcetexts.keys, key));
     let multilang = document.querySelector(replaceKey(Selectors.sourcetexts.multilangs, keyid));
     source.classList.toggle("show");
@@ -523,7 +512,7 @@ const toJsonArray = (s, sep = ",") => {
     return JSON.stringify(s.split(sep));
 };
 /**
- * simple helper to manage selectors
+ * Simple helper to manage selectors
  * @param {string} s
  * @param {string} k
  * @returns {*}
@@ -531,10 +520,8 @@ const toJsonArray = (s, sep = ",") => {
 const replaceKey = (s, k) => {
     return s.replace("<KEY>", k);
 };
-/*const regFrom = /^(.+)\[(.+)\]\[(.+)\]$/i;*/
-//const regTo = /^(.+)-(.+)-(.+)$/i;
 /**
- * transforms a keyid to a key
+ * Transforms a keyid to a key
  * @param {string} k
  * @returns {`${*}[${*}][${*}]`}
  */

@@ -22,16 +22,19 @@
  *
  * @package    local_coursetranslator
  * @copyright  2022 Kaleb Heitzman <kaleb@jamfire.io>
+ * @copyright  2024 Bruno Baudry <bruno.baudry@bfh.ch>
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  * @see        https://docs.moodle.org/dev/Output_API
  */
-
+global $CFG;
+global $PAGE;
+global $DB;
 // Get libs.
-require_once(__DIR__ .'/../../config.php');
-require_once(__DIR__ .'/../../filter/multilang2/filter.php');
+require_once(__DIR__ . '/../../config.php');
+require_once(__DIR__ . '/../../filter/multilang2/filter.php');
 require_once('./classes/output/translate_page.php');
 require_once('./classes/data/course_data.php');
-require_once($CFG->dirroot. '/lib/editorlib.php');
+require_once($CFG->dirroot . '/lib/editorlib.php');
 
 // Needed vars for processing.
 $courseid = required_param('course_id', PARAM_INT);
@@ -48,16 +51,16 @@ require_capability('local/coursetranslator:edittranslations', $context);
 $jsconfig = new stdClass();
 $jsconfig->apikey = get_config('local_coursetranslator', 'apikey');
 $jsconfig->autotranslate = boolval(get_config('local_coursetranslator', 'useautotranslate'))
-    && in_array($lang, explode(',', get_string('supported_languages', 'local_coursetranslator')))
-    ? true
-    : false;
+&& in_array($lang, explode(',', get_string('supported_languages', 'local_coursetranslator')))
+        ? true
+        : false;
 $jsconfig->lang = $lang;
 $jsconfig->currentlang = current_language();
 $jsconfig->syslang = $CFG->lang;
 $jsconfig->courseid = $courseid;
 $jsconfig->deeplurl = boolval(get_config('local_coursetranslator', 'deeplpro'))
-    ? 'https://api.deepl.com/v2/translate?'
-    : 'https://api-free.deepl.com/v2/translate?';
+        ? 'https://api.deepl.com/v2/translate?'
+        : 'https://api-free.deepl.com/v2/translate?';
 $jsconfig->multiplemlang = get_string('t_multiplemlang', 'local_coursetranslator');
 $jsconfig->autosavedmsg = get_string('t_autosaved', 'local_coursetranslator');
 $jsconfig->needsupdate = get_string('t_needsupdate', 'local_coursetranslator');
@@ -75,11 +78,10 @@ $PAGE->set_pagelayout('base');
 $PAGE->set_course($course);
 
 //$jsconfig->ed = editors_get_enabled();
-$defaultEditor = strstr($CFG->texteditors,',', true);
+$defaultEditor = strstr($CFG->texteditors, ',', true);
 $userPrefs = get_user_preferences();
 // get users prefrences to pass the dditor's type to js
-$jsconfig->userPrefs = $userPrefs['htmleditor']??$defaultEditor;
-
+$jsconfig->userPrefs = $userPrefs['htmleditor'] ?? $defaultEditor;
 
 //$jsconfig->userPrefs = get_user_preferences();
 
@@ -87,7 +89,6 @@ $jsconfig->userPrefs = $userPrefs['htmleditor']??$defaultEditor;
 $PAGE->requires->css('/local/coursetranslator/styles.css');
 // Adding page's JS
 $PAGE->requires->js_call_amd('local_coursetranslator/coursetranslator', 'init', array($jsconfig));
-
 
 // Get the renderer.
 $output = $PAGE->get_renderer('local_coursetranslator');

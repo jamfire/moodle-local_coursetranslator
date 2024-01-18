@@ -25,6 +25,7 @@ use core\context;
  *
  * @package    local_coursetranslator
  * @copyright  2022 Kaleb Heitzman <kaleb@jamfire.io>
+ * @copyright  2024 Bruno Baudry <bruno.baudry@bfh.ch>
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 class course_data {

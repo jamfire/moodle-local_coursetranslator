@@ -349,7 +349,6 @@ class course_data {
      * @return string
      */
     private function link_builder($id, $table, $cmid = 0) {
-
         $link = null;
         switch ($table) {
             case 'course':
@@ -368,12 +367,17 @@ class course_data {
         return $link;
     }
 
+    /**
+     * Get the correct context
+     *
+     * @param int $id
+     * @param string $table
+     * @param int $cmid
+     * @return array
+     */
     function getItemContextId($id, $table, $cmid = 0) {
         $i = 0;
         $iscomp = false;
-        /* $field ='';
-         $tempContextModule = \context_module::instance($id)->id;
-         $tempContextCourse = \context_course::instance($id)->id;*/
         switch ($table) {
             case 'course':
                 $i = \context_course::instance($id)->id;

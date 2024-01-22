@@ -20,7 +20,7 @@
  */
 export default {
     actions: {
-        validatorsBtns: '[data-key-validator]',
+        validatorsBtns: 'div[data-key-validator]',
         validator: '[data-key-validator="<KEY>"]',
         validatorIcon: '[data-key-validator="<KEY>"] i',
         checkBoxes: '[data-action="local-coursetranslator/checkbox"]',

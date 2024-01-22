@@ -1,4 +1,2 @@
 #!/bin/bash
-cd ../../
-php vendor/bin/phpunit -c local/coursetranslator/tests
-cd -
+../../vendor/bin/phpunit --colors --testsuite local_coursetranslator_testsuite

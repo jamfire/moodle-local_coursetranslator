@@ -19,16 +19,18 @@
  * @copyright  2024 Bruno Baudry <bruno.baudry@bfh.ch>
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
-// import libs
+// Import libs
 import ajax from "core/ajax";
 import Selectors from "./selectors";
 import Modal from 'core/modal';
 // Initialize the temporary translations dictionary @todo make external class
 let tempTranslations = {};
-let editorType = '';
+let mainEditorType = '';
 let config = {};
 let autotranslateButton = {};
 let checkboxes = [];
+let sourceLang = "";
+let targetLang = "";
 
 const registerEventListeners = () => {
 
@@ -74,6 +76,8 @@ const registerEventListeners = () => {
 const registerUI = () => {
     autotranslateButton = document.querySelector(Selectors.actions.autoTranslateBtn);
     checkboxes = document.querySelectorAll(Selectors.actions.checkBoxes);
+    sourceLang = document.querySelector(Selectors.actions.sourceSwitcher).value;
+    targetLang = document.querySelector(Selectors.actions.targetSwitcher).value;
 };
 
 /**
@@ -82,15 +86,16 @@ const registerUI = () => {
  */
 export const init = (cfg) => {
     config = cfg;
-    editorType = config.userPrefs;
+    if (config.debug > 0) {
+        window.console.info(config);
+    }
+    mainEditorType = config.userPrefs;
     // Setup
     registerUI();
     registerEventListeners();
     toggleAutotranslateButton();
-    const selectAllBtn = document.querySelector(Selectors.actions.selecAllBtn);
-    if (config.autotranslate) {
-        selectAllBtn.disabled = false;
-    }
+    const selectAllBtn = document.querySelector(Selectors.actions.selectAllBtn);
+    selectAllBtn.disabled = sourceLang === targetLang;
     /**
      * Validaate translation ck
      */
@@ -120,11 +125,11 @@ export const init = (cfg) => {
      */
     if (config.autotranslate) {
         checkboxes.forEach((e) => {
-            e.disabled = false;
+            e.disabled = sourceLang === targetLang;
         });
     }
     checkboxes.forEach((e) => {
-        e.addEventListener("change", () => {
+        e.addEventListener("click", () => {
             toggleAutotranslateButton();
         });
     });
@@ -153,7 +158,9 @@ export const init = (cfg) => {
         fielddata.id = parseInt(id);
         fielddata.table = table;
         fielddata.field = field;
-
+        if (config.debug > 0) {
+            window.console.log(fielddata);
+        }
         // Get the latest data to parse text against.
         ajax.call([
             {
@@ -182,6 +189,9 @@ export const init = (cfg) => {
                         tdata.table = table;
                         tdata.field = field;
                         tdata.text = updatedtext;
+                        if (config.debug > 0) {
+                            window.console.log(tdata);
+                        }
                         // Success Message
                         const successMessage = () => {
                             element.classList.add("local-coursetranslator__success");
@@ -316,6 +326,7 @@ const showRows = (selector, selected) => {
         item.querySelector(replaceKey(Selectors.editors.multiples.checkBoxesWithKey, k)).checked = false;
         toggleStatus(k, false);
     });
+    toggleAutotranslateButton();
 };
 const toggleRowVisibility = (row, checked) => {
     if (checked) {
@@ -350,7 +361,6 @@ const switchSource = (e) => {
  */
 const doAutotranslate = () => {
     document
-        // .querySelectorAll(".local-coursetranslator__checkbox:checked")
         .querySelectorAll(Selectors.statuses.checkedCheckBoxes)
         .forEach((ckBox) => {
             let key = ckBox.getAttribute("data-key");
@@ -366,15 +376,19 @@ const getTranslation = (key) => {
     // Store the key in the dictionary
     tempTranslations[key] = {};
     // Get the editor
-    let editor = findEditor(key);
-    // Prepare css to inject in iframe editors
-    const css = document.createElement('style');
-    css.textContent = 'img{background-color:yellow !important;font-style: italic;}';
+    let editorSettings = findEditor(key);
+    if (config.debug > 0) {
+        window.console.log(editorSettings);
+    }
+    let editor = editorSettings.editor;
+    let editorType = editorSettings.editorType;
+
     // Get the source text
     let sourceText = document.querySelector(Selectors.sourcetexts.keys.replace("<KEY>", key)).getAttribute("data-sourcetext-raw");
     let icon = document.querySelector(replaceKey(Selectors.actions.validatorIcon, key));
     // Initialize global dictionary with this key's editor
     tempTranslations[key] = {
+        'editorType': editorType,
         'editor': editor,
         'source': sourceText,
         'translation': ''
@@ -382,9 +396,8 @@ const getTranslation = (key) => {
     // Build formData
     let formData = new FormData();
     formData.append("text", sourceText);
-    // FormData.append("source_lang", "en");
-    formData.append("source_lang", config.currentlang.toUpperCase());
-    formData.append("target_lang", config.lang.toUpperCase());
+    formData.append("source_lang", sourceLang.toUpperCase());
+    formData.append("target_lang", targetLang.toUpperCase());
     formData.append("auth_key", config.apikey);
     formData.append("tag_handling", document.querySelector(Selectors.deepl.tagHandling).checked ? 'html' : 'xml');//
     formData.append("context", document.querySelector(Selectors.deepl.context).value ?? null); //
@@ -413,8 +426,21 @@ const getTranslation = (key) => {
                 tempTranslations[key].translation = data.translations[0].text;
                 icon.setAttribute('role', 'button');
                 icon.setAttribute('data-status', 'local-coursetranslator/tosave');
-                // Inject css to highlight ALT text of image not loaded because of @@POLUGINFILE@@
-                editor.appendChild(css);
+                injectImageCss(editorSettings);
+                // if (editorType === "iframe") {
+                //     let editorshildrens = Array.from(editor.parentElement.children);
+                //     let found = false;
+                //     for (let j in editorshildrens) {
+                //         let e = editorshildrens[j];
+                //         if (e.innerText === css.innerText) {
+                //             found = true;
+                //             break;
+                //         }
+                //     }
+                //     if (!found) {
+                //         editor.parentElement.appendChild(css);
+                //     }
+                // }
             } else {
                 // Oh no! There has been an error with the request!
                 icon.setAttribute('data-status', 'local-coursetranslator/failed');
@@ -426,6 +452,29 @@ const getTranslation = (key) => {
     xhr.send(formData);
 };
 /**
+ * Inject css to highlight ALT text of image not loaded because of @@POLUGINFILE@@
+ * @param {Integer} editorSettings
+ * */
+const injectImageCss = (editorSettings) => {
+    // Prepare css to inject in iframe editors
+    const css = document.createElement('style');
+    css.textContent = 'img{background-color:yellow !important;font-style: italic;}';
+    if (editorSettings.editorType === "iframe") {
+        let editorshildrens = Array.from(editorSettings.editor.parentElement.children);
+        let found = false;
+        for (let j in editorshildrens) {
+            let e = editorshildrens[j];
+            if (e.innerText === css.innerText) {
+                found = true;
+                break;
+            }
+        }
+        if (!found) {
+            editorSettings.editor.parentElement.appendChild(css);
+        }
+    }
+};
+/**
  * Get the editor container based on recieved current user's
  * editor preference.
  * @param {Integer} key Translation Key
@@ -433,14 +482,17 @@ const getTranslation = (key) => {
 const findEditor = (key) => {
     let e = document.querySelector(Selectors.editors.types.basic
         .replace("<KEY>", key));
+    let et = 'basic';
     if (e === null) {
-        switch (editorType) {
+        switch (mainEditorType) {
             case "atto" :
+                et = 'iframe';
                 e = document.querySelector(
                     Selectors.editors.types.atto
                         .replaceAll("<KEY>", key));
                 break;
             case "tiny":
+                et = 'iframe';
                 e = document.querySelector(Selectors.editors.types.tiny
                     .replaceAll("<KEY>", key))
                     .contentWindow.tinymce;
@@ -452,7 +504,7 @@ const findEditor = (key) => {
                 break;
         }
     }
-    return e;
+    return {editor: e, editorType: et};
 };
 /**
  * Toggle checkboxes
@@ -479,15 +531,16 @@ const getParentRow = (node) => {
 };
 /**
  * Toggle Autotranslate Button
- * @todo add real autotranslate functionality
  */
 const toggleAutotranslateButton = () => {
-    let checkboxItems = [];
-    checkboxes.forEach((e) => {
-        checkboxItems.push(e.checked);
-    });
-    let checked = checkboxItems.find((checked) => checked === true);
-    autotranslateButton.disabled = config.autotranslate && checked;
+    autotranslateButton.disabled = true;
+    for (let i in checkboxes) {
+        let e = checkboxes[i];
+        if (e.checked) {
+            autotranslateButton.disabled = false;
+            break;
+        }
+    }
 };
 /**
  * Multilang button handler

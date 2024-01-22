@@ -60,11 +60,10 @@ class translate_page implements renderable, templatable {
          * @todo source lang should be identified and fixed to OTHER
          * if source lang is changed for a course than the whole translation should be void
          */
-
         $this->current_lang = optional_param('lang', current_language(), PARAM_NOTAGS);
         $this->target_lang = optional_param('target_lang', 'en', PARAM_NOTAGS);
         $this->mlangfilter = $mlangfilter;
-        /** @todo no need form if treatment and api call is done by js */
+        /** @todo no need form if treatment and api call is done by js. Replace by Mustache */
         // Moodle Form.
         $mform = new translate_form(null, [
                 'course' => $course,
@@ -90,7 +89,23 @@ class translate_page implements renderable, templatable {
         $target_langs = [];
         // Process langs.
         foreach ($this->langs as $key => $lang) {
+            $disabletarget = $this->current_lang === $key ||
+                    !in_array($key, explode(',', get_string('supported_languages', 'local_coursetranslator')));
+            $disablesource = $this->target_lang === $key ||
+                    !in_array($key, explode(',', get_string('supported_languages', 'local_coursetranslator')));
             array_push($langs, array(
+                    'code' => $key,
+                    'lang' => $lang,
+                    'disabled' => $disablesource ? "disabled" : "",
+                    'selected' => $this->current_lang === $key ? "selected" : ""
+            ));
+            array_push($target_langs, array(
+                    'code' => $key,
+                    'lang' => $lang,
+                    'disabled' => $disabletarget ? "disabled" : "",
+                    'selected' => $this->target_lang === $key ? "selected" : ""
+            ));
+            /*array_push($langs, array(
                     'code' => $key,
                     'lang' => $lang,
                     'disabled' => $this->target_lang === $key ? "disabled" : "",
@@ -99,9 +114,9 @@ class translate_page implements renderable, templatable {
             array_push($target_langs, array(
                     'code' => $key,
                     'lang' => $lang,
-                    'disabled' => $this->current_lang === $key ? "disabled" : "",
+                    'disabled' => ($this->current_lang === $key ? "disabled" : "",
                     'selected' => $this->target_lang === $key ? "selected" : ""
-            ));
+            ));*/
         }
 
         // Data for mustache template.

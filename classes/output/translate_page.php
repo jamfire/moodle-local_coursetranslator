@@ -69,10 +69,10 @@ class translate_page implements renderable, templatable {
     /**
      * Constructor
      *
-     * @Todo no need form if treatment and api call is done by js. Replace by Mustache.
      * @param object $course Moodle course record
      * @param array $coursedata Custom processed course record
      * @param object $mlangfilter Multilang2 Filter for filtering output
+     * @todo no need form if treatment and api call is done by js. Replace by Mustache.
      */
     public function __construct($course, $coursedata, $mlangfilter) {
         $this->course = $course;
@@ -157,15 +157,15 @@ class translate_page implements renderable, templatable {
     }
 
     /**
-     *  compute word, spaces and character's count for a single text
+     * Compute word, spaces and character's count for a single text
      *
-     * @param $text
+     * @param string $text
      * @param int $wc ref
      * @param int $sc ref
      * @param int $csc ref
      * @return void
      */
-    private function computewordcount($text, int &$wc, int &$sc, int &$csc) {
+    private function computewordcount(string $text, int &$wc, int &$sc, int &$csc): void {
         $tagsstriped = strip_tags($text);
         // Get the wordcount.
         $wc = $wc + strlen(str_word_count($tagsstriped));

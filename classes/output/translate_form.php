@@ -94,7 +94,7 @@ class translate_form extends moodleform {
         // Close form.
         $mform->addElement('html', '</div>');
     }
-    
+
     /**
      * Generate Form Row
      *

@@ -51,16 +51,15 @@ class course_data {
     public function __construct(\stdClass $course, string $lang, context $context) {
         // Set db table.
         $this->dbtable = 'local_coursetranslator';
-        // store context
+        // Store context.
         $this->context = $context;
         // Set course.
         $this->course = $course;
-        // Get the context
+        // Get the context.
         $this->contextid = $this->context->id;
         // Set modinfo.
         $modinfo = get_fast_modinfo($course);
         $this->modinfo = $modinfo;
-
         // Set language.
         $this->lang = $lang === 'other' ? '00' : $lang;
     }
@@ -77,13 +76,13 @@ class course_data {
         /*
          * section added to the activity items.
          * */
-        return $this->prepareData($coursedata, $sectiondata, $activitydata);
+        return $this->prepare_data($coursedata, $sectiondata, $activitydata);
     }
 
     /**
      * prepare multidimentional array to re arrange textfields to match course presentation
      */
-    private function prepareData($coursedata, $sectiondata, $activitydata) {
+    private function prepare_data($coursedata, $sectiondata, $activitydata) {
         $tab = ['0' => ['section' => $coursedata, 'activities' => []]];
         foreach ($sectiondata as $k => $v) {
             $tab[$v->id] = ['section' => [$v], 'activities' => []];
@@ -326,7 +325,7 @@ class course_data {
             if (isset($activity->content) && $activity->content != '') {
                 $item->displaytext = $activity->content;
             } else {
-                $item->displaytext = $this->getFileURL($text, $id, $cmid, $table, $field);
+                $item->displaytext = $this->get_file_url($text, $id, $cmid, $table, $field);
             }
 
         }
@@ -375,7 +374,7 @@ class course_data {
      * @param int $cmid
      * @return array
      */
-    private function getItemContextId($id, $table, $cmid = 0) {
+    private function get_item_contextId($id, $table, $cmid = 0) {
         $i = 0;
         $iscomp = false;
         switch ($table) {
@@ -398,13 +397,14 @@ class course_data {
      * @param string $text
      * @return array|string|string[]
      */
-    private function getFileURL(string $text, $itemid, $cmid, $table, $field) {
+    private function get_file_url(string $text, $itemid, $cmid, $table, $field) {
         global $DB;
-        $tmp = $this->getItemContextId($itemid, $table, $cmid);
+        $tmp = $this->get_item_contextId($itemid, $table, $cmid);
         $select =
                 'contextid = :contextid AND component = :component AND filename != "." AND ' . $DB->sql_like('filearea', ':field');
         $params = ['contextid' => $tmp['contextid'], 'component' => $tmp['component'],
                 'field' => '%' . $DB->sql_like_escape($field) . '%'];
+
         $result = $DB->get_recordset_select('files', $select, $params);
         if ($result->valid()) {
             $itemid = ($field == 'intro' || $field == 'summary') ? '' : $result->current()->itemid;

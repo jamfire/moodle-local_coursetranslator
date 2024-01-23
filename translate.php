@@ -28,6 +28,9 @@
  */
 
 // Get libs.
+use local_coursetranslator\data\course_data;
+use local_coursetranslator\output\translate_page;
+
 require_once(__DIR__ . '/../../config.php');
 global $CFG;
 global $PAGE;
@@ -51,22 +54,20 @@ require_capability('local/coursetranslator:edittranslations', $context);
 // Get js data.
 $jsconfig = new stdClass();
 $jsconfig->apikey = get_config('local_coursetranslator', 'apikey');
-$config_use_autotrans = boolval(get_config('local_coursetranslator', 'useautotranslate'));
 $jsconfig->autotranslate = boolval(get_config('local_coursetranslator', 'useautotranslate'));
 $jsconfig->lang = $lang;
 $jsconfig->currentlang = current_language();
 $jsconfig->syslang = $CFG->lang;
 $jsconfig->courseid = $courseid;
-$jsconfig->deeplurl = boolval(get_config('local_coursetranslator', 'deeplpro'))
-        ? 'https://api.deepl.com/v2/translate?'
-        : 'https://api-free.deepl.com/v2/translate?';
+$jsconfig->deeplurl = boolval(get_config('local_coursetranslator', 'deeplpro')) ? 'https://api.deepl.com/v2/translate?' :
+        'https://api-free.deepl.com/v2/translate?';
 $jsconfig->multiplemlang = get_string('t_multiplemlang', 'local_coursetranslator');
 $jsconfig->autosavedmsg = get_string('t_autosaved', 'local_coursetranslator');
 $jsconfig->needsupdate = get_string('t_needsupdate', 'local_coursetranslator');
 $jsconfig->uptodate = get_string('t_uptodate', 'local_coursetranslator');
 $jsconfig->debug = $CFG->debug;
 
-$mlangfilter = new \filter_multilang2($context, array());
+$mlangfilter = new filter_multilang2($context, array());
 
 // Set initial page layout.
 $title = get_string('pluginname', 'local_coursetranslator');
@@ -76,15 +77,14 @@ $PAGE->set_heading($title);
 $PAGE->set_pagelayout('base');
 $PAGE->set_course($course);
 
-//$jsconfig->ed = editors_get_enabled();
-$defaultEditor = strstr($CFG->texteditors, ',', true);
-$userPrefs = get_user_preferences();
-// get users prefrences to pass the editor's type to js
-$jsconfig->userPrefs = $userPrefs['htmleditor'] ?? $defaultEditor;
+$defaulteditor = strstr($CFG->texteditors, ',', true);
+$userprefs = get_user_preferences();
+// Get users prefrences to pass the editor's type to js
+$jsconfig->userPrefs = $userprefs['htmleditor'] ?? $defaulteditor;
 
-// adding PAges CSS
+// Adding page CSS
 $PAGE->requires->css('/local/coursetranslator/styles.css');
-// Adding page's JS
+// Adding page JS
 $PAGE->requires->js_call_amd('local_coursetranslator/coursetranslator', 'init', array($jsconfig));
 
 // Get the renderer.
@@ -97,8 +97,8 @@ echo $output->header();
 echo $output->heading($mlangfilter->filter($course->fullname));
 
 // Output translation grid.
-$coursedata = new \local_coursetranslator\data\course_data($course, $lang, $context);
-$renderable = new \local_coursetranslator\output\translate_page($course, $coursedata->getdata(), $mlangfilter);
+$coursedata = new course_data($course, $lang, $context);
+$renderable = new translate_page($course, $coursedata->getdata(), $mlangfilter);
 echo $output->render($renderable, $course);
 
 // Output footer.

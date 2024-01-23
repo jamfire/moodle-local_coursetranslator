@@ -38,21 +38,14 @@ function local_coursetranslator_extend_navigation_course($navigation, $course) {
 
     // Build a moodle url.
 
-    //$url = new moodle_url("/local/coursetranslator/translate.php?course_id=$course->id&course_lang=other");
     $url = new moodle_url("/local/coursetranslator/translate.php?course_id=$course->id&lang=$lang");
 
     // Get title of translate page for navigation menu.
     $title = get_string('pluginname', 'local_coursetranslator');
 
     // Navigation node.
-    $translatecontent = navigation_node::create(
-            $title,
-            $url,
-            navigation_node::TYPE_CUSTOM,
-            $title,
-            'translate',
-            new pix_icon('icon', 'icon', 'local_coursetranslator')
-    );
+    $translatecontent = navigation_node::create($title, $url, navigation_node::TYPE_CUSTOM, $title, 'translate',
+            new pix_icon('icon', 'icon', 'local_coursetranslator'));
     // Do not show in menu if no capability
     if (has_capability('local/coursetranslator:edittranslations', context_course::instance($course->id))) {
         $navigation->add_node($translatecontent);

@@ -22,10 +22,8 @@
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  * @see        https://docs.moodle.org/dev/Admin_settings
  */
-
 defined('MOODLE_INTERNAL') || die();
-//$test = 1;
-if (has_capability('moodle/site:config', \context_system::instance())) {
+if (has_capability('moodle/site:config', context_system::instance())) {
     global $ADMIN;
     // Create new settings page.
     $settings = new admin_settingpage('local_coursetranslator', get_string('pluginname', 'local_coursetranslator'));
@@ -74,5 +72,4 @@ if (has_capability('moodle/site:config', \context_system::instance())) {
                     false
             )
     );
-
 }

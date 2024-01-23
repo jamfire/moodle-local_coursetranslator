@@ -427,20 +427,6 @@ const getTranslation = (key) => {
                 icon.setAttribute('role', 'button');
                 icon.setAttribute('data-status', 'local-coursetranslator/tosave');
                 injectImageCss(editorSettings);
-                // if (editorType === "iframe") {
-                //     let editorshildrens = Array.from(editor.parentElement.children);
-                //     let found = false;
-                //     for (let j in editorshildrens) {
-                //         let e = editorshildrens[j];
-                //         if (e.innerText === css.innerText) {
-                //             found = true;
-                //             break;
-                //         }
-                //     }
-                //     if (!found) {
-                //         editor.parentElement.appendChild(css);
-                //     }
-                // }
             } else {
                 // Oh no! There has been an error with the request!
                 icon.setAttribute('data-status', 'local-coursetranslator/failed');
@@ -460,10 +446,10 @@ const injectImageCss = (editorSettings) => {
     const css = document.createElement('style');
     css.textContent = 'img{background-color:yellow !important;font-style: italic;}';
     if (editorSettings.editorType === "iframe") {
-        let editorshildrens = Array.from(editorSettings.editor.parentElement.children);
+        let editorschildrens = Array.from(editorSettings.editor.parentElement.children);
         let found = false;
-        for (let j in editorshildrens) {
-            let e = editorshildrens[j];
+        for (let j in editorschildrens) {
+            let e = editorschildrens[j];
             if (e.innerText === css.innerText) {
                 found = true;
                 break;

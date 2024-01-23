@@ -18,7 +18,10 @@ namespace local_coursetranslator\output;
 
 global $CFG;
 
+use context_system;
 use moodleform;
+use MoodleQuickForm;
+use stdClass;
 
 // Load the files we're going to need.
 defined('MOODLE_INTERNAL') || die();
@@ -37,8 +40,8 @@ require_once("$CFG->dirroot/local/coursetranslator/classes/editor/MoodleQuickFor
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 class translate_form extends moodleform {
-    private mixed $target_lang;
-    private mixed $current_lang;
+    private mixed $targetlang;
+    private mixed $currentlang;
 
     /**
      * Define Moodle Form
@@ -51,17 +54,14 @@ class translate_form extends moodleform {
         // Get course data.
         $course = $this->_customdata['course'];
         $coursedata = $this->_customdata['coursedata'];
-        $this->target_lang = $this->_customdata['target_lang'];
-        $this->current_lang = $this->_customdata['current_lang'];
+        $this->targetlang = $this->_customdata['target_lang'];
+        $this->currentlang = $this->_customdata['current_lang'];
 
         // Start moodle form.
         $mform = $this->_form;
         $mform->disable_form_change_checker();
-        \MoodleQuickForm::registerElementType(
-                'cteditor',
-                "$CFG->libdir/form/editor.php",
-                '\local_coursetranslator\editor\MoodleQuickForm_cteditor'
-        );
+        MoodleQuickForm::registerElementType('cteditor', "$CFG->libdir/form/editor.php",
+                '\local_coursetranslator\editor\MoodleQuickForm_cteditor');
 
         // Open Form.
         $mform->addElement('html', '<div class="container-fluid local-coursetranslator__form">');
@@ -70,12 +70,12 @@ class translate_form extends moodleform {
         $sectioncount = 1;
         foreach ($coursedata as $section) {
             /** @todo better UI */
-            // Loop section's headers
+            // Loop section's headers.
             $mform->addElement('html', "<div class='row bg-light py-2'><h3 class='text-center'>Module $sectioncount</h3></div>");
             foreach ($section['section'] as $s) {
                 $this->get_formrow($mform, $s);
             }
-            // loop section's activites
+            // Loop section's activites.
             foreach ($section['activities'] as $a) {
                 $this->get_formrow($mform, $a);
             }
@@ -89,11 +89,11 @@ class translate_form extends moodleform {
     /**
      * Generate Form Row
      *
-     * @param \MoodleQuickForm $mform
-     * @param \stdClass $item
+     * @param MoodleQuickForm $mform
+     * @param stdClass $item
      * @return void
      */
-    private function get_formrow(\MoodleQuickForm $mform, \stdClass $item, $cssClass = "") {
+    private function get_formrow(MoodleQuickForm $mform, stdClass $item, $cssclass = "") {
 
         // Get mlangfilter to filter text.
         $mlangfilter = $this->_customdata['mlangfilter'];
@@ -105,22 +105,20 @@ class translate_form extends moodleform {
         $status = $item->tneeded ? 'needsupdate' : 'updated';
 
         // Open translation item.
-        $mform->addElement(
-                'html', "<div class='$cssClass row align-items-start border-bottom py-2' data-row-id='$key' data-status='$status'>"
-        //'html', '<div class='row align-items-start border-bottom py-3' data-row-id='$key' data-status='$status">"
-        );
+        $mform->addElement('html',
+                "<div class='$cssclass row align-items-start border-bottom py-2' data-row-id='$key' data-status='$status'>");
 
         // First column.
-        if ($this->target_lang === $this->current_lang) {
+        if ($this->targetlang === $this->currentlang) {
             $buttonclass = 'badge-dark';
-            $titlestring = get_string('t_canttranslate', 'local_coursetranslator', $this->target_lang);
+            $titlestring = get_string('t_canttranslate', 'local_coursetranslator', $this->targetlang);
         } else if ($item->tneeded) {
-            if (str_contains($item->text, "{mlang " . $this->target_lang)) {
+            if (str_contains($item->text, "{mlang " . $this->targetlang)) {
                 $buttonclass = 'badge-warning';
                 $titlestring = get_string('t_needsupdate', 'local_coursetranslator');
             } else {
                 $buttonclass = 'badge-danger';
-                $titlestring = get_string('t_nevertranslated', 'local_coursetranslator', $this->target_lang);
+                $titlestring = get_string('t_nevertranslated', 'local_coursetranslator', $this->targetlang);
             }
 
         } else {
@@ -153,26 +151,23 @@ class translate_form extends moodleform {
 
         // Source Text.
         $mform->addElement('html', '<div class="col-5 px-0 pr-5 local-coursetranslator__source-text" data-key="' . $key . '">');
-        // edit button
+        // Edit button
         $mform->addElement('html', '<span class="col-1 px-0 ">
                         <a style="top:.4rem;left:-2rem;position:absolute;" href="' . $item->link . '" target="_blank" title="' .
                 get_string('t_edit', 'local_coursetranslator') . '">
                             <i class="fa fa-pencil-square-o px-2" aria-hidden="true"></i>
                         </a>
                      </span>');
-        // text editor
+        // Text editor
         $mform->addElement('html', '<div class="collapse show" data-sourcetext-key="' . $key . '"
                 data-sourcetext-raw="' . htmlentities($mlangfilter->filter($item->text)) . '">' .
-                $mlangfilter->filter($item->displaytext) .
-                ' </div>');
+                $mlangfilter->filter($item->displaytext) . ' </div>');
 
         $mform->addElement('html', '<div class="collapse" id="' . $keyid . '">');
         $mform->addElement('html', '<div 
             data-key="' . $key . '" 
             data-action="local-coursetranslator/textarea"
-            >'
-                . trim($item->text) . '</div>'
-        );
+            >' . trim($item->text) . '</div>');
         $mform->addElement('html', '</div>');
 
         $mform->addElement('html', '</div>');
@@ -204,35 +199,24 @@ class translate_form extends moodleform {
         }
 
         $mform->addElement('html', '</div>');
-        // adding validator btn
-        //$saveToggleBtn = '<i class="col-1 align-content-center fa fa-floppy-o mr-1" data-toggle="" data-validate-'.$keyid.' ></i>';
-        $saveToggleBtn =
+        // Adding validator btn
+        $savetogglebtn =
                 '<i class="col-1 align-content-center fa mr-1" data-status="local-coursetranslator/wait" data-toggle="" data-validate-' .
                 $keyid . ' role="status"></i>';
-        /* $saveToggleBtn = '<input type="checkbox" checked
-             data-toggle="toggle"
-             data-on="Ready"
-             data-off="Not Ready"
-             data-onstyle="success"
-             data-offstyle="danger">';
- */
+
         $mform->addElement('html', '<div class="col-1 align-content-center"
-            data-key-validator="' . $key . '">' .
-                $saveToggleBtn
-                . '</div>'
-        );
+            data-key-validator="' . $key . '">' . $savetogglebtn . '</div>');
         // Close translation item.
         $mform->addElement('html', '</div>');
-
     }
 
     /**
      * Process data
      *
-     * @param \stdClass $data
+     * @param stdClass $data
      * @return void
      */
-    public function process(\stdClass $data) {
+    public function process(stdClass $data) {
 
     }
 
@@ -242,6 +226,6 @@ class translate_form extends moodleform {
      * @return void
      */
     public function require_access() {
-        require_capability('local/multilingual:edittranslations', \context_system::instance());
+        require_capability('local/multilingual:edittranslations', context_system::instance());
     }
 }

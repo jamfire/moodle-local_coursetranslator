@@ -36,14 +36,14 @@ class translate_page implements renderable, templatable {
     private array $coursedata;
     private object $mlangfilter;
     /** @var String */
-    private mixed $current_lang;
+    private mixed $currentlang;
     /** @var String */
-    private mixed $target_lang;
+    private mixed $targetlang;
     /**
      * @var array|mixed
      */
     private mixed $langs;
-    private \local_coursetranslator\output\translate_form $mform;
+    private translate_form $mform;
 
     /**
      * Constructor
@@ -60,17 +60,13 @@ class translate_page implements renderable, templatable {
          * @todo source lang should be identified and fixed to OTHER
          * if source lang is changed for a course than the whole translation should be void
          */
-        $this->current_lang = optional_param('lang', current_language(), PARAM_NOTAGS);
-        $this->target_lang = optional_param('target_lang', 'en', PARAM_NOTAGS);
+        $this->currentlang = optional_param('lang', current_language(), PARAM_NOTAGS);
+        $this->targetlang = optional_param('target_lang', 'en', PARAM_NOTAGS);
         $this->mlangfilter = $mlangfilter;
         /** @todo no need form if treatment and api call is done by js. Replace by Mustache */
         // Moodle Form.
-        $mform = new translate_form(null, [
-                'course' => $course,
-                'coursedata' => $coursedata,
-                'mlangfilter' => $mlangfilter,
-                'current_lang' => $this->current_lang,
-                'target_lang' => $this->target_lang
+        $mform = new translate_form(null, ['course' => $course, 'coursedata' => $coursedata, 'mlangfilter' => $mlangfilter,
+                'current_lang' => $this->currentlang, 'target_lang' => $this->targetlang
 
         ]);
         $this->mform = $mform;
@@ -89,42 +85,22 @@ class translate_page implements renderable, templatable {
         $target_langs = [];
         // Process langs.
         foreach ($this->langs as $key => $lang) {
-            $disabletarget = $this->current_lang === $key ||
+            $disabletarget = $this->currentlang === $key ||
                     !in_array($key, explode(',', get_string('supported_languages', 'local_coursetranslator')));
-            $disablesource = $this->target_lang === $key ||
+            $disablesource = $this->targetlang === $key ||
                     !in_array($key, explode(',', get_string('supported_languages', 'local_coursetranslator')));
-            array_push($langs, array(
-                    'code' => $key,
-                    'lang' => $lang,
-                    'disabled' => $disablesource ? "disabled" : "",
-                    'selected' => $this->current_lang === $key ? "selected" : ""
-            ));
-            array_push($target_langs, array(
-                    'code' => $key,
-                    'lang' => $lang,
-                    'disabled' => $disabletarget ? "disabled" : "",
-                    'selected' => $this->target_lang === $key ? "selected" : ""
-            ));
-            /*array_push($langs, array(
-                    'code' => $key,
-                    'lang' => $lang,
-                    'disabled' => $this->target_lang === $key ? "disabled" : "",
-                    'selected' => $this->current_lang === $key ? "selected" : ""
-            ));
-            array_push($target_langs, array(
-                    'code' => $key,
-                    'lang' => $lang,
-                    'disabled' => ($this->current_lang === $key ? "disabled" : "",
-                    'selected' => $this->target_lang === $key ? "selected" : ""
-            ));*/
+            array_push($langs, array('code' => $key, 'lang' => $lang, 'disabled' => $disablesource ? "disabled" : "",
+                    'selected' => $this->currentlang === $key ? "selected" : ""));
+            array_push($target_langs, array('code' => $key, 'lang' => $lang, 'disabled' => $disabletarget ? "disabled" : "",
+                    'selected' => $this->targetlang === $key ? "selected" : ""));
         }
 
         // Data for mustache template.
         $data->course = $this->course;
         $data->target_langs = $target_langs;
         $data->langs = $langs;
-        $data->target_lang = $this->target_lang;
-        $data->current_lang = $this->current_lang;
+        $data->target_lang = $this->targetlang;
+        $data->current_lang = $this->currentlang;
 
         // Hacky fix but the only way to adjust html...
         // This could be overridden in css and I might look at that fix for the future.
@@ -139,13 +115,13 @@ class translate_page implements renderable, templatable {
         $spaces = 0;
 
         foreach ($this->coursedata as $section) {
-            // count for each section's headers
+            // Count for each section's headers
             foreach ($section['section'] as $s) {
-                $this->computeWordcount($s->text, $wordcount, $spaces, $charcountspaces);
+                $this->computewordcount($s->text, $wordcount, $spaces, $charcountspaces);
             }
-            // count for each section's activites
+            // Count for each section's activites
             foreach ($section['activities'] as $a) {
-                $this->computeWordcount($a->text, $wordcount, $spaces, $charcountspaces);
+                $this->computewordcount($a->text, $wordcount, $spaces, $charcountspaces);
             }
         }
         // Set word and character counts to data.
@@ -153,8 +129,8 @@ class translate_page implements renderable, templatable {
         $data->charcountspaces = $charcountspaces;
         $data->charcount = $charcountspaces - $spaces;
         // Set langs
-        $data->current_lang = $this->current_lang;
-        $data->target_lang = $this->target_lang;
+        $data->current_lang = $this->currentlang;
+        $data->target_lang = $this->targetlang;
         $data->mlangfilter = $this->mlangfilter;
         // Pass data
         $data->course = $this->course;
@@ -171,13 +147,13 @@ class translate_page implements renderable, templatable {
      * @param integer $csc char count excluding spaces ref
      * @return void
      */
-    private function computeWordcount($text, int &$wc, int &$sc, int &$csc) {
-        $tagsStriped = strip_tags($text);
+    private function computewordcount($text, int &$wc, int &$sc, int &$csc) {
+        $tagsstriped = strip_tags($text);
         // Get the wordcount.
-        $wc = $wc + strlen(str_word_count($tagsStriped));
+        $wc = $wc + strlen(str_word_count($tagsstriped));
         // Get the character count with spaces.
-        $csc = $csc + strlen($tagsStriped);
+        $csc = $csc + strlen($tagsstriped);
         // Get the character count without spaces.
-        $sc = $sc + strlen(array_key_last(preg_split('/\s+/', $tagsStriped)));
+        $sc = $sc + strlen(array_key_last(preg_split('/\s+/', $tagsstriped)));
     }
 }

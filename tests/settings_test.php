@@ -25,7 +25,7 @@
  * @see        https://docs.moodle.org/dev/PHPUnit
  */
 
-namespace local_coursetranslator\tests;
+namespace local_coursetranslator;
 
 /**
  * Settings Test
@@ -44,8 +44,6 @@ class settings_test extends \advanced_testcase {
 
     public function test_settings() {
         global $CFG;
-
-        //echo $CFG->dirroot . '/lib/adminlib.php';
         require_once($CFG->dirroot . '/lib/adminlib.php');
         require_once(__DIR__ . '/../settings.php');
         $settings1 = new \admin_settingpage('local_coursetranslator', get_string('pluginname', 'local_coursetranslator'));
@@ -54,17 +52,7 @@ class settings_test extends \advanced_testcase {
         $this->assertFalse(has_capability('moodle/site:config', \context_system::instance()));
         $this->setAdminUser();
         $this->assertTrue(has_capability('moodle/site:config', \context_system::instance()));
-        //global $ADMIN;
-        //$this->assertNotNull($ADMIN);
-        //$this->assertNotNull($CFG);
-        //$this->assertNotNull($settings);
-        //$this->assertFalse($test_settings === 1);
-        //$this->assertNotNull($ADMIN);
-        //$this->assertTrue(has_capability('moodle/site:config', \context_system::instance()));
         $this->assertInstanceOf("admin_settingpage", $settings1);
-        //$this->assertInstanceOf("admin_settingpage", $settings);
-        //$settings = new \admin_settingpage('local_coursetranslator', get_string('pluginname', 'local_coursetranslator'));
-
     }
 
 }

@@ -24,49 +24,52 @@
  * @see        https://docs.moodle.org/dev/PHPUnit
  */
 
-namespace local_coursetranslator\tests;
+namespace local_coursetranslator;
+
+use advanced_testcase;
+use context_course;
+use filter_multilang2;
+use local_coursetranslator\data\course_data;
+use local_coursetranslator\output\translate_page;
 
 /**
  * Translate Test
  */
-class translate_test extends \advanced_testcase {
-    protected function setUp(): void {
-        parent::setUp();
-        $this->resetAfterTest(true);
-    }
-
+class translate_test extends advanced_testcase {
     public function test_course() {
         require_once(__DIR__ . '/../../../config.php');
         global $CFG;
         global $PAGE;
         global $DB;
+        $this->trace_to_cli(__DIR__, 'Directory');
         $course1 = $this->getDataGenerator()->create_course();
         $this->assertIsString($course1->id);
         $this->assertNotNull($DB);
         $coursedb = $DB->get_record('course', array('id' => $course1->id), '*', MUST_EXIST);
-
         $this->assertIsString($coursedb->id);
         $coursedbid = intval($coursedb->id);
-        //$this->_trace(\context_course::instance($coursedbid), 'context course instance');
         $this->assertIsInt($coursedbid);
         $this->assertEquals($course1->id, $coursedb->id);
-        $PAGE->set_context(\context_course::instance($coursedbid));
-        $this->assertEquals($PAGE->context->id, \context_course::instance($coursedbid)->id);
-        $PAGE->set_context(\context_course::instance($course1->id));
-        $this->assertEquals($PAGE->context->id, \context_course::instance($course1->id)->id);
+        $PAGE->set_context(context_course::instance($coursedbid));
+        $this->assertEquals($PAGE->context->id, context_course::instance($coursedbid)->id);
+        $PAGE->set_context(context_course::instance($course1->id));
+        $this->assertEquals($PAGE->context->id, context_course::instance($course1->id)->id);
+    }
+
+    private function trace_to_cli(mixed $var, string $info) {
+        echo "\n" . $info . "\n";
+        var_dump($var);
+        ob_flush();
     }
 
     public function test_plugin_config() {
         global $CFG;
         $this->assertNotNull(get_config('local_coursetranslator', 'apikey'));
-        //$this->assertIsBool(get_config('local_coursetranslator', 'useautotranslate'));
         $this->assertMatchesRegularExpression('/^0|1$/', get_config('local_coursetranslator', 'useautotranslate'));
         $this->assertNotEquals('', get_string('supported_languages', 'local_coursetranslator'));
         $this->assertTrue(strlen(get_string('supported_languages', 'local_coursetranslator')) > 0);
         $this->assertNotEquals('', current_language());
         $this->assertTrue(strlen(current_language()) > 0);
-        //$this->_trace($CFG->lang, 'CONFIG LANG');
-        //$this->_trace(current_language(), 'CONFIG LANG');
     }
 
     public function test_mlang_filter() {
@@ -74,40 +77,29 @@ class translate_test extends \advanced_testcase {
         $this->assertFileExists($CFG->dirroot . '/filter/multilang2/filter.php');
         require_once($CFG->dirroot . '/filter/multilang2/filter.php');
         $course = $this->getDataGenerator()->create_course();
-        $context = \context_course::instance($course->id);
-        $mlangfilter = new \filter_multilang2($context, array());
+        $context = context_course::instance($course->id);
+        $mlangfilter = new filter_multilang2($context, array());
         $this->assertNotNull($mlangfilter);
         $this->assertIsString($mlangfilter->filter($course->fullname));
         $this->assertTrue($mlangfilter->filter($course->fullname) > 0);
-        //$this->_trace($mlangfilter->filter($course->fullname), 'COURSE FILTERED NAME');
     }
 
     public function test_course_data() {
         global $CFG;
-
         $this->assertFileExists($CFG->dirroot . '/local/coursetranslator/classes/output/translate_page.php');
         $this->assertFileExists($CFG->dirroot . '/local/coursetranslator/classes/data/course_data.php');
         $course = $this->getDataGenerator()->create_course();
-        $page = $this->getDataGenerator()->create_module('page', array('course' => $course->id));
-        // $page->set_url('/local/coursetranslator/translate.php', array('course_id' => $course->id));
-        $context = \context_course::instance($course->id);
-        //$page->set_context($context);
-        //$page->set_pagelayout('base');
-        //$page->set_course($course);
-        //$output = $page->get_renderer('local_coursetranslator');
-        //$this->assertInstanceOf('renderer_base', $output);
-        $course_data = new \local_coursetranslator\data\course_data($course, $CFG->lang, $context);
-        $this->assertNotNull($course_data);
-        $this->assertIsArray($course_data->getdata());
-        $renderable = new \local_coursetranslator\output\translate_page($course, $course_data->getdata(),
-                new \filter_multilang2($context, array()));
+        $context = context_course::instance($course->id);
+        $coursedata = new course_data($course, $CFG->lang, $context);
+        $this->assertNotNull($coursedata);
+        $this->assertIsArray($coursedata->getdata());
+        $renderable = new translate_page($course, $coursedata->getdata(),
+                new filter_multilang2($context, array()));
         $this->assertNotNull($renderable);
-        //$this->assertIsString($output->render($renderable, $course));
     }
 
-    private function _trace(mixed $var, string $info) {
-        echo "\n" . $info . "\n";
-        var_dump($var);
-        ob_flush();
+    protected function setUp(): void {
+        parent::setUp();
+        $this->resetAfterTest(true);
     }
 }

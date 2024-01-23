@@ -31,6 +31,7 @@ namespace local_coursetranslator;
  */
 class settings_test extends \advanced_testcase {
     /**
+     * Set it up
      *
      * @return void
      */
@@ -40,6 +41,8 @@ class settings_test extends \advanced_testcase {
     }
 
     /**
+     * Basic initial test checking globals
+     *
      * @coversNothing
      * @return void
      */
@@ -50,6 +53,8 @@ class settings_test extends \advanced_testcase {
     }
 
     /**
+     * Basic settings test
+     *
      * @covers \admin_settingpage
      * @covers \context_system
      * @return void

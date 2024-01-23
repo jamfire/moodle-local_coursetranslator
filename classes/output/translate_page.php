@@ -32,8 +32,23 @@ use templatable;
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 class translate_page implements renderable, templatable {
+    /**
+     * The course in translation
+     *
+     * @var object
+     */
     private object $course;
+    /**
+     * The data of the course parsed from mod_info
+     *
+     * @var array
+     */
     private array $coursedata;
+    /**
+     * The current multilang filter object
+     *
+     * @var \filter_multilang2
+     */
     private object $mlangfilter;
     /** @var String */
     private mixed $currentlang;
@@ -43,6 +58,12 @@ class translate_page implements renderable, templatable {
      * @var array|mixed
      */
     private mixed $langs;
+    /**
+     * The form to display the row UI
+     *
+     * @todo change this to mustache
+     * @var \translatee_form
+     */
     private translate_form $mform;
 
     /**
@@ -136,12 +157,12 @@ class translate_page implements renderable, templatable {
     }
 
     /**
-     * compute word, spaces and character's count for a single text
+     *  compute word, spaces and character's count for a single text
      *
      * @param $text
-     * @param integer $wc wordcount ref
-     * @param integer $sc spaces count ref
-     * @param integer $csc char count excluding spaces ref
+     * @param int $wc ref
+     * @param int $sc ref
+     * @param int $csc ref
      * @return void
      */
     private function computewordcount($text, int &$wc, int &$sc, int &$csc) {

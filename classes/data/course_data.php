@@ -47,6 +47,8 @@ class course_data {
      *
      * @param \stdClass $course
      * @param string $lang
+     * @param context $context
+     * @throws \moodle_exception
      */
     public function __construct(\stdClass $course, string $lang, context $context) {
         // Set db table.
@@ -79,8 +81,13 @@ class course_data {
 
     /**
      * Prepare multidimentional array to re-arrange textfields to match course presentation
+     *
+     * @param array $coursedata
+     * @param array $sectiondata
+     * @param array $activitydata
+     * @return array[]
      */
-    private function prepare_data($coursedata, $sectiondata, $activitydata) {
+    private function prepare_data(array $coursedata, array $sectiondata, array $activitydata) {
         $tab = ['0' => ['section' => $coursedata, 'activities' => []]];
         foreach ($sectiondata as $k => $v) {
             $tab[$v->id] = ['section' => [$v], 'activities' => []];
@@ -278,15 +285,15 @@ class course_data {
     /**
      * Build Data Item
      *
-     * @param integer $id
+     * @param int $id
      * @param string $text
-     * @param integer $format
-     * @param string $table
+     * @param int $format
      * @param string $field
-     * @param integer $cmid
+     * @param mixed $activity
      * @return \stdClass
+     * @throws \dml_exception
      */
-    private function build_data($id, $text, $format, $field, $activity) {
+    private function build_data(int $id, string $text, int $format, string $field, mixed $activity) {
         global $DB;
         $table = $activity->modname;
         $cmid = $activity->id;
@@ -384,12 +391,19 @@ class course_data {
         }
         return ['contextid' => $i, 'component' => $iscomp ? 'mod_' . $table : $table, 'itemid' => $iscomp ? $cmid : ''];
     }
-
+    
     /**
+     * Retrieve the urls of files.
+     *
      * @param string $text
+     * @param int $itemid
+     * @param int $cmid
+     * @param string $table
+     * @param string $field
      * @return array|string|string[]
+     * @throws \dml_exception
      */
-    private function get_file_url(string $text, $itemid, $cmid, $table, $field) {
+    private function get_file_url(string $text, int $itemid, int $cmid, string $table, string $field) {
         global $DB;
         $tmp = $this->get_item_contextid($itemid, $table, $cmid);
         $select =

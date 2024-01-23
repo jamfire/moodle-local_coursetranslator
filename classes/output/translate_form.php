@@ -40,8 +40,18 @@ require_once("$CFG->dirroot/local/coursetranslator/classes/editor/MoodleQuickFor
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 class translate_form extends moodleform {
-    private mixed $targetlang;
-    private mixed $currentlang;
+    /**
+     * Target language
+     *
+     * @var String
+     */
+    private $targetlang;
+    /**
+     * Source language
+     *
+     * @var String
+     */
+    private $currentlang;
 
     /**
      * Define Moodle Form
@@ -84,15 +94,17 @@ class translate_form extends moodleform {
         // Close form.
         $mform->addElement('html', '</div>');
     }
-
+    
     /**
      * Generate Form Row
      *
      * @param MoodleQuickForm $mform
      * @param stdClass $item
+     * @param string $cssclass
      * @return void
+     * @throws \coding_exception
      */
-    private function get_formrow(MoodleQuickForm $mform, stdClass $item, $cssclass = "") {
+    private function get_formrow(MoodleQuickForm $mform, stdClass $item, string $cssclass = "") {
 
         // Get mlangfilter to filter text.
         $mlangfilter = $this->_customdata['mlangfilter'];

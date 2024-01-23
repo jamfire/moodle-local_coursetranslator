@@ -14,11 +14,10 @@
 // You should have received a copy of the GNU General Public License
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 /**
+ * Local Course Translator Translate Page
+ *
  * @todo use deepl-php instead of js ajax for further maintainability and absctraction
  * @todo check images tag handling in deepl.
- */
-/**
- * Local Course Translator Translate Page
  *
  * @package    local_coursetranslator
  * @copyright  2022 Kaleb Heitzman <kaleb@jamfire.io>

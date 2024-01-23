@@ -37,6 +37,8 @@ use local_coursetranslator\output\translate_page;
  */
 class translate_test extends advanced_testcase {
     /**
+     * Test course creation and context
+     *
      * @covers \context_course
      * @return void
      * @throws \dml_exception
@@ -63,6 +65,8 @@ class translate_test extends advanced_testcase {
     }
 
     /**
+     * Helper to trace
+     *
      * @param mixed $var
      * @param string $info
      * @return void
@@ -74,6 +78,8 @@ class translate_test extends advanced_testcase {
     }
 
     /**
+     * Testing that all settings are loaded
+     *
      * @covers ::get_config
      * @return void
      * @throws \coding_exception
@@ -90,6 +96,8 @@ class translate_test extends advanced_testcase {
     }
 
     /**
+     * Checking the filter_multilang2
+     *
      * @covers \filter_multilang2
      * @return void
      */
@@ -106,6 +114,8 @@ class translate_test extends advanced_testcase {
     }
 
     /**
+     * Verifying test
+     *
      * @covers \course_data
      * @return void
      */
@@ -124,6 +134,8 @@ class translate_test extends advanced_testcase {
     }
 
     /**
+     * Set it up
+     *
      * @return void
      */
     protected function setUp(): void {

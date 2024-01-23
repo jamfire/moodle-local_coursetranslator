@@ -64,7 +64,7 @@ const registerEventListeners = () => {
                     removeOnClose: true,
                 });
             } else {
-                doAutotranslate(e);
+                doAutotranslate();
             }
         }
         if (e.target.closest(Selectors.actions.selectAllBtn)) {

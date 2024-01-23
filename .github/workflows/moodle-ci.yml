@@ -1,6 +1,6 @@
 name: Moodle Plugin CI
 
-on: [push, pull_request]
+on: [ push, pull_request ]
 
 jobs:
   test:
@@ -143,11 +143,11 @@ jobs:
 
       - name: Moodle Code Checker
         if: ${{ always() }}
-        run: moodle-plugin-ci codechecker --max-warnings 0 || true
+        run: moodle-plugin-ci codechecker --max-warnings 0
 
       - name: Moodle PHPDoc Checker
         if: ${{ always() }}
-        run: moodle-plugin-ci phpdoc || true
+        run: moodle-plugin-ci phpdoc --max-warnings 0
 
       - name: Validating
         if: ${{ always() }}
@@ -159,15 +159,15 @@ jobs:
 
       - name: Mustache Lint
         if: ${{ always() }}
-        run: moodle-plugin-ci mustache || true
+        run: moodle-plugin-ci mustache
 
       - name: Grunt
         if: ${{ always() }}
-        run: moodle-plugin-ci grunt || true
+        run: moodle-plugin-ci grunt --max-lint-warnings 0
 
       - name: PHPUnit tests
         if: ${{ always() }}
-        run: moodle-plugin-ci phpunit --coverage-text || true
+        run: moodle-plugin-ci phpunit --fail-on-warning || true
 
       - name: Behat features
         if: ${{ always() }}

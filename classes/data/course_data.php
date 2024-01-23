@@ -73,14 +73,12 @@ class course_data {
         $coursedata = $this->getcoursedata();
         $sectiondata = $this->getsectiondata();
         $activitydata = $this->getactivitydata();
-        /*
-         * section added to the activity items.
-         * */
+        // Sections added to the activity items.
         return $this->prepare_data($coursedata, $sectiondata, $activitydata);
     }
 
     /**
-     * prepare multidimentional array to re arrange textfields to match course presentation
+     * Prepare multidimentional array to re-arrange textfields to match course presentation
      */
     private function prepare_data($coursedata, $sectiondata, $activitydata) {
         $tab = ['0' => ['section' => $coursedata, 'activities' => []]];
@@ -88,7 +86,7 @@ class course_data {
             $tab[$v->id] = ['section' => [$v], 'activities' => []];
         }
         foreach ($activitydata as $ak => $av) {
-            // if the section is not found place it under the course data as general intro
+            // If the section is not found place it under the course data as general intro.
             $sectionid = isset($tab[$av->section]) ? $av->section : "0";
             $tab[$sectionid]['activities'][] = $av;
         }
@@ -101,7 +99,7 @@ class course_data {
      * @return array
      */
     private function getcoursedata() {
-        $coursedata = array();
+        $coursedata = [];
         $course = $this->modinfo->get_course();
         $activity = new \stdClass();
         $activity->modname = 'course';
@@ -149,13 +147,13 @@ class course_data {
     private function getsectiondata() {
         global $DB;
         $sections = $this->modinfo->get_section_info_all();
-        $sectiondata = array();
+        $sectiondata = [];
         $activity = new \stdClass();
         $activity->modname = 'course_sections';
         $activity->id = null;
         $activity->section = null;
         foreach ($sections as $sk => $section) {
-            $record = $DB->get_record('course_sections', array('course' => $this->course->id, 'section' => $sk));
+            $record = $DB->get_record('course_sections', ['course' => $this->course->id, 'section' => $sk]);
             if ($record->name) {
                 $data = $this->build_data(
                         $record->id,
@@ -187,11 +185,11 @@ class course_data {
      */
     private function getactivitydata() {
         global $DB;
-        $activitydata = array();
+        $activitydata = [];
 
         foreach ($this->modinfo->instances as $instances) {
             foreach ($instances as $ik => $activity) {
-                $record = $DB->get_record($activity->modname, array('id' => $ik));
+                $record = $DB->get_record($activity->modname, ['id' => $ik]);
 
                 // Standard name.
                 if (isset($record->name) && !empty($record->name)) {
@@ -208,10 +206,10 @@ class course_data {
                 // Standard intro.
                 if (isset($record->intro) && !empty($record->intro) && trim(strip_tags($record->intro)) !== "") {
                     $data = $this->build_data(
-                            $record->id,//id
-                            $record->intro,//text
-                            $record->introformat,//format
-                            'intro',//field
+                            $record->id,
+                            $record->intro,
+                            $record->introformat,
+                            'intro',
                             $activity
                     );
                     array_push($activitydata, $data);
@@ -274,7 +272,6 @@ class course_data {
                 }
             }
         }
-
         return $activitydata;
     }
 
@@ -289,19 +286,18 @@ class course_data {
      * @param integer $cmid
      * @return \stdClass
      */
-    //private function build_data($id, $text, $format, $table, $field, $cmid = null, $sectionId= null) {
     private function build_data($id, $text, $format, $field, $activity) {
         global $DB;
         $table = $activity->modname;
         $cmid = $activity->id;
-        $sectionId = $activity->section;
+        $sectionid = $activity->section;
         // Build db params.
-        $params = array(
+        $params = [
                 't_id' => $id,
                 't_lang' => $this->lang,
                 't_table' => $table,
-                't_field' => $field
-        );
+                't_field' => $field,
+        ];
 
         // Insert tracking record if it does not exist.
         if (!$DB->record_exists($this->dbtable, $params)) {
@@ -309,7 +305,7 @@ class course_data {
             $params['s_lastmodified'] = $time;
             $params['t_lastmodified'] = $time;
             $id = $DB->insert_record($this->dbtable, $params);
-            $record = $DB->get_record($this->dbtable, array('id' => $id), 'id,s_lastmodified,t_lastmodified');
+            $record = $DB->get_record($this->dbtable, ['id' => $id], 'id,s_lastmodified,t_lastmodified');
         } else {
             $record = $DB->get_record($this->dbtable, $params, 'id,s_lastmodified,t_lastmodified');
         }
@@ -319,22 +315,20 @@ class course_data {
         $item->id = $id;
         $item->tid = $record->id;
         $item->displaytext = $item->text = $text;
-        // additional text to display images
+        // Additional text to display images.
         if (str_contains($text, '@@PLUGINFILE@@')) {
-            //$item->displaytext = $this->getFileURL($text, $this->getItemContextId($id, $table, $cmid), $table, $field, $id);
             if (isset($activity->content) && $activity->content != '') {
                 $item->displaytext = $activity->content;
             } else {
                 $item->displaytext = $this->get_file_url($text, $id, $cmid, $table, $field);
             }
-
         }
         $item->format = intval($format);
         $item->table = $table;
         $item->field = $field;
         $item->link = $this->link_builder($id, $table, $cmid);
         $item->tneeded = $record->s_lastmodified >= $record->t_lastmodified;
-        $item->section = $sectionId;
+        $item->section = $sectionid;
 
         return $item;
     }
@@ -374,7 +368,7 @@ class course_data {
      * @param int $cmid
      * @return array
      */
-    private function get_item_contextId($id, $table, $cmid = 0) {
+    private function get_item_contextid($id, $table, $cmid = 0) {
         $i = 0;
         $iscomp = false;
         switch ($table) {
@@ -384,10 +378,8 @@ class course_data {
             case 'course_sections':
                 break;
             default :
-                {
-                    $i = \context_module::instance($cmid)->id;
-                    $iscomp = true;
-                }
+                $i = \context_module::instance($cmid)->id;
+                $iscomp = true;
                 break;
         }
         return ['contextid' => $i, 'component' => $iscomp ? 'mod_' . $table : $table, 'itemid' => $iscomp ? $cmid : ''];
@@ -399,7 +391,7 @@ class course_data {
      */
     private function get_file_url(string $text, $itemid, $cmid, $table, $field) {
         global $DB;
-        $tmp = $this->get_item_contextId($itemid, $table, $cmid);
+        $tmp = $this->get_item_contextid($itemid, $table, $cmid);
         $select =
                 'contextid = :contextid AND component = :component AND filename != "." AND ' . $DB->sql_like('filearea', ':field');
         $params = ['contextid' => $tmp['contextid'], 'component' => $tmp['component'],

@@ -30,12 +30,10 @@ defined('MOODLE_INTERNAL') || die();
 
 // Translator Capabilities.
 $capabilities = [
-    'local/coursetranslator:edittranslations' => [
-        'captype' => 'write',
-        'riskbitmaskt' => 'RISK_CONFIG',
-        'contextlevel' => CONTEXT_SYSTEM,
-        'archetypes' => array(
-            'manager' => CAP_ALLOW
-        )
-    ]
+        'local/coursetranslator:edittranslations' => [
+                'captype' => 'write',
+                'riskbitmaskt' => 'RISK_CONFIG',
+                'contextlevel' => CONTEXT_SYSTEM,
+                'archetypes' => ['manager' => CAP_ALLOW],
+        ],
 ];

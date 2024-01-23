@@ -15,7 +15,7 @@
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
 namespace local_coursetranslator\output;
-
+defined('MOODLE_INTERNAL') || die();
 global $CFG;
 
 use context_system;
@@ -24,7 +24,7 @@ use MoodleQuickForm;
 use stdClass;
 
 // Load the files we're going to need.
-defined('MOODLE_INTERNAL') || die();
+
 require_once("$CFG->libdir/form/editor.php");
 require_once("$CFG->dirroot/local/coursetranslator/classes/editor/MoodleQuickForm_cteditor.php");
 
@@ -69,7 +69,6 @@ class translate_form extends moodleform {
         // Loop through course data to build form.
         $sectioncount = 1;
         foreach ($coursedata as $section) {
-            /** @todo better UI */
             // Loop section's headers.
             $mform->addElement('html', "<div class='row bg-light py-2'><h3 class='text-center'>Module $sectioncount</h3></div>");
             foreach ($section['section'] as $s) {
@@ -138,10 +137,10 @@ class translate_form extends moodleform {
             data-key="' . $key . '"
             disabled
         />');
-        $mform->addElement('html', '<span 
-                    title="' . get_string('t_viewsource', 'local_coursetranslator') . '" 
-                    id="toggleMultilang" 
-                    aria-controls="' . $keyid . '" 
+        $mform->addElement('html', '<span
+                    title="' . get_string('t_viewsource', 'local_coursetranslator') . '"
+                    id="toggleMultilang"
+                    aria-controls="' . $keyid . '"
                     role="button">
                        <i class="fa fa-language px-10" aria-hidden="true"></i>
                     </span>');
@@ -151,29 +150,25 @@ class translate_form extends moodleform {
 
         // Source Text.
         $mform->addElement('html', '<div class="col-5 px-0 pr-5 local-coursetranslator__source-text" data-key="' . $key . '">');
-        // Edit button
+        // Edit button.
         $mform->addElement('html', '<span class="col-1 px-0 ">
                         <a style="top:.4rem;left:-2rem;position:absolute;" href="' . $item->link . '" target="_blank" title="' .
                 get_string('t_edit', 'local_coursetranslator') . '">
                             <i class="fa fa-pencil-square-o px-2" aria-hidden="true"></i>
                         </a>
                      </span>');
-        // Text editor
+        // Text editor.
         $mform->addElement('html', '<div class="collapse show" data-sourcetext-key="' . $key . '"
                 data-sourcetext-raw="' . htmlentities($mlangfilter->filter($item->text)) . '">' .
                 $mlangfilter->filter($item->displaytext) . ' </div>');
 
         $mform->addElement('html', '<div class="collapse" id="' . $keyid . '">');
-        $mform->addElement('html', '<div 
-            data-key="' . $key . '" 
+        $mform->addElement('html', '<div
+            data-key="' . $key . '"
             data-action="local-coursetranslator/textarea"
             >' . trim($item->text) . '</div>');
         $mform->addElement('html', '</div>');
-
         $mform->addElement('html', '</div>');
-        /**
-         * @todo style editor content to highlight images ALT text
-         */
         // Translation Input.
         $mform->addElement('html', '<div
             class="col-5 px-0 local-coursetranslator__translation"
@@ -199,9 +194,10 @@ class translate_form extends moodleform {
         }
 
         $mform->addElement('html', '</div>');
-        // Adding validator btn
+        // Adding validator btn.
         $savetogglebtn =
-                '<i class="col-1 align-content-center fa mr-1" data-status="local-coursetranslator/wait" data-toggle="" data-validate-' .
+                '<i class="col-1 align-content-center fa mr-1"
+                data-status="local-coursetranslator/wait" data-toggle="" data-validate-' .
                 $keyid . ' role="status"></i>';
 
         $mform->addElement('html', '<div class="col-1 align-content-center"

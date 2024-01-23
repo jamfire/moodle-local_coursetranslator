@@ -1,5 +1,4 @@
 <?php
-
 // This file is part of Moodle - http://moodle.org/
 //
 // Moodle is free software: you can redistribute it and/or modify
@@ -31,18 +30,33 @@ namespace local_coursetranslator;
  * Settings Test
  */
 class settings_test extends \advanced_testcase {
+    /**
+     *
+     * @return void
+     */
     protected function setUp(): void {
         parent::setUp();
         $this->resetAfterTest(true);
     }
 
-    public function test_usedeepl() {
+    /**
+     * @coversNothing
+     * @return void
+     */
+    public function test_usedeepl(): void {
         global $CFG;
         $this->assertNotNull($CFG);
         $this->assertEquals(2, 1 + 1);
     }
 
-    public function test_settings() {
+    /**
+     * @covers \admin_settingpage
+     * @covers \context_system
+     * @return void
+     * @throws \coding_exception
+     * @throws \dml_exception
+     */
+    public function test_settings(): void {
         global $CFG;
         require_once($CFG->dirroot . '/lib/adminlib.php');
         require_once(__DIR__ . '/../settings.php');

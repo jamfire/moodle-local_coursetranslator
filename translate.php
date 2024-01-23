@@ -43,7 +43,7 @@ require_once($CFG->dirroot . '/lib/editorlib.php');
 // Needed vars for processing.
 $courseid = required_param('course_id', PARAM_INT);
 $lang = optional_param('target_lang', 'other', PARAM_NOTAGS);
-$course = $DB->get_record('course', array('id' => $courseid), '*', MUST_EXIST);
+$course = $DB->get_record('course', ['id' => $courseid], '*', MUST_EXIST);
 
 // Setup page.
 $context = context_course::instance($courseid);
@@ -67,11 +67,11 @@ $jsconfig->needsupdate = get_string('t_needsupdate', 'local_coursetranslator');
 $jsconfig->uptodate = get_string('t_uptodate', 'local_coursetranslator');
 $jsconfig->debug = $CFG->debug;
 
-$mlangfilter = new filter_multilang2($context, array());
+$mlangfilter = new filter_multilang2($context, []);
 
 // Set initial page layout.
 $title = get_string('pluginname', 'local_coursetranslator');
-$PAGE->set_url('/local/coursetranslator/translate.php', array('course_id' => $courseid));
+$PAGE->set_url('/local/coursetranslator/translate.php', ['course_id' => $courseid]);
 $PAGE->set_title($title);
 $PAGE->set_heading($title);
 $PAGE->set_pagelayout('base');
@@ -79,13 +79,13 @@ $PAGE->set_course($course);
 
 $defaulteditor = strstr($CFG->texteditors, ',', true);
 $userprefs = get_user_preferences();
-// Get users prefrences to pass the editor's type to js
+// Get users prefrences to pass the editor's type to js.
 $jsconfig->userPrefs = $userprefs['htmleditor'] ?? $defaulteditor;
 
-// Adding page CSS
+// Adding page CSS.
 $PAGE->requires->css('/local/coursetranslator/styles.css');
-// Adding page JS
-$PAGE->requires->js_call_amd('local_coursetranslator/coursetranslator', 'init', array($jsconfig));
+// Adding page JS.
+$PAGE->requires->js_call_amd('local_coursetranslator/coursetranslator', 'init', [$jsconfig]);
 
 // Get the renderer.
 $output = $PAGE->get_renderer('local_coursetranslator');

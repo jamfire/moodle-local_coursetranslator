@@ -80,7 +80,7 @@ class settings_test extends \advanced_testcase {
      * @coversNothing
      * @return void
      */
-    public function test_path() {
+    public function test_path(): void {
         // @codingStandardsIgnoreLine
         require_once(__DIR__ . '/../../../config.php');
         $this->assertFileExists(__DIR__ . '/../../../config.php');

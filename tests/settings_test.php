@@ -74,4 +74,48 @@ class settings_test extends \advanced_testcase {
         $this->assertInstanceOf("admin_settingpage", $settings1);
     }
 
+    /**
+     * Basic path testting
+     *
+     * @coversnothing
+     * @return void
+     */
+    function test_path() {
+        // @codingStandardsIgnoreLine
+        require_once(__DIR__ . '/../../../config.php');
+        $this->assertFileExists(__DIR__ . '/../../../config.php');
+    }
+
+    /**
+     * Check db
+     *
+     * @coversNothing
+     * @return void
+     * @throws \dml_exception
+     */
+    public function test_db_cnx(): void {
+        global $DB;
+        $this->trace_to_cli(__DIR__, 'Directory');
+        $course1 = $this->getDataGenerator()->create_course();
+        $this->assertIsString($course1->id);
+        $this->assertNotNull($DB);
+        $coursedb = $DB->get_record('course', ['id' => $course1->id], '*', MUST_EXIST);
+        $this->assertIsString($coursedb->id);
+        $coursedbid = intval($coursedb->id);
+        $this->assertIsInt($coursedbid);
+        $this->assertEquals($course1->id, $coursedb->id);
+    }
+
+    /**
+     * Helper to trace
+     *
+     * @param mixed $var
+     * @param string $info
+     * @return void
+     */
+    private function trace_to_cli(mixed $var, string $info): void {
+        echo "\n" . $info . "\n";
+        var_dump($var);
+        ob_flush();
+    }
 }

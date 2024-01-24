@@ -20,7 +20,8 @@ Translation workflow being the following:
 
 ## Installation
 
-Clone or download this plugin to ```/moodlewww/local/coursetranslator``` and run through the database upgrade process.
+Clone or [download](https://github.com/brunobaudry/moodle-local_coursetranslator/releases) this plugin to ```/moodlewww/local/coursetranslator``` and run through the database
+upgrade process.
 
 ## Configuration
 

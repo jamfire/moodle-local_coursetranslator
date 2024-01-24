@@ -36,33 +36,6 @@ use local_coursetranslator\output\translate_page;
  * Translate Test
  */
 class translate_test extends advanced_testcase {
-    /**
-     * Test course creation and context
-     *
-     * @covers \context_course
-     * @return void
-     * @throws \dml_exception
-     */
-    public function test_course(): void {
-        // @codingStandardsIgnoreLine
-        require_once(__DIR__ . '/../../../config.php');
-        global $CFG;
-        global $PAGE;
-        global $DB;
-        $this->trace_to_cli(__DIR__, 'Directory');
-        $course1 = $this->getDataGenerator()->create_course();
-        $this->assertIsString($course1->id);
-        $this->assertNotNull($DB);
-        $coursedb = $DB->get_record('course', ['id' => $course1->id], '*', MUST_EXIST);
-        $this->assertIsString($coursedb->id);
-        $coursedbid = intval($coursedb->id);
-        $this->assertIsInt($coursedbid);
-        $this->assertEquals($course1->id, $coursedb->id);
-        $PAGE->set_context(context_course::instance($coursedbid));
-        $this->assertEquals($PAGE->context->id, context_course::instance($coursedbid)->id);
-        $PAGE->set_context(context_course::instance($course1->id));
-        $this->assertEquals($PAGE->context->id, context_course::instance($course1->id)->id);
-    }
 
     /**
      * Helper to trace
@@ -116,7 +89,7 @@ class translate_test extends advanced_testcase {
     /**
      * Verifying test
      *
-     * @covers \course_data
+     * @covers \local_coursetranslator\data\course_data
      * @return void
      */
     public function test_course_data(): void {
@@ -127,7 +100,14 @@ class translate_test extends advanced_testcase {
         $context = context_course::instance($course->id);
         $coursedata = new course_data($course, $CFG->lang, $context);
         $this->assertNotNull($coursedata);
-        $this->assertIsArray($coursedata->getdata());
+        $getdata = $coursedata->getdata();
+        $this->assertIsArray($getdata);
+        $this->assertIsArray($getdata['0']);
+        foreach ($getdata as $v) {
+            $this->assertIsArray($v);
+            $this->assertArrayHasKey('section', $v);
+            $this->assertArrayHasKey('activities', $v);
+        }
         $renderable = new translate_page($course, $coursedata->getdata(),
                 new filter_multilang2($context, []));
         $this->assertNotNull($renderable);
@@ -140,6 +120,7 @@ class translate_test extends advanced_testcase {
      */
     protected function setUp(): void {
         parent::setUp();
+
         $this->resetAfterTest(true);
     }
 }

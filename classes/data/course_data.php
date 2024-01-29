@@ -394,15 +394,15 @@ class course_data {
         }
         return ['contextid' => $i, 'component' => $iscomp ? 'mod_' . $table : $table, 'itemid' => $iscomp ? $cmid : ''];
     }
-
+    
     /**
      * Retrieve the urls of files.
      *
      * @param string $text
      * @param int $itemid
-     * @param int $cmid
      * @param string $table
      * @param string $field
+     * @param int $cmid
      * @return array|string|string[]
      * @throws \dml_exception
      */

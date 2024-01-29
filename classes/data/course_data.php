@@ -348,8 +348,9 @@ class course_data {
      * @param integer $cmid
      * @return string
      */
-    private function link_builder($id, $table, $cmid = 0) {
+    private function link_builder($id, $table, $cmid) {
         $link = null;
+        $tcmid = $cmid ?? 0;
         switch ($table) {
             case 'course':
                 $link = "/course/edit.php?id={$id}";
@@ -359,7 +360,7 @@ class course_data {
                 break;
             default:
                 if ($cmid !== 0) {
-                    $link = "/course/modedit.php?update={$cmid}";
+                    $link = "/course/modedit.php?update={$tcmid}";
                 }
                 break;
         }

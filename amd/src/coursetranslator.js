@@ -74,10 +74,16 @@ const registerEventListeners = () => {
 
 };
 const registerUI = () => {
-    autotranslateButton = document.querySelector(Selectors.actions.autoTranslateBtn);
-    checkboxes = document.querySelectorAll(Selectors.actions.checkBoxes);
-    sourceLang = document.querySelector(Selectors.actions.sourceSwitcher).value;
-    targetLang = document.querySelector(Selectors.actions.targetSwitcher).value;
+    try {
+        autotranslateButton = document.querySelector(Selectors.actions.autoTranslateBtn);
+        checkboxes = document.querySelectorAll(Selectors.actions.checkBoxes);
+        sourceLang = document.querySelector(Selectors.actions.sourceSwitcher).value;
+        targetLang = document.querySelector(Selectors.actions.targetSwitcher).value;
+    } catch (e) {
+        if (config.debug) {
+            window.console.error(e.message);
+        }
+    }
 };
 
 /**

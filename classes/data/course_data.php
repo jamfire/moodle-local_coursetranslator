@@ -327,7 +327,7 @@ class course_data {
             if (isset($activity->content) && $activity->content != '') {
                 $item->displaytext = $activity->content;
             } else {
-                $item->displaytext = $this->get_file_url($text, $id, $cmid, $table, $field);
+                $item->displaytext = $this->get_file_url($text, $id, $table, $field, $cmid ?? 0);
             }
         }
         $item->format = intval($format);
@@ -379,11 +379,13 @@ class course_data {
     private function get_item_contextid($id, $table, $cmid = 0) {
         $i = 0;
         $iscomp = false;
+
         switch ($table) {
             case 'course':
                 $i = \context_course::instance($id)->id;
                 break;
             case 'course_sections':
+                $i = \context_module::instance($id)->id;
                 break;
             default :
                 $i = \context_module::instance($cmid)->id;
@@ -404,17 +406,27 @@ class course_data {
      * @return array|string|string[]
      * @throws \dml_exception
      */
-    private function get_file_url(string $text, int $itemid, int $cmid, string $table, string $field) {
+    private function get_file_url(string $text, int $itemid, string $table, string $field, int $cmid) {
         global $DB;
         $tmp = $this->get_item_contextid($itemid, $table, $cmid);
-        $select =
-                'contextid = :contextid AND component = :component AND filename != "." AND ' . $DB->sql_like('filearea', ':field');
-        $params = ['contextid' => $tmp['contextid'], 'component' => $tmp['component'],
-                'field' => '%' . $DB->sql_like_escape($field) . '%'];
+        switch ($table) {
+            case 'course_sections' :
+                $select =
+                        'component = "course" AND itemid =' . $itemid . ' AND filename != "." AND filearea = "section"';
+                $params = [];
+                break;
+            default :
+                $select =
+                        'contextid = :contextid AND component = :component AND filename != "." AND ' .
+                        $DB->sql_like('filearea', ':field');
+                $params = ['contextid' => $tmp['contextid'], 'component' => $tmp['component'],
+                        'field' => '%' . $DB->sql_like_escape($field) . '%'];
+                break;
+        }
 
         $result = $DB->get_recordset_select('files', $select, $params);
         if ($result->valid()) {
-            $itemid = ($field == 'intro' || $field == 'summary') ? '' : $result->current()->itemid;
+            $itemid = ($field == 'intro' || $field == 'summary') && $table != 'course_sections' ? '' : $result->current()->itemid;
             return file_rewrite_pluginfile_urls($text, 'pluginfile.php', $result->current()->contextid,
                     $result->current()->component, $result->current()->filearea, $itemid);
         } else {

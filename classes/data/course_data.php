@@ -394,7 +394,7 @@ class course_data {
         }
         return ['contextid' => $i, 'component' => $iscomp ? 'mod_' . $table : $table, 'itemid' => $iscomp ? $cmid : ''];
     }
-    
+
     /**
      * Retrieve the urls of files.
      *

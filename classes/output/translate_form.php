@@ -149,13 +149,16 @@ class translate_form extends moodleform {
             data-key="' . $key . '"
             disabled
         />');
+        $warning = $this->check_filed_has_other_and_sourcetag(trim($item->text)) ?
+                '<i title="' . get_string('t_warningsource', 'local_coursetranslator', $this->currentlang) . '"
+                    class="fa fa-warning" aria-hidden="true" data-status="sourceTextWarings" ></i>' : "";
         $mform->addElement('html', '<span
                     title="' . get_string('t_viewsource', 'local_coursetranslator') . '"
                     id="toggleMultilang"
                     aria-controls="' . $keyid . '"
                     role="button">
                        <i class="fa fa-language px-10" aria-hidden="true"></i>
-                    </span>');
+                    </span>&nbsp;' . $warning);
 
         $mform->addElement('html', '</div>');
         $mform->addElement('html', '</div>');
@@ -216,6 +219,17 @@ class translate_form extends moodleform {
             data-key-validator="' . $key . '">' . $savetogglebtn . '</div>');
         // Close translation item.
         $mform->addElement('html', '</div>');
+    }
+
+    /**
+     * Checks if the multilang tag OTHER and the current/source language is already there to warn the user that the tags will be
+     * overridden and deleted.
+     *
+     * @param string $t
+     * @return bool
+     */
+    function check_filed_has_other_and_sourcetag(string $t) {
+        return str_contains($t, '{mlang other}') && str_contains($t, "{mlang $this->currentlang}");
     }
 
     /**

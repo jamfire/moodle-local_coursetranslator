@@ -33,6 +33,7 @@ export default {
         toggleMultilang: '#toggleMultilang'
     },
     statuses: {
+        sourceTextWarings: '[data-status="sourceTextWarings"]',
         checkedCheckBoxes: '[data-action="local-coursetranslator/checkbox"]:checked',
         updated: '[data-status="updated"]',
         needsupdate: '[data-status="needsupdate"]',

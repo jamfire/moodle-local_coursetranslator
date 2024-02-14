@@ -116,11 +116,7 @@ export const init = (cfg) => {
                  */
                 window.console.log(`Transaltion key "${key}" is undefined `);
             } else {
-                saveTranslation(
-                    key,
-                    tempTranslations[key].editor,
-                    tempTranslations[key].editor.innerHTML
-                );
+                saveTranslation(key);
             }
 
         });
@@ -144,12 +140,12 @@ export const init = (cfg) => {
     /**
      * Save Translation to Moodle
      * @param  {String} key Data Key
-     * @param  {Node} editor HTML Editor Node
-     * @param  {String} text Updated Text
-     * @todo 3rd param is to refactor remove as it is the editors content
      */
-    const saveTranslation = (key, editor, text) => {
+    const saveTranslation = (key) => {
         // Get processing vars
+        let editor = tempTranslations[key].editor;
+        let text = editor.innerHTML; // We keep the editors text in case translation is edited
+        let sourceText = tempTranslations[key].source;
         let icon = document.querySelector(replaceKey(Selectors.actions.validatorIcon, key));
         let selector = Selectors.editors.multiples.editorsWithKey.replace("<KEY>", key);
         let element = document.querySelector(selector);
@@ -185,7 +181,7 @@ export const init = (cfg) => {
                             Selectors.editors.multiples.textAreas
                                 .replace("<KEY>", key));
                         // Get the updated text
-                        let updatedtext = getupdatedtext(fieldtext, text);
+                        let updatedtext = getupdatedtext(fieldtext, text, sourceText);
 
                         // Build the data object
                         let tdata = {};
@@ -271,37 +267,58 @@ export const init = (cfg) => {
      * Update Textarea
      * @param {string} fieldtext Latest text from database
      * @param {string} text Text to update
+     * @param {string} source Original text translated from
      * @returns {string}
      */
-    const getupdatedtext = (fieldtext, text) => {
-        let lang = config.lang;
-
+    const getupdatedtext = (fieldtext, text, source) => {
+        let targetlang = config.lang;
         // Search for {mlang} not found.
-        let mlangtext = `{mlang ${lang}}${text}{mlang}`;
+        let startOther = `{mlang other}`;
+        let otherlangtext = `${startOther}${source}{mlang}`;
+        let targetLangTag = `{mlang ${targetlang}}`;
+        let targetlangtext = `${targetLangTag}${text}{mlang}`;
 
-        // Return new mlang text if mlang has not been used before
+        // Return new mlang text if mlang has not been used before.
         if (fieldtext.indexOf("{mlang") === -1) {
-            if (lang === "other") {
-                return mlangtext;
-            } else {
-                return (
-                    `{mlang other} ${fieldtext} {mlang}{mlang ${lang}} ${text} {mlang}`
-                );
+            return otherlangtext + targetlangtext;
+        }
+        // Use regex to replace the string
+        let alllanpattern = `({mlang [a-z]{2,5}})(.*?){mlang}`;
+        let alllangregex = new RegExp(alllanpattern, "g");
+        let all = {};
+        let tagReg = new RegExp("{mlang (other|[a-z]{2})}", "");
+        let splited = fieldtext.split(alllangregex);
+        let foundsourcetag = "";
+        var l = "";
+
+        for (var i in splited) {
+
+            if (splited[i] === "") {
+                continue;
+            }
+            if (splited[i].match(tagReg)) {
+                l = splited[i].match(tagReg)[0];
+            } else if (l !== "") {
+                all[l] = splited[i];
+                if (splited[i] === source) {
+                    foundsourcetag = l;
+                }
+                l = "";
             }
         }
-
-        // Use regex to replace the string
-        let pattern = `{*mlang +(${lang})}(.*?){*mlang*}`;
-        let replacex = new RegExp(pattern, "dgis");
-        let matches = fieldtext.match(replacex);
-
-        // Return the updated string
-        const updatedString = `{mlang ${lang}} ${text} {mlang}`;
-        if (matches) {
-            return fieldtext.replace(replacex, updatedString);
-        } else {
-            return fieldtext + updatedString;
+        if (foundsourcetag !== startOther) {
+            // We need to replace the source.
+            delete all[foundsourcetag];
         }
+        // If there is a other tag we replace it by the source.
+        // @todo a mechanism to propose to the user to select another tag for this.
+        all[startOther] = source;
+        all[targetLangTag] = text;
+        let s = "";
+        for (let tag in all) {
+            s += tag + all[tag] + "{mlang}";
+        }
+        return s;
     };
 };
 

@@ -55,7 +55,8 @@ $string['t_word_count'] = '{$a} words';
 $string['t_char_count'] = '{$a} characters';
 $string['t_word_count_sentence'] =
         'Total {$a->wordcount} words, {$a->charcount} characters ({$a->charcountspaces} chars including spaces)';
-
+$string['t_warningsource'] =
+        'Watch out ! Source lang &quot;{$a}&quot; is found as a multilang tag along side with the fallback tag &quot;other&quot;. Note that both will be merge as the &quot;other&quot; multilang tag.';
 $string['t_char_count_spaces'] = '({$a} char including spaces)';
 $string['t_autotranslate'] = 'Translate';
 $string['t_source_text'] = 'Source lang: {$a}';

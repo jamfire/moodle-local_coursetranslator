@@ -228,7 +228,7 @@ class translate_form extends moodleform {
      * @param string $t
      * @return bool
      */
-    function check_filed_has_other_and_sourcetag(string $t) {
+    private function check_filed_has_other_and_sourcetag(string $t) {
         return str_contains($t, '{mlang other}') && str_contains($t, "{mlang $this->currentlang}");
     }
 

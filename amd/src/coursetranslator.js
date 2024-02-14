@@ -93,6 +93,7 @@ const registerUI = () => {
 export const init = (cfg) => {
     config = cfg;
     if (config.debug > 0) {
+        window.console.info("debugging coursetranslator");
         window.console.info(config);
     }
     mainEditorType = config.userPrefs;
@@ -290,9 +291,7 @@ export const init = (cfg) => {
         let splited = fieldtext.split(alllangregex);
         let foundsourcetag = "";
         var l = "";
-
         for (var i in splited) {
-
             if (splited[i] === "") {
                 continue;
             }

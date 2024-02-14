@@ -14,47 +14,122 @@ GNU General Public License for more details.
 You should have received a copy of the GNU General Public License
 along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 */
-
-/* content */
-.local-coursetranslator__form .row.border-bottom:last-child {
-    /* stylelint-disable-next-line */
-    border-bottom: 0 !important;
+/*
+ * @module     local_coursetranslator/coursetranslator
+ * @copyright  2024 Bruno Baudry <bruno.baudry@bfh.ch>
+ * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
+ */
+#page-local-coursetranslator-translate {
+  /**
+  [contenteditable="true"] img, img, [data-action="local-coursetranslator/editor"] img
+  editors as to done via js ... see courstranslator.js
+   */
+  /* stylelint-disable-next-line */
+  /* responsive iframes */
+  /* ui notices */
+}
+#page-local-coursetranslator-translate a[aria-expanded=true] .fa-caret-right {
+  display: none;
+}
+#page-local-coursetranslator-translate a[aria-expanded=false] .fa-caret-down {
+  display: none;
+}
+#page-local-coursetranslator-translate img {
+  background-color: yellow !important;
+  font-style: italic;
+}
+#page-local-coursetranslator-translate img:before {
+  content: "pic:" !important;
+}
+#page-local-coursetranslator-translate .local-coursetranslator__form .row.border-bottom:last-child {
+  border-bottom: 0 !important;
+}
+#page-local-coursetranslator-translate .local-coursetranslator__source-text iframe {
+  max-width: 100%;
+}
+#page-local-coursetranslator-translate .local-coursetranslator__translation {
+  /* responsive iframes */
+  /* editor tweaks */
+}
+#page-local-coursetranslator-translate .local-coursetranslator__translation iframe {
+  max-width: 100%;
+}
+#page-local-coursetranslator-translate .local-coursetranslator__translation [data-action="local-coursetranslator/editor"],
+#page-local-coursetranslator-translate .local-coursetranslator__translation [data-fieldtype=editor] {
+  width: 100%;
+}
+#page-local-coursetranslator-translate .local-coursetranslator__translation textarea[data-action="local-coursetranslator/editor"] {
+  width: 100%;
+  min-height: 300px;
+}
+#page-local-coursetranslator-translate .local-coursetranslator__translation .form-group.row {
+  margin-left: 0;
+  margin-right: 0;
+}
+#page-local-coursetranslator-translate .local-coursetranslator__error {
+  border: 2px solid #ca3120;
+  border-radius: 6px;
+}
+#page-local-coursetranslator-translate .local-coursetranslator__success {
+  border: 2px solid #357a32;
+  border-radius: 6px;
+}
+#page-local-coursetranslator-translate [data-status="local-coursetranslator/success-message"] {
+  background: #20c997;
+  font-size: 0.6rem;
+  text-transform: uppercase;
+  padding: 0.25rem 1rem;
+  margin-top: 2rem;
+  top: 12px;
+  bottom: 9px;
+  right: 9px;
+  border-radius: 4px;
+}
+#page-local-coursetranslator-translate [data-status="local-coursetranslator/wait"]:before {
+  content: "\f141"; /*3 dots ellipse*/
+  color: #ced4da;
+}
+#page-local-coursetranslator-translate [data-status="local-coursetranslator/totranslate"]:before {
+  content: "\f251"; /* Sand icon*/
+  color: #0f6cbf;
+}
+#page-local-coursetranslator-translate [data-status="local-coursetranslator/tosave"]:hover {
+  color: #000;
+}
+#page-local-coursetranslator-translate [data-status="local-coursetranslator/tosave"]:before {
+  content: "\f0c7"; /*floppy (save) icon*/
+  color: #0f6cbf;
+}
+#page-local-coursetranslator-translate [data-status="local-coursetranslator/success"]:before {
+  content: "\f00c"; /*check  icon*/
+  color: #357a32;
+}
+#page-local-coursetranslator-translate [data-status="local-coursetranslator/saved"]:before {
+  content: "\f1c0"; /*database  icon*/
+  color: #357a32;
+}
+#page-local-coursetranslator-translate [data-status="local-coursetranslator/failed"]:before {
+  content: "\f071"; /*exclamation triangle  icon*/
+  color: #ca3120;
+}
+#page-local-coursetranslator-translate #toggleMultilang {
+  padding: 0 10px 0 10px;
+}
+#page-local-coursetranslator-translate [data-status=sourceTextWarings] {
+  color: #f0ad4e;
+}
+#page-local-coursetranslator-translate #toggleMultilang.showing, #page-local-coursetranslator-translate #toggleMultilang:hover {
+  padding: 0 !important;
+  background-color: #f8f9fa;
+}
+#page-local-coursetranslator-translate #toggleMultilang.showing:after, #page-local-coursetranslator-translate #toggleMultilang:hover:after {
+  /*padding: 3px;*/
+  content: " }";
+  padding: 0 !important;
+}
+#page-local-coursetranslator-translate #toggleMultilang.showing:before, #page-local-coursetranslator-translate #toggleMultilang:hover:before {
+  content: "{";
+  padding: 0 !important;
 }
 
-/* responsive iframes */
-.local-coursetranslator__source-text iframe,
-.local-coursetranslator__translation iframe {
-    max-width: 100%;
-}
-
-/* editor tweaks */
-.local-coursetranslator__translation .local-coursetranslator__editor,
-.local-coursetranslator__translation [data-fieldtype="editor"] {
-    width: 100%;
-}
-.local-coursetranslator__translation textarea.local-coursetranslator__editor {
-    width: 100%;
-    min-height: 300px;
-}
-.local-coursetranslator__translation .form-group.row {
-    margin-left: 0;
-    margin-right: 0;
-}
-
-/* ui notices */
-.local-coursetranslator__error {
-    background: #facbcb;
-}
-.local-coursetranslator__success {
-    background: #e3fadc;
-}
-.local-coursetranslator__success-message {
-    background: #b4fa9f;
-    font-size: 0.6rem;
-    text-transform: uppercase;
-    padding: 0.25rem 1rem;
-    position: absolute;
-    bottom: 9px;
-    right: 9px;
-    border-radius: 4px;
-}
+/*# sourceMappingURL=styles.css.map */

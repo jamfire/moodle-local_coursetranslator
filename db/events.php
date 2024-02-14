@@ -28,21 +28,17 @@
 defined('MOODLE_INTERNAL') || die();
 
 // Event observer for local_coursetranslator.
-$observers = array(
-
-    array(
-        'eventname' => '\core\event\course_updated',
-        'callback'  => 'local_coursetranslator_observer::course_updated'
-    ),
-
-    array(
-        'eventname' => '\core\event\course_section_updated',
-        'callback'  => 'local_coursetranslator_observer::course_section_updated'
-    ),
-
-    array(
-        'eventname' => '\core\event\course_module_updated',
-        'callback'  => 'local_coursetranslator_observer::course_module_updated'
-    ),
-
-);
+$observers = [
+        [
+                'eventname' => '\core\event\course_updated',
+                'callback' => 'local_coursetranslator_observer::course_updated',
+        ],
+        [
+                'eventname' => '\core\event\course_section_updated',
+                'callback' => 'local_coursetranslator_observer::course_section_updated',
+        ],
+        [
+                'eventname' => '\core\event\course_module_updated',
+                'callback' => 'local_coursetranslator_observer::course_module_updated',
+        ],
+];

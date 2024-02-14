@@ -19,6 +19,7 @@
  *
  * @package    local_coursetranslator
  * @copyright  2022 Kaleb Heitzman <kaleb@jamfire.io>
+ * @copyright  2024 Bruno Baudry <bruno.baudry@bfh.ch>
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  * @see        https://docs.moodle.org/dev/String_API
  */
@@ -34,27 +35,62 @@ $string['edittranslation'] = 'Edit Translation';
 $string['apikey'] = 'API Key for DeepL Translate';
 $string['apikey_desc'] = 'Copy your api key from DeepL to use machine translation.';
 $string['usedeepl'] = 'Use DeepL';
-$string['usedeepl_desc'] = 'Check this checkbox if you want the plugin to use the DeepL translate api, otherwise auto generated translations are same as original.';
+$string['usedeepl_desc'] =
+        'Check this checkbox if you want the plugin to use the DeepL translate api, otherwise auto generated translations are same as original.';
 $string['deeplpro'] = 'Use DeepL Pro?';
 $string['deeplpro_desc'] = 'Enable this to use DeepL Pro instead of the free version of DeepL.';
 $string['useautotranslate'] = 'Enable autotranslate for translation page';
-$string['useautotranslate_desc'] = 'Enable autotranslate on the translation page. This gives translators the abilty to autotranslate content without enabling autotranslate on individual page loads.';
-$string['supported_languages'] = 'bg,cs,da,de,el,en,es,et,fi,fr,hu,it,ja,lt,lv,nl,pl,pt,ro,ru,sk,sl,sv,zh'; // Do not change between translations.
-
+$string['useautotranslate_desc'] =
+        'Enable autotranslate on the translation page. This gives translators the abilty to autotranslate content without enabling autotranslate on individual page loads.';
+$string['supported_languages'] =
+        'bg,cs,da,de,el,en,es,et,fi,fr,hu,it,ja,lt,lv,nl,pl,pt,ro,ru,sk,sl,sv,zh'; // Do not change between translations.*/
 // Template strings.
-$string['t_select_target_language'] = 'Select {mlang} Language';
-$string['t_word_count'] = 'Word Count: {$a}';
-$string['t_char_count'] = 'Character Count: {$a}';
-$string['t_char_count_spaces'] = 'Character Count with Spaces: {$a}';
-$string['t_autotranslate'] = 'Autotranslate';
-$string['t_source_text'] = 'Source Text';
-$string['t_translation'] = 'Translation: {$a}';
-$string['t_autosaved'] = 'Autosaved';
+$string['t_contextDeepl'] = 'Course context ';
+$string['t_deeplapidoc'] = 'see detail on deepl\'s documentation';
+$string['t_contextDeeplPlaceholder'] =
+        'Tell the translator (Deepl) about the context, to help it translate in a more contextual way... ';
+$string['t_sourceLang'] = 'Source lang {mlang other}';
+$string['t_select_target_language'] = 'Target language {mlang XX}';
+$string['t_word_count'] = '{$a} words';
+$string['t_char_count'] = '{$a} characters';
+$string['t_word_count_sentence'] =
+        'Total {$a->wordcount} words, {$a->charcount} characters ({$a->charcountspaces} chars including spaces)';
+$string['t_warningsource'] =
+        'Watch out ! Source lang &quot;{$a}&quot; is found as a multilang tag along side with the fallback tag &quot;other&quot;. Note that both will be merge as the &quot;other&quot; multilang tag.';
+$string['t_char_count_spaces'] = '({$a} char including spaces)';
+$string['t_autotranslate'] = 'Translate';
+$string['t_source_text'] = 'Source lang: {$a}';
+$string['t_translation'] = 'Target lang: {$a}';
+$string['t_autosaved'] = 'Saved!';
 $string['t_selectall'] = 'Select All';
 $string['t_status'] = 'Status';
 $string['t_other'] = 'Other (other)';
-$string['t_multiplemlang'] = 'This field is using advanced {mlang} usage. Please edit translation using standard Moodle editor or simplify to a single mlang tag per language.';
-$string['t_needsupdate'] = 'Update Needed';
-$string['t_uptodate'] = 'Updated';
-$string['t_edit'] = 'Edit';
-$string['t_viewsource'] = 'View Source';
+$string['t_multiplemlang'] =
+        'This field is using advanced {mlang} usage. Please edit translation using standard Moodle editor or simplify to a single mlang tag per language.';
+$string['t_needsupdate'] = 'Needs update';
+$string['t_uptodate'] = 'Up to date';
+$string['t_nevertranslated'] = 'No \'{$a}\' translation yet';
+$string['t_canttranslate'] = 'Cannot translate \'{$a}\' to \'{$a}\', please select a different target language';
+
+$string['t_edit'] = 'Edit source in place';
+$string['t_viewsource'] = 'View multilang';
+$string['t_seeSetting'] = 'more Deepl\'s settings';
+$string['t_splitsentences'] = 'Split sentences?';
+$string['t_splitsentences_0'] = 'no splitting at all';
+$string['t_splitsentences_1'] = 'splits on punctuation and on newlines (default)';
+$string['t_splitsentences_nonewlines'] = 'splits on punctuation only, ignoring newlines';
+$string['t_preserveformatting'] = 'Preserve formatting';
+$string['t_formality'] = 'Formality';
+$string['t_formality_default'] = 'default';
+$string['t_formality_less'] = 'less';
+$string['t_formality_more'] = 'more';
+$string['t_formality_prefer_more'] = 'prefer more';
+$string['t_formality_prefer_less'] = 'prefer less';
+$string['t_glossaryid'] = 'Glossary id';
+$string['t_glossaryid_placeholder'] = 'Glossary id should you have one...';
+$string['t_taghandling'] = 'Handle tags as : ';
+$string['t_outlinedetection'] = 'Outline detection';
+$string['t_tagsplaceholder'] = 'List all tags (separate tag with comma ",")';
+$string['t_nonsplittingtags'] = 'Non splitting tags';
+$string['t_splittingtags'] = 'Splitting tags';
+$string['t_ignoretags'] = 'Tags to ignore';

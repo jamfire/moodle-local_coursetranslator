@@ -18,9 +18,8 @@ namespace local_coursetranslator\output;
 
 use renderable;
 use renderer_base;
-use templatable;
 use stdClass;
-use local_coursetranslator\output\translate_form;
+use templatable;
 
 /**
  * Translate Page Output
@@ -29,33 +28,65 @@ use local_coursetranslator\output\translate_form;
  *
  * @package    local_coursetranslator
  * @copyright  2022 Kaleb Heitzman <kaleb@jamfire.io>
+ * @copyright  2024 Bruno Baudry <bruno.baudry@bfh.ch>
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 class translate_page implements renderable, templatable {
+    /**
+     * The course in translation
+     *
+     * @var object
+     */
+    private object $course;
+    /**
+     * The data of the course parsed from mod_info
+     *
+     * @var array
+     */
+    private array $coursedata;
+    /**
+     * The current multilang filter object
+     *
+     * @var \filter_multilang2
+     */
+    private object $mlangfilter;
+    /** @var String */
+    private mixed $currentlang;
+    /** @var String */
+    private mixed $targetlang;
+    /**
+     * @var array|mixed
+     */
+    private mixed $langs;
+    /**
+     * The form to display the row UI
+     *
+     * @todo change this to mustache
+     * @var \translatee_form
+     */
+    private translate_form $mform;
 
     /**
      * Constructor
      *
      * @param object $course Moodle course record
-     * @param array  $coursedata Custom processed course record
+     * @param array $coursedata Custom processed course record
      * @param object $mlangfilter Multilang2 Filter for filtering output
+     * @todo no need form if treatment and api call is done by js. Replace by Mustache.
      */
     public function __construct($course, $coursedata, $mlangfilter) {
         $this->course = $course;
         $this->coursedata = $coursedata;
         $this->langs = get_string_manager()->get_list_of_translations();
-        $this->langs['other'] = get_string('t_other', 'local_coursetranslator');
-        $this->current_lang = optional_param('course_lang', 'other', PARAM_NOTAGS);
+
+        // If source lang is changed for a course than the whole translation should be void.
+        $this->currentlang = optional_param('lang', current_language(), PARAM_NOTAGS);
+        $this->targetlang = optional_param('target_lang', 'en', PARAM_NOTAGS);
         $this->mlangfilter = $mlangfilter;
-
         // Moodle Form.
-        $mform = new translate_form(null, [
-            'course' => $course,
-            'coursedata' => $coursedata,
-            'mlangfilter' => $mlangfilter,
-            'lang' => $this->current_lang
+        $mform = new translate_form(null, ['course' => $course, 'coursedata' => $coursedata, 'mlangfilter' => $mlangfilter,
+                'current_lang' => $this->currentlang, 'target_lang' => $this->targetlang,
         ]);
-
         $this->mform = $mform;
     }
 
@@ -69,19 +100,25 @@ class translate_page implements renderable, templatable {
         $data = new stdClass();
 
         $langs = [];
+        $targetlangs = [];
         // Process langs.
         foreach ($this->langs as $key => $lang) {
-            array_push($langs, array(
-                'code' => $key,
-                'lang' => $lang,
-                'selected' => $this->current_lang === $key ? "selected" : ""
-            ));
+            $disabletarget = $this->currentlang === $key ||
+                    !in_array($key, explode(',', get_string('supported_languages', 'local_coursetranslator')));
+            $disablesource = $this->targetlang === $key ||
+                    !in_array($key, explode(',', get_string('supported_languages', 'local_coursetranslator')));
+            array_push($langs, ['code' => $key, 'lang' => $lang, 'disabled' => $disablesource ? "disabled" : "",
+                    'selected' => $this->currentlang === $key ? "selected" : ""]);
+            array_push($targetlangs, ['code' => $key, 'lang' => $lang, 'disabled' => $disabletarget ? "disabled" : "",
+                    'selected' => $this->targetlang === $key ? "selected" : ""]);
         }
 
         // Data for mustache template.
         $data->course = $this->course;
+        $data->target_langs = $targetlangs;
         $data->langs = $langs;
-        $data->lang = $this->langs[$this->current_lang];
+        $data->target_lang = $this->targetlang;
+        $data->current_lang = $this->currentlang;
 
         // Hacky fix but the only way to adjust html...
         // This could be overridden in css and I might look at that fix for the future.
@@ -94,27 +131,47 @@ class translate_page implements renderable, templatable {
         $wordcount = 0;
         $charcountspaces = 0;
         $spaces = 0;
-        foreach ($this->coursedata as $item) {
-            $text = $this->mlangfilter->filter($item->text);
 
-            // Get the wordcount.
-            $wcwords = strip_tags($text);
-            $wordcount = $wordcount + str_word_count($wcwords);
-
-            // Get the character count with spaces.
-            $cswords = strip_tags($text);
-            $charcountspaces = $charcountspaces + strlen($cswords);
-
-            // Get the character count without spaces.
-            $ccwords = strip_tags($text);
-            $spaces = $spaces + array_key_last(preg_split('/\s+/', $ccwords));
+        foreach ($this->coursedata as $section) {
+            // Count for each section's headers.
+            foreach ($section['section'] as $s) {
+                $this->computewordcount($s->text, $wordcount, $spaces, $charcountspaces);
+            }
+            // Count for each section's activites.
+            foreach ($section['activities'] as $a) {
+                $this->computewordcount($a->text, $wordcount, $spaces, $charcountspaces);
+            }
         }
-
         // Set word and character counts to data.
         $data->wordcount = $wordcount;
         $data->charcountspaces = $charcountspaces;
         $data->charcount = $charcountspaces - $spaces;
-
+        // Set langs.
+        $data->current_lang = $this->currentlang;
+        $data->target_lang = $this->targetlang;
+        $data->mlangfilter = $this->mlangfilter;
+        // Pass data.
+        $data->course = $this->course;
+        $data->coursedata = $this->coursedata;
         return $data;
+    }
+
+    /**
+     * Compute word, spaces and character's count for a single text
+     *
+     * @param string $text
+     * @param int $wc ref
+     * @param int $sc ref
+     * @param int $csc ref
+     * @return void
+     */
+    private function computewordcount(string $text, int &$wc, int &$sc, int &$csc): void {
+        $tagsstriped = strip_tags($text);
+        // Get the wordcount.
+        $wc = $wc + strlen(str_word_count($tagsstriped));
+        // Get the character count with spaces.
+        $csc = $csc + strlen($tagsstriped);
+        // Get the character count without spaces.
+        $sc = $sc + strlen(array_key_last(preg_split('/\s+/', $tagsstriped)));
     }
 }

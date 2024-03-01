@@ -272,7 +272,7 @@ export const init = (cfg) => {
      * @returns {string}
      */
     const getupdatedtext = (fieldtext, text, source) => {
-        let targetlang = config.lang;
+        let targetlang = targetLang;
         // Search for {mlang} not found.
         let startOther = `{mlang other}`;
         let otherlangtext = `${startOther}${source}{mlang}`;

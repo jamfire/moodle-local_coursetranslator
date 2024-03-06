@@ -29,21 +29,21 @@ defined('MOODLE_INTERNAL') || die();
 define('LOCAL_COURSETRANSLATOR_CAP', 'local/coursetranslator:edittranslations');
 
 // Add services definition.
-$services = array(
-    'Course Translator' => array(
-        'functions' => array ('local_coursetranslator_update_translation'),
+$services = [
+    'Course Translator' => [
+        'functions' => ['local_coursetranslator_update_translation'],
         'requiredcapability' => LOCAL_COURSETRANSLATOR_CAP,
         'restrictedusers' => 0,
         'enabled' => 1,
         'shortname' => 'CourseTranslator',
         'downloadfiles' => 0,
-        'uploadfiles'  => 0
-    )
-);
+        'uploadfiles'  => 0,
+    ],
+];
 
 // Add functions for webservices.
-$functions = array(
-    'local_coursetranslator_update_translation' => array(
+$functions = [
+    'local_coursetranslator_update_translation' => [
         'classname'     => 'local_coursetranslator_external',
         'methodname'    => 'update_translation',
         'classpath'     => 'local/coursetranslator/externallib.php',
@@ -51,8 +51,8 @@ $functions = array(
         'type'          => 'write',
         'ajax'          => true,
         'capabilities'  => LOCAL_COURSETRANSLATOR_CAP,
-    ),
-    'local_coursetranslator_get_field' => array(
+    ],
+    'local_coursetranslator_get_field' => [
         'classname'     => 'local_coursetranslator_external',
         'methodname'    => 'get_field',
         'classpath'     => 'local/coursetranslator/externallib.php',
@@ -60,5 +60,5 @@ $functions = array(
         'type'          => 'read',
         'ajax'          => true,
         'capabilities'  => LOCAL_COURSETRANSLATOR_CAP,
-    ),
-);
+    ],
+];

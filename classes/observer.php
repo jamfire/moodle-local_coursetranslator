@@ -31,7 +31,6 @@
  * @package    local_coursetranslator
  */
 class local_coursetranslator_observer {
-
     /**
      * Observer for course_updated event
      *
@@ -51,7 +50,7 @@ class local_coursetranslator_observer {
         // Get matching records.
         $records = $DB->get_recordset(
             'local_coursetranslator',
-            array('t_id' => $objectid, 't_table' => $objecttable),
+            ['t_id' => $objectid, 't_table' => $objecttable],
             '',
             'id'
         );
@@ -60,7 +59,7 @@ class local_coursetranslator_observer {
         foreach ($records as $record) {
             $DB->update_record(
                 'local_coursetranslator',
-                array('id' => $record->id, 's_lastmodified' => $timemodified )
+                ['id' => $record->id, 's_lastmodified' => $timemodified ]
             );
         }
         $records->close();
@@ -85,7 +84,7 @@ class local_coursetranslator_observer {
         // Get matching records.
         $records = $DB->get_recordset(
             'local_coursetranslator',
-            array('t_id' => $objectid, 't_table' => $objecttable),
+            ['t_id' => $objectid, 't_table' => $objecttable],
             '',
             'id'
         );
@@ -94,7 +93,7 @@ class local_coursetranslator_observer {
         foreach ($records as $record) {
             $DB->update_record(
                 'local_coursetranslator',
-                array('id' => $record->id, 's_lastmodified' => $timemodified )
+                ['id' => $record->id, 's_lastmodified' => $timemodified ]
             );
         }
         $records->close();
@@ -119,7 +118,7 @@ class local_coursetranslator_observer {
         // Get matching records.
         $records = $DB->get_recordset(
             'local_coursetranslator',
-            array('t_id' => $objectid, 't_table' => $objecttable),
+            ['t_id' => $objectid, 't_table' => $objecttable],
             '',
             '*'
         );
@@ -128,10 +127,9 @@ class local_coursetranslator_observer {
         foreach ($records as $record) {
             $DB->update_record(
                 'local_coursetranslator',
-                array('id' => $record->id, 's_lastmodified' => $timemodified )
+                ['id' => $record->id, 's_lastmodified' => $timemodified ]
             );
         }
         $records->close();
     }
-
 }

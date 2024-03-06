@@ -26,7 +26,6 @@
 defined('MOODLE_INTERNAL') || die();
 
 if ($hassiteconfig) {
-
     // Create new settings page.
     $settings = new admin_settingpage('local_coursetranslator', get_string('pluginname', 'local_coursetranslator'));
 
@@ -74,5 +73,4 @@ if ($hassiteconfig) {
             false
         )
     );
-
 }

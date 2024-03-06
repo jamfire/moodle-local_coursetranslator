@@ -26,7 +26,6 @@ namespace local_coursetranslator\data;
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 class course_data {
-
     /**
      * Class Construct
      *
@@ -67,7 +66,7 @@ class course_data {
      * @return array
      */
     private function getcoursedata() {
-        $coursedata = array();
+        $coursedata = [];
         $course = $this->modinfo->get_course();
 
         if ($course->fullname) {
@@ -94,9 +93,9 @@ class course_data {
     private function getsectiondata() {
         global $DB;
         $sections = $this->modinfo->get_section_info_all();
-        $sectiondata = array();
+        $sectiondata = [];
         foreach ($sections as $sk => $section) {
-            $record = $DB->get_record('course_sections', array('course' => $this->course->id, 'section' => $sk));
+            $record = $DB->get_record('course_sections', ['course' => $this->course->id, 'section' => $sk]);
             if ($record->name) {
                 $data = $this->build_data($record->id, $record->name, 0, 'course_sections', 'name');
                 array_push($sectiondata, $data);
@@ -116,11 +115,11 @@ class course_data {
      */
     private function getactivitydata() {
         global $DB;
-        $activitydata = array();
+        $activitydata = [];
 
         foreach ($this->modinfo->instances as $instances) {
             foreach ($instances as $ik => $activity) {
-                $record = $DB->get_record($activity->modname, array('id' => $ik));
+                $record = $DB->get_record($activity->modname, ['id' => $ik]);
 
                 // Standard name.
                 if (isset($record->name) && !empty($record->name)) {
@@ -217,12 +216,12 @@ class course_data {
         global $DB;
 
         // Build db params.
-        $params = array(
+        $params = [
             't_id' => $id,
             't_lang' => $this->lang,
             't_table' => $table,
-            't_field' => $field
-        );
+            't_field' => $field,
+        ];
 
         // Insert tracking record if it does not exist.
         if (!$DB->record_exists($this->dbtable, $params)) {
@@ -230,7 +229,7 @@ class course_data {
             $params['s_lastmodified'] = $time;
             $params['t_lastmodified'] = $time;
             $id = $DB->insert_record($this->dbtable, $params);
-            $record = $DB->get_record($this->dbtable, array('id' => $id), 'id,s_lastmodified,t_lastmodified');
+            $record = $DB->get_record($this->dbtable, ['id' => $id], 'id,s_lastmodified,t_lastmodified');
         } else {
             $record = $DB->get_record($this->dbtable, $params, 'id,s_lastmodified,t_lastmodified');
         }

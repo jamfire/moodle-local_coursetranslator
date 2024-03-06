@@ -36,7 +36,6 @@ function xmldb_local_coursetranslator_upgrade($oldversion) {
     $dbman = $DB->get_manager();
 
     if ($oldversion < 2022050100) {
-
         // Define table local_coursetranslator to be created.
         $table = new xmldb_table('local_coursetranslator');
 
@@ -66,7 +65,6 @@ function xmldb_local_coursetranslator_upgrade($oldversion) {
     }
 
     if ($oldversion < 2022050300) {
-
         // Coursetranslator savepoint reached.
         upgrade_plugin_savepoint(true, 2022050300, 'local', 'coursetranslator');
     }

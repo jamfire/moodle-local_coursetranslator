@@ -31,9 +31,7 @@ namespace local_coursetranslator;
  * Settings Test
  */
 class settings_test extends \advanced_testcase {
-
     public function test_usedeepl() {
         $this->assertEquals(2, 1 + 1);
     }
-
 }

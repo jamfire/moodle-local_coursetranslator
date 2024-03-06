@@ -32,7 +32,6 @@ use local_coursetranslator\output\translate_form;
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 class translate_page implements renderable, templatable {
-
     /**
      * Constructor
      *
@@ -53,7 +52,7 @@ class translate_page implements renderable, templatable {
             'course' => $course,
             'coursedata' => $coursedata,
             'mlangfilter' => $mlangfilter,
-            'lang' => $this->current_lang
+            'lang' => $this->current_lang,
         ]);
 
         $this->mform = $mform;
@@ -71,11 +70,11 @@ class translate_page implements renderable, templatable {
         $langs = [];
         // Process langs.
         foreach ($this->langs as $key => $lang) {
-            array_push($langs, array(
+            array_push($langs, [
                 'code' => $key,
                 'lang' => $lang,
-                'selected' => $this->current_lang === $key ? "selected" : ""
-            ));
+                'selected' => $this->current_lang === $key ? "selected" : "",
+            ]);
         }
 
         // Data for mustache template.

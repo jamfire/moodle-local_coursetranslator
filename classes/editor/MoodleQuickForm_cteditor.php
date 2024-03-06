@@ -26,7 +26,6 @@ namespace local_coursetranslator\editor;
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 class MoodleQuickForm_cteditor extends \MoodleQuickForm_editor {
-
     /**
      * Course Translation Editor Setup
      *

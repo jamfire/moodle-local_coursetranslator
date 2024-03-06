@@ -28,7 +28,6 @@ require_once("$CFG->libdir/externallib.php");
  * @see        https://docs.moodle.org/dev/External_functions_API
  */
 class local_coursetranslator_external extends external_api {
-
     /**
      * Get field parameters
      *
@@ -38,18 +37,18 @@ class local_coursetranslator_external extends external_api {
      */
     public static function get_field_parameters() {
         return new external_function_parameters(
-            array(
+            [
                 'data' => new external_multiple_structure(
                     new external_single_structure(
-                        array(
+                        [
                             'courseid'  => new external_value(PARAM_INT, 'course id'),
                             'id'        => new external_value(PARAM_INT, 'id of table record'),
                             'table'     => new external_value(PARAM_RAW, 'table to update text'),
                             'field'     => new external_value(PARAM_RAW, 'table field to update'),
-                        )
+                        ]
                     )
-                )
-            )
+                ),
+            ]
         );
     }
 
@@ -64,9 +63,9 @@ class local_coursetranslator_external extends external_api {
     public static function get_field($data) {
         global $CFG, $DB;
 
-        $params = self::validate_parameters(self::get_field_parameters(), array('data' => $data));
+        $params = self::validate_parameters(self::get_field_parameters(), ['data' => $data]);
         $transaction = $DB->start_delegated_transaction();
-        $response = array();
+        $response = [];
 
         foreach ($params['data'] as $data) {
             // Check for null values and throw errors.
@@ -77,12 +76,12 @@ class local_coursetranslator_external extends external_api {
             require_capability('local/coursetranslator:edittranslations', $context);
 
             // Get the original record.
-            $record = (array) $DB->get_record($data['table'], array('id' => $data['id']));
+            $record = (array) $DB->get_record($data['table'], ['id' => $data['id']]);
             $text = $record[$data['field']];
 
-            $response[] = array(
+            $response[] = [
                 'text' => $text,
-            );
+            ];
         }
 
         // Commit the transaction.
@@ -101,9 +100,9 @@ class local_coursetranslator_external extends external_api {
     public static function get_field_returns() {
         return new external_multiple_structure(
             new external_single_structure(
-                array(
-                    'text' => new external_value(PARAM_RAW, 'updated text of field')
-                )
+                [
+                    'text' => new external_value(PARAM_RAW, 'updated text of field'),
+                ]
             )
         );
     }
@@ -117,20 +116,20 @@ class local_coursetranslator_external extends external_api {
      */
     public static function update_translation_parameters() {
         return new external_function_parameters(
-            array(
+            [
                 'data' => new external_multiple_structure(
                     new external_single_structure(
-                        array(
+                        [
                             'courseid'  => new external_value(PARAM_INT, 'course id'),
                             'id'        => new external_value(PARAM_INT, 'id of table record'),
                             'tid'       => new external_value(PARAM_INT, 'tid of local_coursetranslator record'),
                             'table'     => new external_value(PARAM_RAW, 'table to update text'),
                             'field'     => new external_value(PARAM_RAW, 'table field to update'),
                             'text'      => new external_value(PARAM_RAW, 'text to be upserted'),
-                        )
+                        ]
                     )
-                )
-            )
+                ),
+            ]
         );
     }
 
@@ -145,14 +144,13 @@ class local_coursetranslator_external extends external_api {
     public static function update_translation($data) {
         global $CFG, $DB;
 
-        $params = self::validate_parameters(self::update_translation_parameters(), array('data' => $data));
+        $params = self::validate_parameters(self::update_translation_parameters(), ['data' => $data]);
 
         $transaction = $DB->start_delegated_transaction();
 
-        $response = array();
+        $response = [];
 
         foreach ($params['data'] as $data) {
-
             purge_all_caches();
 
             // Check for null values and throw errors.
@@ -163,19 +161,19 @@ class local_coursetranslator_external extends external_api {
             require_capability('local/coursetranslator:edittranslations', $context);
 
             // Update the record.
-            $dataobject = array();
+            $dataobject = [];
             $dataobject['id'] = $data['id'];
             $dataobject[$data['field']] = $data['text'];
             $DB->update_record($data['table'], (object) $dataobject);
 
             // Update t_lastmodified.
             $timemodified = time();
-            $DB->update_record('local_coursetranslator', array('id' => $data['tid'], 't_lastmodified' => $timemodified));
+            $DB->update_record('local_coursetranslator', ['id' => $data['tid'], 't_lastmodified' => $timemodified]);
 
-            $response[] = array(
+            $response[] = [
                 't_lastmodified' => $timemodified,
-                'text' => $data['text']
-            );
+                'text' => $data['text'],
+            ];
         }
 
         // Commit the transaction.
@@ -194,12 +192,11 @@ class local_coursetranslator_external extends external_api {
     public static function update_translation_returns() {
         return new external_multiple_structure(
             new external_single_structure(
-                array(
+                [
                     't_lastmodified' => new external_value(PARAM_INT, 'translation last modified time'),
-                    'text'           => new external_value(PARAM_RAW, 'text of field')
-                )
+                    'text'           => new external_value(PARAM_RAW, 'text of field'),
+                ]
             )
         );
     }
-
 }

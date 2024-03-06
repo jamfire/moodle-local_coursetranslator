@@ -52,4 +52,3 @@ function local_coursetranslator_extend_navigation_course($navigation, $course) {
     );
     $navigation->add_node($translatecontent);
 }
-

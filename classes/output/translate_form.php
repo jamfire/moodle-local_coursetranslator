@@ -149,12 +149,11 @@ class translate_form extends moodleform {
             data-key="' . $key . '"
             disabled
         />');
-        /**
-         * Multilanguage tag.
-         * Invisible when nothing translated already.
-         * Can be as bootstrap info when there is a multilang tag in the source.
-         * Will be a danger tag if the content has already an OTHER and the TARGET language tag.
-         */
+
+        // Multilanguage tag.
+        // Invisible when nothing translated already.
+        // Can be as bootstrap info when there is a multilang tag in the source.
+        // Will be a danger tag if the content has already an OTHER and the TARGET language tag.
         $hasotherandsourcetag = $this->check_field_has_other_and_sourcetag(trim($item->text));
         $alreadyhasmultilang = $this->has_multilang(trim($item->text));
         $visibilityclass = $alreadyhasmultilang ? '' : 'invisible';
@@ -164,11 +163,12 @@ class translate_form extends moodleform {
                 get_string('t_viewsource', 'local_coursetranslator');
         $mutlilangspantag =
                 "<span
-                    title='$titlestring' 
+                    title='$titlestring'
                     id='toggleMultilang'
                     aria-controls='$keyid'
                     role='button'
-                    class='badge badge-pill badge-$badgeclass $visibilityclass'><i class='fa fa-language px-10' aria-hidden='true'></i></span>";
+                    class='badge badge-pill badge-$badgeclass $visibilityclass'>
+                    <i class='fa fa-language px-10' aria-hidden='true'></i></span>";
         $mform->addElement('html', $mutlilangspantag);
         $mform->addElement('html', '</div>');
         $mform->addElement('html', '</div>');

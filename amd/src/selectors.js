@@ -38,7 +38,9 @@ export default {
         updated: '[data-status="updated"]',
         needsupdate: '[data-status="needsupdate"]',
         keys: '[data-status-key="<KEY>"',
-        successMessages: '[data-status="local-coursetranslator/success-message"][data-key="<KEY>"]'
+        successMessages: '[data-status="local-coursetranslator/success-message"][data-key="<KEY>"]',
+        prevTransStatus: '[data-row-id="<KEY>"] span#previousTranslationStatus',
+        multilang: '[data-row-id="<KEY>"] span#toggleMultilang'
     },
     editors: {
         textarea: '[data-action="local-coursetranslator/textarea"',

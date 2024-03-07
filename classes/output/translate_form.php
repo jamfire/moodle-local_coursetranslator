@@ -137,7 +137,8 @@ class translate_form extends moodleform {
             $titlestring = get_string('t_uptodate', 'local_coursetranslator');
         }
         $mform->addElement('html', '<div class="col-1 px-1">');
-        $mform->addElement('html', '<span title="' . $titlestring . '" class="badge badge-pill ' . $buttonclass .
+        $mform->addElement('html',
+                '<span id="previousTranslationStatus" title="' . $titlestring . '" class="badge badge-pill ' . $buttonclass .
                 '" style="font-size:.6rem;top:.3rem;left:-1rem;position:absolute;">&nbsp;</span>');
         $mform->addElement('html', '<div class="form-check">');
 

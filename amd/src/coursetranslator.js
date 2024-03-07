@@ -203,10 +203,15 @@ export const init = (cfg) => {
                             icon.setAttribute('data-status', "local-coursetranslator/success");
                             // Remove success message after a few seconds
                             setTimeout(() => {
+                                let multilangPill = document.querySelector(replaceKey(Selectors.statuses.multilang, key));
+                                let prevTransStatus = document.querySelector(replaceKey(Selectors.statuses.prevTransStatus, key));
+                                prevTransStatus.classList = "badge badge-pill badge-success";
+                                if (multilangPill.classList.contains("invisible")) {
+                                    multilangPill.classList.remove('invisible');
+                                }
                                 icon.setAttribute('data-status', "local-coursetranslator/saved");
                             });
                         };
-
                         // Error Mesage
                         const errorMessage = (error) => {
                             editor.classList.add("local-coursetranslator__error");

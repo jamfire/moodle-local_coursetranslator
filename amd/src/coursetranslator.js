@@ -275,26 +275,34 @@ export const init = (cfg) => {
         let targetlang = targetLang;
         // Search for {mlang} not found.
         let startOther = `{mlang other}`;
-        let otherlangtext = `${startOther}${source}{mlang}`;
-        let targetLangTag = `{mlang ${targetlang}}`;
+        let otherlangtext = `${startOther}${source}{mlang}`; // Source tag.
+        let targetLangTag = `{mlang ${targetlang}}`; // Target tag.
         let targetlangtext = `${targetLangTag}${text}{mlang}`;
         if (config.debug > 0) {
-            window.console.log(targetlang);
-            window.console.log(startOther);
-            window.console.log(otherlangtext);
-            window.console.log(targetLangTag);
-            window.console.log(targetlangtext);
+            window.console.log("targetlang", targetlang);
+            window.console.log("startOther", startOther);
+            window.console.log("otherlangtext", otherlangtext);
+            window.console.log("targetLangTag", targetLangTag);
+            window.console.log("targetlangtext", targetlangtext); // Translated text with tag.
+            window.console.log("fieldtext", fieldtext); // Original editor content.
+            window.console.log("text", text); // Translated text without tag.
+            window.console.log("source", source); // Source text without tag.
         }
         // Return new mlang text if mlang has not been used before.
         if (fieldtext.indexOf("{mlang") === -1) {
             return otherlangtext + targetlangtext;
         }
-        // Use regex to replace the string
+        // Use regex to replace the string.
         let alllanpattern = `({mlang [a-z]{2,5}})(.*?){mlang}`;
-        let alllangregex = new RegExp(alllanpattern, "g");
+        // Important to leave the "s" mofifiers to match line breaks added by the rich text editors.
+        let alllangregex = new RegExp(alllanpattern, "gs");
         let all = {};
         let tagReg = new RegExp("{mlang (other|[a-z]{2})}", "");
         let splited = fieldtext.split(alllangregex);
+        if (config.debug > 0) {
+            window.console.info("SPLITED");
+            window.console.log(splited);
+        }
         let foundsourcetag = "";
         var l = "";
         for (var i in splited) {

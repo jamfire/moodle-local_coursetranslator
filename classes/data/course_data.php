@@ -63,7 +63,6 @@ class course_data {
         $modinfo = get_fast_modinfo($course);
         $this->modinfo = $modinfo;
         // Set language.
-        //$this->lang = $lang === 'other' ? '00' : $lang;
         $this->lang = $lang;
     }
 

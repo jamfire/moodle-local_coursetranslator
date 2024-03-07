@@ -299,25 +299,6 @@ class course_data {
         $cmid = $activity->id;
         $sectionid = $activity->section;
         $record = $this->store_status_db($id, $table, $field);
-        /*// Build db params.
-        $params = [
-                't_id' => $id,
-                't_lang' => $this->lang,
-                't_table' => $table,
-                't_field' => $field,
-        ];
-
-        // Insert tracking record if it does not exist.
-        if (!$DB->record_exists($this->dbtable, $params)) {
-            $time = time();
-            $params['s_lastmodified'] = $time;
-            $params['t_lastmodified'] = $time;
-            $id = $DB->insert_record($this->dbtable, $params);
-            $record = $DB->get_record($this->dbtable, ['id' => $id], 'id,s_lastmodified,t_lastmodified');
-        } else {
-            $record = $DB->get_record($this->dbtable, $params, 'id,s_lastmodified,t_lastmodified');
-        }
-*/
         // Build item.
         $item = new \stdClass();
         $item->id = $id;

@@ -50,7 +50,7 @@ class course_data {
      * @param context $context
      * @throws \moodle_exception
      */
-    public function __construct(\stdClass $course, string $lang, context $context) {
+    public function __construct(\stdClass $course, string $lang = null, context $context) {
         // Set db table.
         $this->dbtable = 'local_coursetranslator';
         // Store context.
@@ -63,7 +63,8 @@ class course_data {
         $modinfo = get_fast_modinfo($course);
         $this->modinfo = $modinfo;
         // Set language.
-        $this->lang = $lang === 'other' ? '00' : $lang;
+        //$this->lang = $lang === 'other' ? '00' : $lang;
+        $this->lang = $lang;
     }
 
     /**
@@ -298,7 +299,8 @@ class course_data {
         $table = $activity->modname;
         $cmid = $activity->id;
         $sectionid = $activity->section;
-        // Build db params.
+        $record = $this->store_status_db($id, $table, $field);
+        /*// Build db params.
         $params = [
                 't_id' => $id,
                 't_lang' => $this->lang,
@@ -316,7 +318,7 @@ class course_data {
         } else {
             $record = $DB->get_record($this->dbtable, $params, 'id,s_lastmodified,t_lastmodified');
         }
-
+*/
         // Build item.
         $item = new \stdClass();
         $item->id = $id;
@@ -338,6 +340,46 @@ class course_data {
         $item->section = $sectionid;
 
         return $item;
+    }
+
+    /**
+     * Stores the translation's statuses
+     *
+     * @param int $id
+     * @param string $table
+     * @param string $field
+     * @return false|mixed|\stdClass
+     * @throws \dml_exception
+     */
+    private function store_status_db(int $id, string $table, string $field) {
+        global $DB;
+        // Skip if target lang is undefined.
+        if ($this->lang == null) {
+            $dummy = new \stdClass();
+            $dummy->id = "0";
+            $dummy->s_lastmodified = "0";
+            $dummy->t_lastmodified = "0";
+            return $dummy;
+        }
+        // Build db params.
+        $params = [
+                't_id' => $id,
+                't_lang' => $this->lang,
+                't_table' => $table,
+                't_field' => $field,
+        ];
+
+        // Insert tracking record if it does not exist.
+        if (!$DB->record_exists($this->dbtable, $params)) {
+            $time = time();
+            $params['s_lastmodified'] = $time;
+            $params['t_lastmodified'] = $time;
+            $id = $DB->insert_record($this->dbtable, $params);
+            $record = $DB->get_record($this->dbtable, ['id' => $id], 'id,s_lastmodified,t_lastmodified');
+        } else {
+            $record = $DB->get_record($this->dbtable, $params, 'id,s_lastmodified,t_lastmodified');
+        }
+        return $record;
     }
 
     /**

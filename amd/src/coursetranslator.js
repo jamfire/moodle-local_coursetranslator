@@ -278,7 +278,13 @@ export const init = (cfg) => {
         let otherlangtext = `${startOther}${source}{mlang}`;
         let targetLangTag = `{mlang ${targetlang}}`;
         let targetlangtext = `${targetLangTag}${text}{mlang}`;
-
+        if (config.debug > 0) {
+            window.console.log(targetlang);
+            window.console.log(startOther);
+            window.console.log(otherlangtext);
+            window.console.log(targetLangTag);
+            window.console.log(targetlangtext);
+        }
         // Return new mlang text if mlang has not been used before.
         if (fieldtext.indexOf("{mlang") === -1) {
             return otherlangtext + targetlangtext;

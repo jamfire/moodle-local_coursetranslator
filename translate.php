@@ -41,7 +41,7 @@ require_once($CFG->dirroot . '/lib/editorlib.php');
 
 // Needed vars for processing.
 $courseid = required_param('course_id', PARAM_INT);
-$lang = optional_param('target_lang', 'other', PARAM_NOTAGS);
+$targetLang = optional_param('target_lang', null, PARAM_NOTAGS);
 $course = $DB->get_record('course', ['id' => $courseid], '*', MUST_EXIST);
 
 // Setup page.
@@ -54,7 +54,7 @@ require_capability('local/coursetranslator:edittranslations', $context);
 $jsconfig = new stdClass();
 $jsconfig->apikey = get_config('local_coursetranslator', 'apikey');
 $jsconfig->autotranslate = boolval(get_config('local_coursetranslator', 'useautotranslate'));
-$jsconfig->lang = $lang;
+$jsconfig->lang = $targetLang;
 $jsconfig->currentlang = current_language();
 $jsconfig->syslang = $CFG->lang;
 $jsconfig->courseid = $courseid;
@@ -96,9 +96,9 @@ echo $output->header();
 echo $output->heading($mlangfilter->filter($course->fullname));
 
 // Output translation grid.
-$coursedata = new course_data($course, $lang, $context);
+
+$coursedata = new course_data($course, $targetLang, $context);
 $renderable = new translate_page($course, $coursedata->getdata(), $mlangfilter);
 echo $output->render($renderable, $course);
-
 // Output footer.
 echo $output->footer();

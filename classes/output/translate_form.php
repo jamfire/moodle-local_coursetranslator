@@ -149,17 +149,27 @@ class translate_form extends moodleform {
             data-key="' . $key . '"
             disabled
         />');
-        $warning = $this->check_filed_has_other_and_sourcetag(trim($item->text)) ?
-                '<i title="' . get_string('t_warningsource', 'local_coursetranslator', $this->currentlang) . '"
-                    class="fa fa-warning" aria-hidden="true" data-status="sourceTextWarings" ></i>' : "";
-        $mform->addElement('html', '<span
-                    title="' . get_string('t_viewsource', 'local_coursetranslator') . '"
-                    id="toggleMultilang"
-                    aria-controls="' . $keyid . '"
-                    role="button">
-                       <i class="fa fa-language px-10" aria-hidden="true"></i>
-                    </span>&nbsp;' . $warning);
-
+        /**
+         * Multilanguage tag.
+         * Invisible when nothing translated already.
+         * Can be as bootstrap info when there is a multilang tag in the source.
+         * Will be a danger tag if the content has already an OTHER and the TARGET language tag.
+         */
+        $hasotherandsourcetag = $this->check_field_has_other_and_sourcetag(trim($item->text));
+        $alreadyhasmultilang = $this->has_multilang(trim($item->text));
+        $visibilityclass = $alreadyhasmultilang ? '' : 'invisible';
+        $badgeclass = $hasotherandsourcetag ? 'danger' : 'info';
+        $titlestring = $hasotherandsourcetag ?
+                get_string('t_warningsource', 'local_coursetranslator', strtoupper($this->currentlang)) :
+                get_string('t_viewsource', 'local_coursetranslator');
+        $mutlilangspantag =
+                "<span
+                    title='$titlestring' 
+                    id='toggleMultilang'
+                    aria-controls='$keyid'
+                    role='button'
+                    class='badge badge-pill badge-$badgeclass $visibilityclass'><i class='fa fa-language px-10' aria-hidden='true'></i></span>";
+        $mform->addElement('html', $mutlilangspantag);
         $mform->addElement('html', '</div>');
         $mform->addElement('html', '</div>');
 
@@ -228,8 +238,18 @@ class translate_form extends moodleform {
      * @param string $t
      * @return bool
      */
-    private function check_filed_has_other_and_sourcetag(string $t) {
+    private function check_field_has_other_and_sourcetag(string $t): bool {
         return str_contains($t, '{mlang other}') && str_contains($t, "{mlang $this->currentlang}");
+    }
+
+    /**
+     * As the title says.
+     *
+     * @param string $t
+     * @return bool
+     */
+    private function has_multilang(string $t): bool {
+        return str_contains($t, '{mlang}');
     }
 
     /**

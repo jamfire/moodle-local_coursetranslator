@@ -56,7 +56,7 @@ $string['t_char_count'] = '{$a} characters';
 $string['t_word_count_sentence'] =
         'Total {$a->wordcount} words, {$a->charcount} characters ({$a->charcountspaces} chars including spaces)';
 $string['t_warningsource'] =
-        'Watch out ! Source lang &quot;{$a}&quot; is found as a multilang tag along side with the fallback tag &quot;other&quot;. Note that both will be merge as the &quot;other&quot; multilang tag.';
+        'Watch out ! The current source language &quot;{$a}&quot; is already as a multilang tag along side with the fallback tag &quot;OTHER&quot;. Note that both will be merge as the &quot;OTHER&quot; multilang tag.';
 $string['t_char_count_spaces'] = '({$a} char including spaces)';
 $string['t_autotranslate'] = 'Translate';
 $string['t_source_text'] = 'Source lang: {$a}';
@@ -73,7 +73,7 @@ $string['t_nevertranslated'] = 'No \'{$a}\' translation yet';
 $string['t_canttranslate'] = 'Cannot translate \'{$a}\' to \'{$a}\', please select a different target language';
 
 $string['t_edit'] = 'Edit source in place';
-$string['t_viewsource'] = 'View multilang';
+$string['t_viewsource'] = 'Check multilingual content.';
 $string['t_seeSetting'] = 'more Deepl\'s settings';
 $string['t_splitsentences'] = 'Split sentences?';
 $string['t_splitsentences_0'] = 'no splitting at all';

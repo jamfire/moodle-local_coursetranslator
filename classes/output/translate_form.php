@@ -178,7 +178,7 @@ class translate_form extends moodleform {
         $mform->addElement('html', '<div class="col-5 px-0 pr-5 local-coursetranslator__source-text" data-key="' . $key . '">');
         // Edit button.
         $mform->addElement('html', '<span class="col-1 px-0 ">
-                        <a style="top:.4rem;left:-2rem;position:absolute;" href="' . $item->link . '" target="_blank" title="' .
+                        <a id="local-coursetranslator__sourcelink" href="' . $item->link . '" target="_blank" title="' .
                 get_string('t_edit', 'local_coursetranslator') . '">
                             <i class="fa fa-pencil-square-o px-2" aria-hidden="true"></i>
                         </a>

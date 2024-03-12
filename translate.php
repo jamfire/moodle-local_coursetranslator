@@ -16,14 +16,15 @@
 /**
  * Local Course Translator Translate Page
  *
- * @todo use deepl-php instead of js ajax for further maintainability and absctraction
- * @todo check images tag handling in deepl.
- *
  * @package    local_coursetranslator
  * @copyright  2022 Kaleb Heitzman <kaleb@jamfire.io>
  * @copyright  2024 Bruno Baudry <bruno.baudry@bfh.ch>
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  * @see        https://docs.moodle.org/dev/Output_API
+ */
+/**
+ * @todo use deepl-php instead of js ajax for further maintainability and absctraction
+ * @todo check images tag handling in deepl.
  */
 
 // Get libs.

@@ -58,10 +58,6 @@ $secondary: $gray-400 !default;
         display: none;
     }
 
-    /**
-    [contenteditable="true"] img, img, [data-action="local-coursetranslator/editor"] img
-    editors as to done via js ... see courstranslator.js
-     */
     img {
         background-color: yellow !important;
         font-style: italic;
@@ -161,10 +157,12 @@ $secondary: $gray-400 !default;
         color: $red;
     }
 
+    #local-coursetranslator__sourcelink {
+        top: .4rem;
+        left: -2rem;
+        position: absolute;
+    }
 
-    /*[data-status="sourceTextWarings"] {
-        color: $orange;
-    }*/
     #toggleMultilang {
         font-size: medium;
         margin: 1px;
@@ -172,21 +170,6 @@ $secondary: $gray-400 !default;
     }
 
     #toggleMultilang.showing, #toggleMultilang:hover {
-        /*padding: 0 !important;
-        background-color: $gray-100;*/
         border: black 2px solid;
     }
-
-    /*
-        #toggleMultilang.showing:after, #toggleMultilang:hover:after {
-            content: " }";
-            padding: 0 !important;
-        }
-
-        #toggleMultilang.showing:before, #toggleMultilang:hover:before {
-            content: "{";
-            padding: 0 !important;
-        }
-
-     */
 }

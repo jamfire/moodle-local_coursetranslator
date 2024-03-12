@@ -53,7 +53,6 @@ require_capability('local/coursetranslator:edittranslations', $context);
 // Get js data.
 $jsconfig = new stdClass();
 $jsconfig->apikey = get_config('local_coursetranslator', 'apikey');
-$jsconfig->autotranslate = boolval(get_config('local_coursetranslator', 'useautotranslate'));
 $jsconfig->lang = $targetlang;
 $jsconfig->currentlang = current_language();
 $jsconfig->syslang = $CFG->lang;

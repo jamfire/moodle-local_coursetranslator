@@ -124,19 +124,14 @@ export const init = (cfg) => {
     });
 
     /**
-     * Autotranslate Checkboxes
+     * Selection Checkboxes
      */
-    if (config.autotranslate) {
-        checkboxes.forEach((e) => {
-            e.disabled = sourceLang === targetLang;
-        });
-    }
     checkboxes.forEach((e) => {
+        e.disabled = sourceLang === targetLang;
         e.addEventListener("click", () => {
             toggleAutotranslateButton();
         });
     });
-
 
     /**
      * Save Translation to Moodle

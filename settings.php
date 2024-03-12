@@ -31,16 +31,6 @@ if (has_capability('moodle/site:config', context_system::instance())) {
     // Add to admin menu.
     $ADMIN->add('localplugins', $settings);
 
-    // Use deepl machine translation.
-    $settings->add(
-            new admin_setting_configcheckbox(
-                    'local_coursetranslator/usedeepl',
-                    get_string('usedeepl', 'local_coursetranslator'),
-                    get_string('usedeepl_desc', 'local_coursetranslator'),
-                    false
-            )
-    );
-
     // DeepL apikey.
     $settings->add(
             new admin_setting_configtext(
@@ -59,16 +49,6 @@ if (has_capability('moodle/site:config', context_system::instance())) {
                     'local_coursetranslator/deeplpro',
                     get_string('deeplpro', 'local_coursetranslator'),
                     get_string('deeplpro_desc', 'local_coursetranslator'),
-                    false
-            )
-    );
-
-    // Use translation page autotranslation.
-    $settings->add(
-            new admin_setting_configcheckbox(
-                    'local_coursetranslator/useautotranslate',
-                    get_string('useautotranslate', 'local_coursetranslator'),
-                    get_string('useautotranslate_desc', 'local_coursetranslator'),
                     false
             )
     );

@@ -34,14 +34,8 @@ $string['edittranslation'] = 'Edit Translation';
 // DeepL strings.
 $string['apikey'] = 'API Key for DeepL Translate';
 $string['apikey_desc'] = 'Copy your api key from DeepL to use machine translation.';
-$string['usedeepl'] = 'Use DeepL';
-$string['usedeepl_desc'] =
-        'Check this checkbox if you want the plugin to use the DeepL translate api, otherwise auto generated translations are same as original.';
 $string['deeplpro'] = 'Use DeepL Pro?';
 $string['deeplpro_desc'] = 'Enable this to use DeepL Pro instead of the free version of DeepL.';
-$string['useautotranslate'] = 'Enable autotranslate for translation page';
-$string['useautotranslate_desc'] =
-        'Enable autotranslate on the translation page. This gives translators the abilty to autotranslate content without enabling autotranslate on individual page loads.';
 $string['supported_languages'] =
         'bg,cs,da,de,el,en,es,et,fi,fr,hu,it,ja,lt,lv,nl,pl,pt,ro,ru,sk,sl,sv,zh'; // Do not change between translations.*/
 // Template strings.

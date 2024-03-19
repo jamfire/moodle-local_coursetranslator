@@ -309,7 +309,12 @@ class course_data {
             if (isset($activity->content) && $activity->content != '') {
                 $item->displaytext = $activity->content;
             } else {
-                $item->displaytext = $this->get_file_url($text, $id, $table, $field, $cmid ?? 0);
+                try {
+                    $item->displaytext = $this->get_file_url($text, $id, $table, $field, $cmid ?? 0);
+                } catch (Exception $e) {
+                    // Image not found leave the plugin file empty.
+                }
+
             }
         }
         $item->format = intval($format);

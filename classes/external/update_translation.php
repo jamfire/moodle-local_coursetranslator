@@ -13,23 +13,30 @@
 //
 // You should have received a copy of the GNU General Public License
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
+namespace local_coursetranslator\external;
+
+use core_external\external_api;
 
 /**
- * Local Course Translator
+ * Local Course Translator update_translation Web Service
+ *
+ * Adds a webservice available via ajax for the Translate Content page.
  *
  * @package    local_coursetranslator
- * @copyright  2022 Kaleb Heitzman <kaleb@jamfire.io>
  * @copyright  2024 Bruno Baudry <bruno.baudry@bfh.ch>
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
- * @see        https://docs.moodle.org/dev/version.php
+ * @see        https://docs.moodle.org/dev/External_functions_API
  */
+class update_translation extends external_api {
+    public static function execute_parameters(): external_function_parameters {
 
-defined('MOODLE_INTERNAL') || die();
-$plugin->component = 'local_coursetranslator';  // Full name of the plugin (used for diagnostics).
-$plugin->version = 2024031900;                // The current plugin version (Date: YYYYMMDDXX).
-$plugin->requires = 2020061500;                // Requires Moodle 3.9 LTS.
-$plugin->supported = [401, 403];                // Supported Moodle Versions.
-$plugin->maturity = MATURITY_ALPHA;            // Maturity level.
-$plugin->release = 'v0.9.6';                  // Semantic Versioning for CHANGES.md.
-// Dependencies.
-$plugin->dependencies = ['filter_multilang2' => 2020101300];
+    }
+
+    public static function execute_returns(): external_single_structure {
+
+    }
+
+    public static function execute() {
+
+    }
+}

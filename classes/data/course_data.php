@@ -313,8 +313,8 @@ class course_data {
                     $item->displaytext = $this->get_file_url($text, $id, $table, $field, $cmid ?? 0);
                 } catch (Exception $e) {
                     // Image not found leave the plugin file empty.
+                    $item->displaytext = $item->text = $text;
                 }
-
             }
         }
         $item->format = intval($format);

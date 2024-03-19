@@ -311,7 +311,7 @@ class course_data {
             } else {
                 try {
                     $item->displaytext = $this->get_file_url($text, $id, $table, $field, $cmid ?? 0);
-                } catch (Exception $e) {
+                } catch (\moodle_exception $e) {
                     // Image not found leave the plugin file empty.
                     $item->displaytext = $item->text = $text;
                 }

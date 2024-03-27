@@ -57,6 +57,7 @@ $string['t_source_text'] = 'Source lang: {$a}';
 $string['t_translation'] = 'Target lang: {$a}';
 $string['t_autosaved'] = 'Saved!';
 $string['t_selectall'] = 'Select All';
+$string['t_saveall'] = 'Save&nbsp;all';
 $string['t_status'] = 'Status';
 $string['t_other'] = 'Other (other)';
 $string['t_multiplemlang'] =

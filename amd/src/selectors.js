@@ -13,7 +13,7 @@
 // You should have received a copy of the GNU General Public License
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
-/*
+/**
  * @module     local_coursetranslator/coursetranslator
  * @copyright  2024 Bruno Baudry <bruno.baudry@bfh.ch>
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
@@ -23,8 +23,10 @@ export default {
         validatorsBtns: 'div[data-key-validator]',
         validator: '[data-key-validator="<KEY>"]',
         validatorIcon: '[data-key-validator="<KEY>"] i',
+        validatorBtn: '[data-key-validator="<KEY>"] span',
         checkBoxes: '[data-action="local-coursetranslator/checkbox"]',
         selectAllBtn: '[data-action="local-coursetranslator/select-all"]',
+        saveAll: '[data-action="local-coursetranslator/saveall-btn"]',
         autoTranslateBtn: '[data-action="local-coursetranslator/autotranslate-btn"]',
         targetSwitcher: '[data-action="local-coursetranslator/target-switcher"]',
         sourceSwitcher: '[data-action="local-coursetranslator/source-switcher"]',
@@ -40,7 +42,13 @@ export default {
         keys: '[data-status-key="<KEY>"',
         successMessages: '[data-status="local-coursetranslator/success-message"][data-key="<KEY>"]',
         prevTransStatus: '[data-row-id="<KEY>"] span#previousTranslationStatus',
-        multilang: '[data-row-id="<KEY>"] span#toggleMultilang'
+        multilang: '[data-row-id="<KEY>"] span#toggleMultilang',
+        wait: 'local-coursetranslator/wait',
+        totranslate: 'local-coursetranslator/totranslate',
+        tosave: 'local-coursetranslator/tosave',
+        failed: 'local-coursetranslator/failed',
+        success: 'local-coursetranslator/success',
+        saved: 'local-coursetranslator/saved',
     },
     editors: {
         textarea: '[data-action="local-coursetranslator/textarea"',

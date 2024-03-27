@@ -61,7 +61,7 @@ class translate_page implements renderable, templatable {
     /**
      * The form to display the row UI
      *
-     * @todo change this to mustache
+     * @todo MDL-0 change this to mustache
      * @var \translatee_form
      */
     private translate_form $mform;
@@ -72,7 +72,7 @@ class translate_page implements renderable, templatable {
      * @param object $course Moodle course record
      * @param array $coursedata Custom processed course record
      * @param object $mlangfilter Multilang2 Filter for filtering output
-     * @todo no need form if treatment and api call is done by js. Replace by Mustache.
+     * @todo MDL-0 no need form if treatment and api call is done by js. Replace by Mustache.
      */
     public function __construct($course, $coursedata, $mlangfilter) {
         $this->course = $course;

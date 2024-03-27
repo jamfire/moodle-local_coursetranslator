@@ -23,8 +23,8 @@
  * @see        https://docs.moodle.org/dev/Output_API
  */
 /**
- * @todo use deepl-php instead of js ajax for further maintainability and absctraction
- * @todo check images tag handling in deepl.
+ * @todo MDL-0 use deepl-php instead of js ajax for further maintainability and absctraction
+ * @todo MDL-0 check images tag handling in deepl.
  */
 
 // Get libs.

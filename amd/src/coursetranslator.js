@@ -31,6 +31,7 @@ let autotranslateButton = {};
 let checkboxes = [];
 let sourceLang = "";
 let targetLang = "";
+let saveAllBtn = {};
 
 const registerEventListeners = () => {
 
@@ -70,22 +71,35 @@ const registerEventListeners = () => {
         if (e.target.closest(Selectors.actions.selectAllBtn)) {
             toggleAllCheckboxes(e);
         }
+        if (e.target.closest(Selectors.actions.saveAll)) {
+            const selected = document.querySelectorAll(Selectors.statuses.checkedCheckBoxes);
+            selected.forEach((e) => {
+                const key = e.dataset.key;
+                if (tempTranslations[key].translation !== "") {
+                    saveTranslation(key);
+                } else {
+                    window.console.warn("not translated " + key);
+                }
+            });
+        }
     });
 
 };
 const registerUI = () => {
     try {
-        autotranslateButton = document.querySelector(Selectors.actions.autoTranslateBtn);
-        checkboxes = document.querySelectorAll(Selectors.actions.checkBoxes);
+        saveAllBtn = document.querySelector(Selectors.actions.saveAll);
         sourceLang = document.querySelector(Selectors.actions.sourceSwitcher).value;
         targetLang = document.querySelector(Selectors.actions.targetSwitcher).value;
+        autotranslateButton = document.querySelector(Selectors.actions.autoTranslateBtn);
+        checkboxes = document.querySelectorAll(Selectors.actions.checkBoxes);
+        // Initialise status object.
+        checkboxes.forEach((node) => (tempTranslations[node.dataset.key] = {}));
     } catch (e) {
         if (config.debug) {
             window.console.error(e.message);
         }
     }
 };
-
 /**
  * Translation Editor UI
  * @param {Object} cfg JS Config
@@ -107,22 +121,21 @@ export const init = (cfg) => {
      * Validaate translation ck
      */
     const validators = document.querySelectorAll(Selectors.actions.validatorsBtns);
-    validators.forEach((e) => {
+    validators.forEach((item) => {
         // Get the stored data and do the saving from editors content
-        e.addEventListener('click', (e) => {
-            let key = e.target.parentElement.dataset.keyValidator;
+        item.addEventListener('click', (e) => {
+            const _this = e.target.closest(Selectors.actions.validatorsBtns);
+            let key = _this.dataset.keyValidator;
             if (tempTranslations[key] === null || tempTranslations[key] === undefined) {
                 /**
                  * @todo do a UI feedback (disable save )
                  */
-                window.console.log(`Transaltion key "${key}" is undefined `);
+                window.console.warn(`Transaltion key "${key}" is undefined `,);
             } else {
                 saveTranslation(key);
             }
-
         });
     });
-
     /**
      * Selection Checkboxes
      */
@@ -132,222 +145,255 @@ export const init = (cfg) => {
             toggleAutotranslateButton();
         });
     });
+};
+/**
+ * Save Translation to Moodle
+ * @param  {String} key Data Key
+ */
+const saveTranslation = (key) => {
+    // Get processing vars.
+    let editor = tempTranslations[key].editor;
+    let text = editor.innerHTML; // We keep the editors text in case translation is edited
+    let sourceText = tempTranslations[key].source;
+    let icon = document.querySelector(replaceKey(Selectors.actions.validatorBtn, key));
+    let selector = Selectors.editors.multiples.editorsWithKey.replace("<KEY>", key);
+    let element = document.querySelector(selector);
+    let id = element.getAttribute("data-id");
+    let tid = element.getAttribute("data-tid");
+    let table = element.getAttribute("data-table");
+    let field = element.getAttribute("data-field");
 
-    /**
-     * Save Translation to Moodle
-     * @param  {String} key Data Key
-     */
-    const saveTranslation = (key) => {
-        // Get processing vars
-        let editor = tempTranslations[key].editor;
-        let text = editor.innerHTML; // We keep the editors text in case translation is edited
-        let sourceText = tempTranslations[key].source;
-        let icon = document.querySelector(replaceKey(Selectors.actions.validatorIcon, key));
-        let selector = Selectors.editors.multiples.editorsWithKey.replace("<KEY>", key);
-        let element = document.querySelector(selector);
-        let id = element.getAttribute("data-id");
-        let tid = element.getAttribute("data-tid");
-        let table = element.getAttribute("data-table");
-        let field = element.getAttribute("data-field");
-
-        // Get the latest field data
-        let fielddata = {};
-        fielddata.courseid = config.courseid;
-        fielddata.id = parseInt(id);
-        fielddata.table = table;
-        fielddata.field = field;
-        if (config.debug > 0) {
-            window.console.log(fielddata);
-        }
-        // Get the latest data to parse text against.
-        ajax.call([
-            {
-                methodname: "local_coursetranslator_get_field",
-                args: {
-                    data: [fielddata],
-                },
-                done: (data) => {
-                    // The latests field text so multiple translators can work at the same time
-                    let fieldtext = data[0].text;
-
-                    // Field text exists
-                    if (data.length > 0) {
-                        // Updated hidden textarea with updatedtext
-                        let textarea = document.querySelector(
-                            Selectors.editors.multiples.textAreas
-                                .replace("<KEY>", key));
-                        // Get the updated text
-                        let updatedtext = getupdatedtext(fieldtext, text, sourceText);
-
-                        // Build the data object
-                        let tdata = {};
-                        tdata.courseid = config.courseid;
-                        tdata.id = parseInt(id);
-                        tdata.tid = tid;
-                        tdata.table = table;
-                        tdata.field = field;
-                        tdata.text = updatedtext;
-                        if (config.debug > 0) {
-                            window.console.log(tdata);
-                        }
-                        // Success Message
-                        const successMessage = () => {
-                            element.classList.add("local-coursetranslator__success");
-                            // Add saved indicator
-                            icon.setAttribute('role', 'status');
-                            icon.setAttribute('data-status', "local-coursetranslator/success");
-                            // Remove success message after a few seconds
-                            setTimeout(() => {
-                                let multilangPill = document.querySelector(replaceKey(Selectors.statuses.multilang, key));
-                                let prevTransStatus = document.querySelector(replaceKey(Selectors.statuses.prevTransStatus, key));
-                                prevTransStatus.classList = "badge badge-pill badge-success";
-                                if (multilangPill.classList.contains("invisible")) {
-                                    multilangPill.classList.remove('invisible');
-                                }
-                                icon.setAttribute('data-status', "local-coursetranslator/saved");
-                            });
-                        };
-                        // Error Mesage
-                        const errorMessage = (error) => {
-                            editor.classList.add("local-coursetranslator__error");
-                            icon.setAttribute('role', 'status');
-                            icon.setAttribute('data-status', "local-coursetranslator/failed");
-                            if (error) {
-                                textarea.innerHTML = error;
-                            }
-                        };
-
-                        // Submit the request
-                        ajax.call([
-                            {
-                                methodname: "local_coursetranslator_update_translation",
-                                args: {
-                                    data: [tdata],
-                                },
-                                done: (data) => {
-                                    // Print response to console log
-                                    if (config.debug > 0) {
-                                        window.console.log("ws: ", key, data);
-                                    }
-
-                                    // Display success message
-                                    if (data.length > 0) {
-                                        successMessage();
-                                        textarea.innerHTML = data[0].text;
-
-                                        // Update source lang if necessary
-                                        if (config.currentlang === config.lang) {
-                                            document.querySelector(Selectors.sourcetexts.keys.replace('<KEY>', key))
-                                                .innerHTML = text;
-                                        }
-                                    } else {
-                                        // Something went wrong with the data
-                                        errorMessage();
-                                    }
-                                },
-                                fail: (error) => {
-                                    // An error occurred
-                                    errorMessage(error);
-                                },
-                            },
-                        ]);
-                    } else {
-                        // Something went wrong with field retrieval
-                        window.console.log(data);
-                    }
-                },
-                fail: (error) => {
-                    // An error occurred
-                    window.console.log(error);
-                },
+    // Get the latest field data
+    let fielddata = {};
+    fielddata.courseid = config.courseid;
+    fielddata.id = parseInt(id);
+    fielddata.table = table;
+    fielddata.field = field;
+    if (config.debug > 0) {
+        window.console.info(fielddata);
+    }
+    // Get the latest data to parse text against.
+    ajax.call([
+        {
+            methodname: "local_coursetranslator_get_field",
+            args: {
+                data: [fielddata],
             },
-        ]);
-    };
+            done: (data) => {
+                // The latests field text so multiple translators can work at the same time
+                let fieldtext = data[0].text;
 
-    /**
-     * Update Textarea
-     * @param {string} fieldtext Latest text from database
-     * @param {string} text Text to update
-     * @param {string} source Original text translated from
-     * @returns {string}
-     */
-    const getupdatedtext = (fieldtext, text, source) => {
-        let targetlang = targetLang;
-        // Search for {mlang} not found.
-        let startOther = `{mlang other}`;
-        let otherlangtext = `${startOther}${source}{mlang}`; // Source tag.
-        let targetLangTag = `{mlang ${targetlang}}`; // Target tag.
-        let targetlangtext = `${targetLangTag}${text}{mlang}`;
-        if (config.debug > 0) {
-            window.console.log("targetlang", targetlang);
-            window.console.log("startOther", startOther);
-            window.console.log("otherlangtext", otherlangtext);
-            window.console.log("targetLangTag", targetLangTag);
-            window.console.log("targetlangtext", targetlangtext); // Translated text with tag.
-            window.console.log("fieldtext", fieldtext); // Original editor content.
-            window.console.log("text", text); // Translated text without tag.
-            window.console.log("source", source); // Source text without tag.
-        }
-        // Return new mlang text if mlang has not been used before.
-        if (fieldtext.indexOf("{mlang") === -1) {
-            return otherlangtext + targetlangtext;
-        }
-        // Use regex to replace the string.
-        let alllanpattern = `({mlang [a-z]{2,5}})(.*?){mlang}`;
-        // Important to leave the "s" mofifiers to match line breaks added by the rich text editors.
-        let alllangregex = new RegExp(alllanpattern, "gs");
-        let all = {};
-        let tagReg = new RegExp("{mlang (other|[a-z]{2})}", "");
-        let splited = fieldtext.split(alllangregex);
-        if (config.debug > 0) {
-            window.console.info("SPLITED");
-            window.console.log(splited);
-        }
-        let foundsourcetag = "";
-        var l = "";
-        for (var i in splited) {
-            if (splited[i] === "") {
-                continue;
-            }
-            if (splited[i].match(tagReg)) {
-                l = splited[i].match(tagReg)[0];
-            } else if (l !== "") {
-                all[l] = splited[i];
-                if (splited[i] === source) {
-                    foundsourcetag = l;
+                // Field text exists
+                if (data.length > 0) {
+                    // Updated hidden textarea with updatedtext
+                    let textarea = document.querySelector(
+                        Selectors.editors.multiples.textAreas
+                            .replace("<KEY>", key));
+                    // Get the updated text
+                    let updatedtext = getupdatedtext(fieldtext, text, sourceText);
+
+                    // Build the data object
+                    let tdata = {};
+                    tdata.courseid = config.courseid;
+                    tdata.id = parseInt(id);
+                    tdata.tid = tid;
+                    tdata.table = table;
+                    tdata.field = field;
+                    tdata.text = updatedtext;
+                    if (config.debug > 0) {
+                        window.console.info(tdata);
+                    }
+                    // Success Message
+                    const successMessage = () => {
+                        element.classList.add("local-coursetranslator__success");
+                        // Add saved indicator
+                        setIconStatus(icon, Selectors.statuses.success);
+                        // Remove success message after a few seconds
+                        setTimeout(() => {
+                            let multilangPill = document.querySelector(replaceKey(Selectors.statuses.multilang, key));
+                            let prevTransStatus = document.querySelector(replaceKey(Selectors.statuses.prevTransStatus, key));
+                            prevTransStatus.classList = "badge badge-pill badge-success";
+                            if (multilangPill.classList.contains("invisible")) {
+                                multilangPill.classList.remove('invisible');
+                            }
+                            setIconStatus(icon, Selectors.statuses.saved);
+                        });
+                    };
+                    // Error Mesage
+                    const errorMessage = (error) => {
+                        editor.classList.add("local-coursetranslator__error");
+                        setIconStatus(icon, Selectors.statuses.failed);
+                        if (error) {
+                            textarea.innerHTML = error;
+                        }
+                    };
+
+                    // Submit the request
+                    ajax.call([
+                        {
+                            methodname: "local_coursetranslator_update_translation",
+                            args: {
+                                data: [tdata],
+                            },
+                            done: (data) => {
+                                // Print response to console log
+                                if (config.debug > 0) {
+                                    window.console.info("ws: ", key, data);
+                                }
+
+                                // Display success message
+                                if (data.length > 0) {
+                                    successMessage();
+                                    textarea.innerHTML = data[0].text;
+
+                                    // Update source lang if necessary
+                                    if (config.currentlang === config.lang) {
+                                        document.querySelector(Selectors.sourcetexts.keys.replace('<KEY>', key))
+                                            .innerHTML = text;
+                                    }
+                                } else {
+                                    // Something went wrong with the data
+                                    errorMessage();
+                                }
+                            },
+                            fail: (error) => {
+                                // An error occurred
+                                errorMessage(error);
+                            },
+                        },
+                    ]);
+                } else {
+                    // Something went wrong with field retrieval
+                    window.console.warn(data);
                 }
-                l = "";
-            }
-        }
-        if (foundsourcetag !== startOther) {
-            // We need to replace the source.
-            delete all[foundsourcetag];
-        }
-        // If there is a other tag we replace it by the source.
-        // @todo a mechanism to propose to the user to select another tag for this.
-        all[startOther] = source;
-        all[targetLangTag] = text;
-        let s = "";
-        for (let tag in all) {
-            s += tag + all[tag] + "{mlang}";
-        }
-        return s;
-    };
+            },
+            fail: (error) => {
+                // An error occurred
+                window.console.warn(error);
+            },
+        },
+    ]);
 };
 
+/**
+ * Update Textarea
+ * @param {string} fieldtext Latest text from database
+ * @param {string} text Text to update
+ * @param {string} source Original text translated from
+ * @returns {string}
+ */
+const getupdatedtext = (fieldtext, text, source) => {
+    let targetlang = targetLang;
+    // Search for {mlang} not found.
+    let startOther = `{mlang other}`;
+    let otherlangtext = `${startOther}${source}{mlang}`; // Source tag.
+    let targetLangTag = `{mlang ${targetlang}}`; // Target tag.
+    let targetlangtext = `${targetLangTag}${text}{mlang}`;
+    if (config.debug > 0) {
+        window.console.info("targetlang", targetlang);
+        window.console.info("startOther", startOther);
+        window.console.info("otherlangtext", otherlangtext);
+        window.console.info("targetLangTag", targetLangTag);
+        window.console.info("targetlangtext", targetlangtext); // Translated text with tag.
+        window.console.info("fieldtext", fieldtext); // Original editor content.
+        window.console.info("text", text); // Translated text without tag.
+        window.console.info("source", source); // Source text without tag.
+    }
+    // Return new mlang text if mlang has not been used before.
+    if (fieldtext.indexOf("{mlang") === -1) {
+        return otherlangtext + targetlangtext;
+    }
+    // Use regex to replace the string.
+    let alllanpattern = `({mlang [a-z]{2,5}})(.*?){mlang}`;
+    // Important to leave the "s" mofifiers to match line breaks added by the rich text editors.
+    let alllangregex = new RegExp(alllanpattern, "gs");
+    let all = {};
+    let tagReg = new RegExp("{mlang (other|[a-z]{2})}", "");
+    let splited = fieldtext.split(alllangregex);
+    if (config.debug > 0) {
+        window.console.info("SPLITED", splited);
+    }
+    let foundsourcetag = "";
+    var l = "";
+    for (var i in splited) {
+        if (splited[i] === "") {
+            continue;
+        }
+        if (splited[i].match(tagReg)) {
+            l = splited[i].match(tagReg)[0];
+        } else if (l !== "") {
+            all[l] = splited[i];
+            if (splited[i] === source) {
+                foundsourcetag = l;
+            }
+            l = "";
+        }
+    }
+    if (foundsourcetag !== startOther) {
+        // We need to replace the source.
+        delete all[foundsourcetag];
+    }
+    // If there is a other tag we replace it by the source.
+    // @todo a mechanism to propose to the user to select another tag for this.
+    all[startOther] = source;
+    all[targetLangTag] = text;
+    let s = "";
+    for (let tag in all) {
+        s += tag + all[tag] + "{mlang}";
+    }
+    return s;
+};
 const onItemChecked = (e) => {
     toggleStatus(e.target.getAttribute('data-key'), e.target.checked);
 };
 const toggleStatus = (key, checked) => {
-    let s = 'wait';
-    if (checked) {
-        s = "totranslate";
+    const icon = document.querySelector(replaceKey(Selectors.actions.validatorBtn, key));
+    const status = icon.dataset.status;
+    switch (status) {
+        case Selectors.statuses.wait :
+            if (checked) {
+                setIconStatus(icon, Selectors.statuses.totranslate);
+            }
+            break;
+        case Selectors.statuses.totranslate :
+            if (checked && tempTranslations[key]?.translation?.length > 0) {
+                setIconStatus(icon, Selectors.statuses.tosave, true);
+            } else {
+                setIconStatus(icon, Selectors.statuses.wait);
+            }
+            break;
+        case Selectors.statuses.tosave :
+            if (!checked) {
+                setIconStatus(icon, Selectors.statuses.totranslate);
+            }
+            break;
+        case Selectors.statuses.failed :
+            break;
+        case Selectors.statuses.success :
+            break;
+        case Selectors.statuses.saved :
+            break;
     }
-    document.querySelector(replaceKey(Selectors.actions.validatorIcon, key))
-        .setAttribute('data-status', `local-coursetranslator/${s}`);
 };
-
-
+const setIconStatus = (icon, s = Selectors.statuses.wait, isBtn = false) => {
+    if (isBtn) {
+        if (!icon.classList.contains('btn')) {
+            icon.classList.add('btn');
+        }
+        if (icon.classList.contains('disable')) {
+            icon.classList.remove('disable');
+        }
+    } else {
+        if (!icon.classList.contains('disable')) {
+            icon.classList.add('disable');
+        }
+        if (icon.classList.contains('btn')) {
+            icon.classList.remove('btn');
+        }
+    }
+    icon.setAttribute('role', isBtn ? 'button' : 'status');
+    icon.setAttribute('data-status', s);
+};
 /**
  * Shows/hides rows
  * @param {string} selector
@@ -396,6 +442,8 @@ const switchSource = (e) => {
  * Launch autotranslation
  */
 const doAutotranslate = () => {
+    saveAllBtn.hidden = saveAllBtn.disabled = false;
+
     document
         .querySelectorAll(Selectors.statuses.checkedCheckBoxes)
         .forEach((ckBox) => {
@@ -414,19 +462,20 @@ const getTranslation = (key) => {
     // Get the editor
     let editorSettings = findEditor(key);
     if (config.debug > 0) {
-        window.console.log(editorSettings);
+        window.console.info(editorSettings);
     }
     let editor = editorSettings.editor;
     let editorType = editorSettings.editorType;
 
     // Get the source text
     let sourceText = document.querySelector(Selectors.sourcetexts.keys.replace("<KEY>", key)).getAttribute("data-sourcetext-raw");
-    let icon = document.querySelector(replaceKey(Selectors.actions.validatorIcon, key));
-    // Initialize global dictionary with this key's editor
+    let icon = document.querySelector(replaceKey(Selectors.actions.validatorBtn, key));
+    // Initialize global dictionary with this key's editor.
     tempTranslations[key] = {
         'editorType': editorType,
         'editor': editor,
         'source': sourceText,
+        'status': Selectors.statuses.wait,
         'translation': ''
     };
     // Build formData
@@ -446,7 +495,7 @@ const getTranslation = (key) => {
     formData.append("splitting_tags", toJsonArray(document.querySelector(Selectors.deepl.splittingTags).value));
     formData.append("ignore_tags", toJsonArray(document.querySelector(Selectors.deepl.ignoreTags).value));
     if (config.debug) {
-        window.console.log("Send deepl:", formData);
+        window.console.info("Send deepl:", formData);
     }
     // Update the translation
     let xhr = new XMLHttpRequest();
@@ -460,13 +509,11 @@ const getTranslation = (key) => {
                 editor.innerHTML = data.translations[0].text;
                 // Store the translation in the global object
                 tempTranslations[key].translation = data.translations[0].text;
-                icon.setAttribute('role', 'button');
-                icon.setAttribute('data-status', 'local-coursetranslator/tosave');
-                injectImageCss(editorSettings);
+                setIconStatus(icon, Selectors.statuses.tosave, true);
+                injectImageCss(editorSettings); // Hack for iframes based editors to highlight missing pictures.
             } else {
                 // Oh no! There has been an error with the request!
-                icon.setAttribute('data-status', 'local-coursetranslator/failed');
-                icon.setAttribute('role', 'status');
+                setIconStatus(icon, Selectors.statuses.failed, false);
             }
         }
     };

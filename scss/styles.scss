@@ -50,6 +50,16 @@ $danger: $red !default;
 $secondary: $gray-400 !default;
 
 #page-local-coursetranslator-translate {
+    .sticky-offset {
+        top: 20px;
+    }
+
+    .local-coursetranslator__saveall-btn {
+        margin-left: 97% !important;
+        position: sticky !important;
+        bottom: 80px !important;
+    }
+
     a[aria-expanded=true] .fa-caret-right {
         display: none;
     }
@@ -86,7 +96,7 @@ $secondary: $gray-400 !default;
 
         [data-action="local-coursetranslator/editor"],
         [data-fieldtype="editor"] {
-            width: 100%;  /* editor tweaks */
+            width: 100%; /* editor tweaks */
         }
 
         textarea[data-action="local-coursetranslator/editor"] {
@@ -123,40 +133,41 @@ $secondary: $gray-400 !default;
         border-radius: 4px;
     }
 
-    [data-status="local-coursetranslator/wait"]:before {
+    [data-status="local-coursetranslator/wait"] i:before {
         content: '\f141'; /*3 dots ellipse*/
         color: $gray-400;
     }
 
-    [data-status="local-coursetranslator/totranslate"]:before {
+    [data-status="local-coursetranslator/totranslate"] i:before {
         content: '\f251'; /* Sand icon*/
         color: $blue;
     }
 
-    [data-status="local-coursetranslator/tosave"]:hover {
-        color: $black;
-    }
+    /*    [data-status="local-coursetranslator/tosave"] i:hover {
+            color: $black;
+        }*/
 
-    [data-status="local-coursetranslator/tosave"]:before {
+    [data-status="local-coursetranslator/tosave"] i:before {
         content: '\f0c7'; /*floppy (save) icon*/
         color: $blue;
     }
 
-    [data-status="local-coursetranslator/success"]:before {
+    [data-status="local-coursetranslator/success"] i:before {
         content: '\f00c'; /*check  icon*/
         color: $green;
     }
 
-    [data-status="local-coursetranslator/saved"]:before {
+    [data-status="local-coursetranslator/saved"] i:before {
         content: '\f1c0'; /*database  icon*/
         color: $green;
     }
 
-    [data-status="local-coursetranslator/failed"]:before {
+    [data-status="local-coursetranslator/failed"] i:before {
         content: '\f071'; /*exclamation triangle  icon*/
         color: $red;
     }
-    #toggleMultilang {
+
+    /*#toggleMultilang {
         font-size: medium;
         margin: 1px;
         border: white 2px solid;
@@ -164,5 +175,5 @@ $secondary: $gray-400 !default;
 
     #toggleMultilang.showing, #toggleMultilang:hover {
         border: black 2px solid;
-    }
+    }*/
 }

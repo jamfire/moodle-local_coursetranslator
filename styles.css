@@ -19,6 +19,28 @@ along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
  * @copyright  2024 Bruno Baudry <bruno.baudry@bfh.ch>
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
+#page-local-coursetranslator-translate {
+  /*    [data-status="local-coursetranslator/tosave"] i:hover {
+          color: $black;
+      }*/
+  /*#toggleMultilang {
+      font-size: medium;
+      margin: 1px;
+      border: white 2px solid;
+  }
+
+  #toggleMultilang.showing, #toggleMultilang:hover {
+      border: black 2px solid;
+  }*/
+}
+#page-local-coursetranslator-translate .sticky-offset {
+  top: 20px;
+}
+#page-local-coursetranslator-translate .local-coursetranslator__saveall-btn {
+  margin-left: 97% !important;
+  position: sticky !important;
+  bottom: 80px !important;
+}
 #page-local-coursetranslator-translate a[aria-expanded=true] .fa-caret-right {
   display: none;
 }
@@ -72,40 +94,29 @@ along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
   right: 9px;
   border-radius: 4px;
 }
-#page-local-coursetranslator-translate [data-status="local-coursetranslator/wait"]:before {
+#page-local-coursetranslator-translate [data-status="local-coursetranslator/wait"] i:before {
   content: "\f141"; /*3 dots ellipse*/
   color: #ced4da;
 }
-#page-local-coursetranslator-translate [data-status="local-coursetranslator/totranslate"]:before {
+#page-local-coursetranslator-translate [data-status="local-coursetranslator/totranslate"] i:before {
   content: "\f251"; /* Sand icon*/
   color: #0f6cbf;
 }
-#page-local-coursetranslator-translate [data-status="local-coursetranslator/tosave"]:hover {
-  color: #000;
-}
-#page-local-coursetranslator-translate [data-status="local-coursetranslator/tosave"]:before {
+#page-local-coursetranslator-translate [data-status="local-coursetranslator/tosave"] i:before {
   content: "\f0c7"; /*floppy (save) icon*/
   color: #0f6cbf;
 }
-#page-local-coursetranslator-translate [data-status="local-coursetranslator/success"]:before {
+#page-local-coursetranslator-translate [data-status="local-coursetranslator/success"] i:before {
   content: "\f00c"; /*check  icon*/
   color: #357a32;
 }
-#page-local-coursetranslator-translate [data-status="local-coursetranslator/saved"]:before {
+#page-local-coursetranslator-translate [data-status="local-coursetranslator/saved"] i:before {
   content: "\f1c0"; /*database  icon*/
   color: #357a32;
 }
-#page-local-coursetranslator-translate [data-status="local-coursetranslator/failed"]:before {
+#page-local-coursetranslator-translate [data-status="local-coursetranslator/failed"] i:before {
   content: "\f071"; /*exclamation triangle  icon*/
   color: #ca3120;
-}
-#page-local-coursetranslator-translate #toggleMultilang {
-  font-size: medium;
-  margin: 1px;
-  border: white 2px solid;
-}
-#page-local-coursetranslator-translate #toggleMultilang.showing, #page-local-coursetranslator-translate #toggleMultilang:hover {
-  border: black 2px solid;
 }
 
 /*# sourceMappingURL=styles.css.map */
